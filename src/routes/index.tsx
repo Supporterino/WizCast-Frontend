@@ -1,14 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Stack, Title } from '@mantine/core';
+import { HomeScreen } from '@/components/HomeScreen/HomeScreen.tsx';
 
 const Home = () => {
-  return (
-    <Stack align="center" gap="lg">
-      <Title order={1} ta="center" fw={800}>
-        Welcome to WizCast
-      </Title>
-    </Stack>
-  );
+  return <HomeScreen />;
 };
 
 export const Route = createFileRoute('/')({
