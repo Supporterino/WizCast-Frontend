@@ -6,7 +6,7 @@ import { routeTree } from './routeTree.gen';
 
 function App() {
   const colorSchemeManager = localStorageColorSchemeManager({
-    key: 'yarm-frontend-color-scheme',
+    key: 'wizcast-frontend-color-scheme',
   });
 
   const globalTheme = createTheme({
