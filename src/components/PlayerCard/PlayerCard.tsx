@@ -29,8 +29,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
     const currentPrediction = rounds[currentRound].predictions[idx];
     if (currentPrediction === newActual) {
       setScoreChange(currentRound, idx, 20 + 10 * newActual);
-    } else if (currentPrediction) {
-      const diff = Math.abs(currentPrediction - newActual);
+    } else {
+      const diff = Math.abs(currentPrediction! - newActual);
       setScoreChange(currentRound, idx, diff * -10);
     }
   };
