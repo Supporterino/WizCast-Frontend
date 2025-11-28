@@ -1,25 +1,20 @@
-// src/components/SettingsMenu.tsx
-
-import { ActionIcon, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import {
+  ActionIcon,
+  Text,
+  useComputedColorScheme,
+  useMantineColorScheme,
+  Select,                     // <-- added
+} from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 
-/**
- * SettingsMenu
- *
- * This component will eventually contain all application settings.
- * At the moment it only exposes a theme‑toggle button and the
- * placeholder Settings icon.  Keeping this logic isolated makes it
- * trivial to replace or extend the UI later without touching
- * the Header component.
- */
 export const SettingsMenu: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // 'light' | 'dark' | 'auto'
   const computedColorScheme = useComputedColorScheme(); // resolved to 'light' | 'dark'
 
-  /** Cycle through light → dark → auto → light … */
   const cycleColorScheme = () => {
     if (colorScheme === 'light') setColorScheme('dark');
     else if (colorScheme === 'dark') setColorScheme('auto');
@@ -32,20 +27,38 @@ export const SettingsMenu: FunctionComponent = () => {
     auto: <IconBrightnessAuto stroke={1.5} />,
   };
 
+  const { t, i18n } = useTranslation();
+
   return (
     <FlexCol fullWidth>
-      <FlexRow fullWidth>
-        <Text>Color Scheme</Text>
+      <FlexRow fullWidth align="center">
+        <Text>{t('settingsMenu.label')}</Text>
         <ActionIcon
-          ml={'auto'}
+          ml="auto"
           onClick={cycleColorScheme}
           variant="default"
           size="lg"
-          aria-label="Toggle color scheme"
-          title={`Current: ${colorScheme} (${computedColorScheme})`}
+          aria-label={t('settingsMenu.ariaLabel')}
+          title={t('settingsMenu.title', {
+            colorScheme,
+            computedColorScheme,
+          })}
         >
           {icon[colorScheme]}
         </ActionIcon>
+      </FlexRow>
+      <FlexRow fullWidth>
+        <Text>{t('settingsMenu.labelLanguage')}</Text>
+        <Select
+          ml={"auto"}
+          value={i18n.language}
+          onChange={(value) => i18n.changeLanguage(value!)}
+          data={[
+            { value: 'en', label: 'English' },
+            { value: 'de', label: 'Deutsch' },
+          ]}
+          style={{ minWidth: 120, marginLeft: 12 }}
+        />
       </FlexRow>
     </FlexCol>
   );

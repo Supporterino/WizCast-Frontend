@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import './i18n/i18n';
 
 import { Button, MantineProvider, Stack, Text, createTheme, localStorageColorSchemeManager } from '@mantine/core';
 import { Link, RouterProvider, createRouter } from '@tanstack/react-router';

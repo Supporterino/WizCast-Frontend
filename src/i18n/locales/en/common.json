@@ -1,0 +1,75 @@
+{
+  "roundHeader": "Round",
+  "finalRow": "Final",
+  "table": {
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "playersCount": "# Players",
+    "action": "Action"
+  },
+  "ellipsis": "…",
+  "notifications": {
+    "roundIncomplete": {
+      "title": "Round incomplete",
+      "predictionMissing": "Not all players have valid prediction.",
+      "actualMissing": "Not all players have valid actual."
+    },
+    "roundIncorrect": {
+      "title": "Round incorrect",
+      "tooManyPredictions": "A player predicted more hits than available",
+      "noMatchingPrediction": "The predictions match the actual cards. Rule: No matching prediction is active",
+      "actualMismatch": "The actual hits do not align with the given number of cards"
+    }
+  },
+  "buttons": {
+    "view": "View",
+    "previousRound": "Previous Round",
+    "nextRound": "Next Round",
+    "endGame": "End Game",
+    "rules": "Rules",
+    "play": "Play"
+  },
+  "labels": {
+    "currentRound": "Current Round: {{current}} / {{total}}",
+    "numberOfPlayers": "Number of Players"
+  },
+  "placeholder": {
+    "playerName": "Player {index} name"
+  },
+  "alerts": {
+    "predictionMatches": {
+      "title": "Prediction count matches",
+      "message": "Your current prediction matches the number of cards this round. This isn't allowed since rule (No matching prediction) is active."
+    },
+    "playerCount": {
+      "title": "Player Count",
+      "message": "The game is designed for 3-6 players but can be played with two players when special rules are used."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "game": "Game",
+    "results": "Results",
+    "settings": "Settings"
+  },
+  "playerCard": {
+    "prediction": "Prediction",
+    "actual": "Actual"
+  },
+  "modal": {
+    "rules": "Rules"
+  },
+  "settingsMenu": {
+    "label": "Color Scheme",
+    "ariaLabel": "Toggle color scheme",
+    "title": "Current: {{colorScheme}} ({{computedColorScheme}})",
+    "labelLanguage": "Language"
+  },
+  "rule": {
+    "noMatchingPrediction": {
+      "name": "No matching prediction",
+      "description": "Players are not allowed to set predictions equal to the number of hits per round."
+    }
+  }
+}

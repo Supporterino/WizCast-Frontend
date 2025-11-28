@@ -1,5 +1,6 @@
 import { IconGoGame, IconHome, IconList, IconSettings } from '@tabler/icons-react';
 import { Link, useLocation } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import classes from './NavBar.module.css';
 import type { FunctionComponent } from 'react';
 import { Route as HomeRoute } from '@/routes/index';
@@ -16,10 +17,27 @@ export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
   const location = useLocation();
   const { startDate } = useGame();
 
+  const { t } = useTranslation();
+
   const data = [
-    { link: HomeRoute.to, label: 'Home', icon: IconHome, disabled: startDate },
-    { link: GameRoute.to, label: 'Game', icon: IconGoGame, disabled: !startDate },
-    { link: ResultRoute.to, label: 'Results', icon: IconList, disabled: undefined },
+    {
+      link: HomeRoute.to,
+      label: t('nav.home'),
+      icon: IconHome,
+      disabled: startDate,
+    },
+    {
+      link: GameRoute.to,
+      label: t('nav.game'),
+      icon: IconGoGame,
+      disabled: !startDate,
+    },
+    {
+      link: ResultRoute.to,
+      label: t('nav.results'),
+      icon: IconList,
+      disabled: undefined,
+    },
   ];
 
   const links = data.map((item) => (
@@ -46,11 +64,11 @@ export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
           to={SettingsRoute.to}
           className={classes.link}
           data-active={SettingsRoute.to === location.pathname || undefined}
-          key={'settings'}
+          key="settings"
           onClick={() => closeNav()}
         >
           <IconSettings className={classes.linkIcon} />
-          Settings
+          {t('nav.settings')}
         </Link>
       </div>
     </nav>

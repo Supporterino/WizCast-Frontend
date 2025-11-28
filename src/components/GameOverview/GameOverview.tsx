@@ -1,5 +1,6 @@
 import { Button, Table } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import { useStore } from '@/hooks/useStore.tsx';
 import { Route as ResultRoute } from '@/routes/results/$resultID';
@@ -8,15 +9,18 @@ export const GameOverview: FunctionComponent = () => {
   const { gameOverview } = useStore();
   const navigate = useNavigate();
 
+  const { t } = useTranslation();
+
   return (
     <Table striped highlightOnHover>
       <Table.Thead>
         <Table.Tr>
-          <Table.Th>Date</Table.Th>
-          <Table.Th>Time</Table.Th>
-          <Table.Th>Location</Table.Th>
-          <Table.Th># Players</Table.Th>
-          <Table.Th>Action</Table.Th>
+          {/* 1️⃣ Header strings */}
+          <Table.Th>{t('table.date')}</Table.Th>
+          <Table.Th>{t('table.time')}</Table.Th>
+          <Table.Th>{t('table.location')}</Table.Th>
+          <Table.Th>{t('table.playersCount')}</Table.Th>
+          <Table.Th>{t('table.action')}</Table.Th>
         </Table.Tr>
       </Table.Thead>
 
@@ -29,7 +33,7 @@ export const GameOverview: FunctionComponent = () => {
             <Table.Tr key={g.id}>
               <Table.Td>{start.toLocaleDateString()}</Table.Td>
               <Table.Td>
-                {start.toLocaleTimeString()} – {end ? end.toLocaleTimeString() : '…'}
+                {start.toLocaleTimeString()} – {end ? end.toLocaleTimeString() : t('ellipsis')}
               </Table.Td>
               <Table.Td>{g.location}</Table.Td>
               <Table.Td>{g.playerCount}</Table.Td>
@@ -37,7 +41,7 @@ export const GameOverview: FunctionComponent = () => {
                 <Button
                   size="xs"
                   variant="outline"
-                  mx={'auto'}
+                  mx="auto"
                   onClick={() =>
                     navigate({
                       to: ResultRoute.to,
@@ -45,7 +49,7 @@ export const GameOverview: FunctionComponent = () => {
                     })
                   }
                 >
-                  View
+                  {t('buttons.view')}
                 </Button>
               </Table.Td>
             </Table.Tr>

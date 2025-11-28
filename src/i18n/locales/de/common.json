@@ -1,0 +1,75 @@
+{
+  "roundHeader": "Runde",
+  "finalRow": "Endstand",
+  "table": {
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "location": "Ort",
+    "playersCount": "# Spieler",
+    "action": "Aktion"
+  },
+  "ellipsis": "…",
+  "notifications": {
+    "roundIncomplete": {
+      "title": "Runde unvollständig",
+      "predictionMissing": "Nicht alle Spieler haben gültige Vorhersage.",
+      "actualMissing": "Nicht alle Spieler haben gültige tatsächliche Ergebnisse."
+    },
+    "roundIncorrect": {
+      "title": "Runde inkorrekt",
+      "tooManyPredictions": "Ein Spieler hat mehr Treffer vorhergesagt als verfügbar.",
+      "noMatchingPrediction": "Die Vorhersagen stimmen mit den tatsächlichen Karten überein. Regel: Keine passende Vorhersage ist aktiv.",
+      "actualMismatch": "Die tatsächlichen Treffer stimmen nicht mit der angegebenen Kartenanzahl überein."
+    }
+  },
+  "buttons": {
+    "view": "Ansehen",
+    "previousRound": "Vorherige Runde",
+    "nextRound": "Nächste Runde",
+    "endGame": "Spiel beenden",
+    "rules": "Regeln",
+    "play": "Spielen"
+  },
+  "labels": {
+    "currentRound": "Aktuelle Runde: {{current}} / {{total}}",
+    "numberOfPlayers": "Anzahl der Spieler"
+  },
+  "placeholder": {
+    "playerName": "Spieler {index} Name"
+  },
+  "alerts": {
+    "predictionMatches": {
+      "title": "Vorhersageanzahl stimmt überein",
+      "message": "Ihre aktuelle Vorhersage entspricht der Anzahl der Karten in dieser Runde. Dies ist nicht erlaubt, da die Regel (Keine passende Vorhersage) aktiv ist."
+    },
+    "playerCount": {
+      "title": "Spieleranzahl",
+      "message": "Das Spiel ist für 3‑6 Spieler konzipiert, kann aber mit zwei Spielern gespielt werden, wenn spezielle Regeln verwendet werden."
+    }
+  },
+  "nav": {
+    "home": "Startseite",
+    "game": "Spiel",
+    "results": "Ergebnisse",
+    "settings": "Einstellungen"
+  },
+  "playerCard": {
+    "prediction": "Vorhersage",
+    "actual": "Tatsächlich"
+  },
+  "modal": {
+    "rules": "Regeln"
+  },
+  "settingsMenu": {
+    "label": "Farbschema",
+    "ariaLabel": "Farbschema wechseln",
+    "title": "Aktuell: {{colorScheme}} ({{computedColorScheme}})",
+    "labelLanguage": "Sprache"
+  },
+  "rule": {
+    "noMatchingPrediction": {
+      "name": "Keine passende Vorhersage",
+      "description": "Spieler dürfen keine Vorhersagen gleich der Anzahl der Treffer pro Runde setzen."
+    }
+  }
+}

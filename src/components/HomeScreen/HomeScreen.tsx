@@ -5,6 +5,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { checkPermissions, getCurrentPosition, requestPermissions } from '@tauri-apps/plugin-geolocation';
+import { useTranslation } from 'react-i18next';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
@@ -14,6 +15,8 @@ export const HomeScreen: React.FC = () => {
   const { setPlayers, startGame, setLocation } = useGame();
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+
+  const { t } = useTranslation();
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -63,7 +66,8 @@ export const HomeScreen: React.FC = () => {
         })}
       >
         <Group gap="xs">
-          <Text mr={'auto'}>Number of Players</Text>
+          <Text mr="auto">{t('labels.numberOfPlayers')}</Text>
+
           <Button
             variant="light"
             onClick={() => form.setFieldValue('playerCount', Math.max(2, form.values.playerCount - 1))}
@@ -71,6 +75,7 @@ export const HomeScreen: React.FC = () => {
           >
             –
           </Button>
+
           <NumberInput
             value={form.values.playerCount}
             min={2}
@@ -79,6 +84,7 @@ export const HomeScreen: React.FC = () => {
             style={{ width: 40 }}
             hideControls
           />
+
           <Button
             variant="light"
             onClick={() => form.setFieldValue('playerCount', Math.min(6, form.values.playerCount + 1))}
@@ -98,23 +104,27 @@ export const HomeScreen: React.FC = () => {
                 marginBottom: theme.spacing.sm,
               }}
             >
-              <TextInput placeholder={`Player ${index + 1} name`} {...form.getInputProps(`players.${index}`)} style={{ flex: 1 }} />
+              <TextInput
+                placeholder={t('placeholder.playerName', { index: index + 1 })}
+                {...form.getInputProps(`players.${index}`)}
+                style={{ flex: 1 }}
+              />
             </Box>
           ))}
         </Box>
 
         {form.getValues().playerCount == 2 && (
-          <Alert variant="light" color="blue" radius="md" title="Player Count" icon={<IconInfoCircle stroke={1.5} />}>
-            The game is designed for 3-6 players but can be played with two players when special rules are used.
+          <Alert variant="light" color="blue" radius="md" title={t('alerts.playerCount.title')} icon={<IconInfoCircle stroke={1.5} />}>
+            {t('alerts.playerCount.message')}
           </Alert>
         )}
 
         <Group align="center" gap="md" style={{ marginTop: theme.spacing.xl }}>
-          <Button onClick={open} variant={'light'}>
-            Rules
+          <Button onClick={open} variant="light">
+            {t('buttons.rules')}
           </Button>
-          <Button ml={'auto'} variant="filled" type={'submit'}>
-            Play
+          <Button ml="auto" variant="filled" type="submit">
+            {t('buttons.play')}
           </Button>
         </Group>
       </form>

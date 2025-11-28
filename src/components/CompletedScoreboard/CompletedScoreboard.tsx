@@ -1,5 +1,6 @@
 import { Badge, Table, Text } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
+import { useTranslation } from 'react-i18next';
 import type { RoundData } from '@/contexts/GameProvider.tsx';
 import type { FunctionComponent } from 'react';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
@@ -13,6 +14,8 @@ type CompletedScoreboardProps = {
 export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = ({ players, rounds, scores }) => {
   const { height, width } = useViewportSize();
 
+  const { t } = useTranslation();
+
   const getScoreTillRound = (end: number) => {
     return rounds.slice(0, end).reduce((acc, r) => {
       r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
@@ -25,16 +28,17 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
       <Table.Td>
         <FlexRow>{idx + 1}</FlexRow>
       </Table.Td>
+
       {players.map((_, index) => {
         const roundScores = getScoreTillRound(idx + 1);
         return (
-          <Table.Td>
+          <Table.Td key={index}>
             <FlexRow>
               <Text>{roundScores[index]}</Text>
-              <Text size={'sm'} c={'dimmed'}>
+              <Text size="sm" c="dimmed">
                 ({round.scoreChanges[index]})
               </Text>
-              <Badge color={round.actuals[index] == round.predictions[index] ? 'green' : 'red'}>
+              <Badge color={round.actuals[index] === round.predictions[index] ? 'green' : 'red'}>
                 {round.actuals[index]} / {round.predictions[index]}
               </Badge>
             </FlexRow>
@@ -50,26 +54,25 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <FlexRow>Round</FlexRow>
+              <FlexRow>{t('roundHeader')}</FlexRow> {/* 1️⃣ */}
             </Table.Th>
-            {players.map((player) => (
-              <Table.Th>
+            {players.map((player, i) => (
+              <Table.Th key={i}>
                 <FlexRow>{player}</FlexRow>
               </Table.Th>
             ))}
           </Table.Tr>
         </Table.Thead>
+
         <Table.Tbody>
           {roundElements}
           <Table.Tr>
             <Table.Td>
-              <FlexRow>
-                <Text>Final</Text>
-              </FlexRow>
+              <FlexRow>{t('finalRow')}</FlexRow>
             </Table.Td>
 
             {players.map((_, index) => (
-              <Table.Td>
+              <Table.Td key={index}>
                 <FlexRow>
                   <Text>{scores[index]}</Text>
                 </FlexRow>

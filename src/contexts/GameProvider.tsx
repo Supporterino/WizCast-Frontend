@@ -1,4 +1,5 @@
 import { createContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 
 export interface Rule {
@@ -44,15 +45,17 @@ export interface GameContextProps {
 
 export const GameContext = createContext<GameContextProps | undefined>(undefined);
 
-const defaultRules: Array<Rule> = [
-  {
-    name: 'No matching prediction',
-    description: 'Players are not allowed to set predictions equal to the number of hits per round.',
-    active: true,
-  },
-];
-
 export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
+
+  const getDefaultRules = (): Array<Rule> => [
+    {
+      name: t('rule.noMatchingPrediction.name'),
+      description: t('rule.noMatchingPrediction.description'),
+      active: true,
+    },
+  ];
+
   const [gameId, setGameId] = useState<string>(() =>
     typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
@@ -62,7 +65,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const [players, setPlayers] = useState<Array<string>>(Array(3).fill(''));
 
-  const [rules, setRules] = useState<Array<Rule>>(defaultRules);
+  const [rules, setRules] = useState<Array<Rule>>(getDefaultRules());
 
   const roundCount = Math.ceil(60 / players.length);
   const makeEmptyRound = (id: number): RoundData => ({
@@ -75,6 +78,9 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
   const [currentRound, setCurrentRound] = useState(0);
 
+  /* ------------------------------------------------------------------ */
+  /*  State‑updating helpers                                           */
+  /* ------------------------------------------------------------------ */
   const setPrediction = (roundIdx: number, playerIdx: number, value: number) => {
     setRounds((prev) =>
       prev.map((r) =>
@@ -130,15 +136,19 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
     /* reset all state to defaults */
     setPlayers(Array(3).fill(''));
-    setRules(defaultRules);
+    setRules(getDefaultRules());
 
     /* re‑compute derived values */
     const newRoundCount = Math.ceil(60 / players.length);
     setRounds(Array.from({ length: newRoundCount }, (_, i) => makeEmptyRound(i)));
     setCurrentRound(0);
   };
+
   const startGame = () => setStartDate(new Date());
 
+  /* ------------------------------------------------------------------ */
+  /*  Context value                                                    */
+  /* ------------------------------------------------------------------ */
   const ctx: GameContextProps = {
     id: gameId,
     startDate,
