@@ -1,9 +1,9 @@
 import {
   ActionIcon,
+  Select,
   Text,
   useComputedColorScheme,
-  useMantineColorScheme,
-  Select,                     // <-- added
+  useMantineColorScheme,                     // <-- added
 } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';

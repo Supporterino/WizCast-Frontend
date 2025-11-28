@@ -16,7 +16,7 @@ export const GameScreen: FunctionComponent = () => {
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
 
-  const notifyRoundIncomplete = (msgKey: string) =>
+  const notifyRoundIncomplete = (msgKey: 'notifications.roundIncomplete.predictionMissing' | 'notifications.roundIncomplete.actualMissing') =>
     notifications.show({
       title: t('notifications.roundIncomplete.title'),
       color: 'red',
@@ -24,7 +24,7 @@ export const GameScreen: FunctionComponent = () => {
       message: t(msgKey),
     });
 
-  const notifyRoundIncorrect = (msgKey: string) =>
+  const notifyRoundIncorrect = (msgKey: 'notifications.roundIncorrect.tooManyPredictions' | 'notifications.roundIncorrect.noMatchingPrediction' | 'notifications.roundIncorrect.actualMismatch') =>
     notifications.show({
       title: t('notifications.roundIncorrect.title'),
       color: 'red',
