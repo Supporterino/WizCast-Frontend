@@ -1,19 +1,15 @@
-import {
-  ActionIcon,
-  Select,
-  Text,
-  useComputedColorScheme,
-  useMantineColorScheme, // <-- added
-} from '@mantine/core';
+import { ActionIcon, Button, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { useGame } from '@/hooks/useGame.tsx';
 
 export const SettingsMenu: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // 'light' | 'dark' | 'auto'
   const computedColorScheme = useComputedColorScheme(); // resolved to 'light' | 'dark'
+  const { endGame } = useGame();
 
   const cycleColorScheme = () => {
     if (colorScheme === 'light') setColorScheme('dark');
@@ -59,6 +55,10 @@ export const SettingsMenu: FunctionComponent = () => {
           ]}
           style={{ minWidth: 120, marginLeft: 12 }}
         />
+      </FlexRow>
+      <FlexRow fullWidth>
+        <Text>Clear current game data</Text>
+        <Button onClick={() => endGame()}>GO!</Button>
       </FlexRow>
     </FlexCol>
   );

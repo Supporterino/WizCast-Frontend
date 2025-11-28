@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import { Alert, Box, Button, Group, NumberInput, Text, TextInput, Title, useMantineTheme } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
@@ -18,7 +18,10 @@ export const HomeScreen: React.FC = () => {
 
   const { t } = useTranslation();
 
-  const form = useForm({
+  const form = useForm<{
+    playerCount: number;
+    players: Array<string>;
+  }>({
     mode: 'uncontrolled',
     initialValues: {
       playerCount: 3,
@@ -55,17 +58,17 @@ export const HomeScreen: React.FC = () => {
     }
   }, [form.getValues().playerCount]);
 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPlayers(form.getValues().players);
+    setLocation(await getLocation());
+    startGame();
+    navigate({ to: GameRoute.to });
+  };
+
   return (
     <Box style={{ position: 'relative', minHeight: '100%' }}>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setPlayers(form.values.players);
-          setLocation(await getLocation());
-          startGame();
-          navigate({ to: GameRoute.to });
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <Title c={'red'} mb={'lg'}>
           {t('titles.new')}
         </Title>

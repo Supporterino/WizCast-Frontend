@@ -103,18 +103,20 @@ export const GameScreen: FunctionComponent = () => {
         </Badge>
       </FlexRow>
       {/* Alert for rule “No matching prediction” */}
-      {rules[0].active && rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0) === currentRound + 1 && (
-        <Alert
-          my="md"
-          variant="light"
-          color="blue"
-          radius="md"
-          title={t('alerts.predictionMatches.title')}
-          icon={<IconInfoCircle stroke={1.5} />}
-        >
-          {t('alerts.predictionMatches.message')}
-        </Alert>
-      )}
+      {rules[0].active &&
+        rounds[currentRound].predictions.every((val) => val !== undefined) &&
+        rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0) === currentRound + 1 && (
+          <Alert
+            my="md"
+            variant="light"
+            color="blue"
+            radius="md"
+            title={t('alerts.predictionMatches.title')}
+            icon={<IconInfoCircle stroke={1.5} />}
+          >
+            {t('alerts.predictionMatches.message')}
+          </Alert>
+        )}
       <Grid mt={'md'}>
         {players.map((name, idx) => (
           <GridCol span={6} key={idx}>

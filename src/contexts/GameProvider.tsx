@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 
@@ -68,8 +68,8 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const [players, setPlayers] = useState<Array<string>>(Array(3).fill(''));
 
   const [rules, setRules] = useState<Array<Rule>>(getDefaultRules());
+  const [roundCount, setRoundCount] = useState(Math.ceil(60 / players.length));
 
-  const roundCount = Math.ceil(60 / players.length);
   const makeEmptyRound = (id: number): RoundData => ({
     id,
     predictions: Array(players.length).fill(undefined),
@@ -79,6 +79,11 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
   const [currentRound, setCurrentRound] = useState(0);
+
+  useEffect(() => {
+    setRoundCount(Math.ceil(60 / players.length));
+    setRounds(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
+  }, [players]);
 
   /* ------------------------------------------------------------------ */
   /*  State‑updating helpers                                           */
@@ -137,13 +142,9 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setStartDate(undefined);
     setEndDate(undefined);
 
-    /* reset all state to defaults */
     setPlayers(Array(3).fill(''));
     setRules(getDefaultRules());
 
-    /* re‑compute derived values */
-    const newRoundCount = Math.ceil(60 / players.length);
-    setRounds(Array.from({ length: newRoundCount }, (_, i) => makeEmptyRound(i)));
     setCurrentRound(0);
   };
 
