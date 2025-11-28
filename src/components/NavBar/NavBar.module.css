@@ -44,11 +44,11 @@
   &[data-active] {
     &,
     &:hover {
-      background-color: var(--mantine-color-blue-light);
-      color: var(--mantine-color-blue-light-color);
+      background-color: var(--mantine-color-red-light);
+      color: var(--mantine-color-red-light-color);
 
       .linkIcon {
-        color: var(--mantine-color-blue-light-color);
+        color: var(--mantine-color-red-light-color);
       }
     }
   }
@@ -59,4 +59,25 @@
   margin-right: var(--mantine-spacing-sm);
   width: rem(25px);
   height: rem(25px);
+}
+
+.link[data-disabled],
+.link[disabled] {
+  /* Make the link look inactive */
+  pointer-events: none; /* no click/hover handling */
+  opacity: 0.6; /* subtle fade‑out */
+  cursor: not-allowed; /* visual cue */
+
+  /* Keep the text and icon color neutral */
+  color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+
+  .linkIcon {
+    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  }
+
+  /* Override any hover/active background that might sneak in */
+  &:hover,
+  &[data-active] {
+    background-color: transparent;
+  }
 }
