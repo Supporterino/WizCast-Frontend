@@ -35,7 +35,7 @@
     "numberOfPlayers": "Anzahl der Spieler"
   },
   "placeholder": {
-    "playerName": "Spieler {index} Name"
+    "playerName": "Spieler {{index}} Name"
   },
   "alerts": {
     "predictionMatches": {
@@ -71,5 +71,8 @@
       "name": "Keine passende Vorhersage",
       "description": "Spieler dürfen keine Vorhersagen gleich der Anzahl der Treffer pro Runde setzen."
     }
+  },
+  "errors": {
+    "required": "Alle Felder müssen asugefüllt sein"
   }
 }

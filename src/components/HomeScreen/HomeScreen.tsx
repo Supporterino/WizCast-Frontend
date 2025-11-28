@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Alert, Box, Button, Group, NumberInput, Text, TextInput, useMantineTheme } from '@mantine/core';
+import { Alert, Box, Button, Group, NumberInput, Text, TextInput, Title, useMantineTheme } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useDisclosure } from '@mantine/hooks';
@@ -24,6 +24,10 @@ export const HomeScreen: React.FC = () => {
       playerCount: 3,
       players: Array(3).fill(''),
     },
+
+    validate: {
+      players: (players) => players.map((name) => (name.trim() === '' ? t('errors.required') : null)),
+    },
   });
 
   const getLocation = async () => {
@@ -35,7 +39,8 @@ export const HomeScreen: React.FC = () => {
     if (permissions.location === 'granted') {
       const pos = await getCurrentPosition();
       return `${pos.coords.latitude} ${pos.coords.longitude}`;
-    } else return 'unknown';
+    }
+    return 'unknown';
   };
 
   useEffect(() => {
@@ -51,20 +56,19 @@ export const HomeScreen: React.FC = () => {
   }, [form.getValues().playerCount]);
 
   return (
-    <Box
-      style={{
-        position: 'relative',
-        minHeight: '100%',
-      }}
-    >
+    <Box style={{ position: 'relative', minHeight: '100%' }}>
       <form
-        onSubmit={form.onSubmit(async (values) => {
-          setPlayers(values.players);
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setPlayers(form.values.players);
           setLocation(await getLocation());
           startGame();
           navigate({ to: GameRoute.to });
-        })}
+        }}
       >
+        <Title c={'red'} mb={'lg'}>
+          {t('titles.new')}
+        </Title>
         <Group gap="xs">
           <Text mr="auto">{t('labels.numberOfPlayers')}</Text>
 
@@ -108,6 +112,7 @@ export const HomeScreen: React.FC = () => {
                 placeholder={t('placeholder.playerName', { index: index + 1 })}
                 {...form.getInputProps(`players.${index}`)}
                 style={{ flex: 1 }}
+                required
               />
             </Box>
           ))}

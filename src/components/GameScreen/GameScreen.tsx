@@ -1,6 +1,6 @@
-import { Alert, Box, Button, Grid, GridCol, Text } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Box, Grid, GridCol, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle, IconX } from '@tabler/icons-react';
+import { IconArrowNarrowLeft, IconArrowNarrowRight, IconInfoCircle, IconReportAnalytics, IconX } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
@@ -16,7 +16,9 @@ export const GameScreen: FunctionComponent = () => {
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
 
-  const notifyRoundIncomplete = (msgKey: 'notifications.roundIncomplete.predictionMissing' | 'notifications.roundIncomplete.actualMissing') =>
+  const notifyRoundIncomplete = (
+    msgKey: 'notifications.roundIncomplete.predictionMissing' | 'notifications.roundIncomplete.actualMissing',
+  ) =>
     notifications.show({
       title: t('notifications.roundIncomplete.title'),
       color: 'red',
@@ -24,7 +26,12 @@ export const GameScreen: FunctionComponent = () => {
       message: t(msgKey),
     });
 
-  const notifyRoundIncorrect = (msgKey: 'notifications.roundIncorrect.tooManyPredictions' | 'notifications.roundIncorrect.noMatchingPrediction' | 'notifications.roundIncorrect.actualMismatch') =>
+  const notifyRoundIncorrect = (
+    msgKey:
+      | 'notifications.roundIncorrect.tooManyPredictions'
+      | 'notifications.roundIncorrect.noMatchingPrediction'
+      | 'notifications.roundIncorrect.actualMismatch',
+  ) =>
     notifications.show({
       title: t('notifications.roundIncorrect.title'),
       color: 'red',
@@ -68,9 +75,9 @@ export const GameScreen: FunctionComponent = () => {
   return (
     <Box style={{ position: 'relative', minHeight: '100%' }}>
       <FlexRow fullWidth gap="md" mb="md">
-        <Button mr="auto" variant="light" onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound === 0}>
-          {t('buttons.previousRound')}
-        </Button>
+        <ActionIcon size="lg" mr="auto" variant="light" onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound === 0}>
+          <IconArrowNarrowLeft stroke={1.5} />
+        </ActionIcon>
 
         <Text>
           {t('labels.currentRound', {
@@ -79,17 +86,26 @@ export const GameScreen: FunctionComponent = () => {
           })}
         </Text>
 
-        <Button ml="auto" variant="light" onClick={handleNextRound} disabled={currentRound + 1 === roundCount}>
-          {t('buttons.nextRound')}
-        </Button>
+        <ActionIcon size="lg" ml="auto" variant="light" onClick={handleNextRound} disabled={currentRound + 1 === roundCount}>
+          <IconArrowNarrowRight stroke={1.5} />
+        </ActionIcon>
 
-        {currentRound + 1 === roundCount && <Button onClick={handleFinishGame}>{t('buttons.endGame')}</Button>}
+        {currentRound + 1 === roundCount && (
+          <ActionIcon onClick={handleFinishGame}>
+            <IconReportAnalytics stroke={1.5} />
+          </ActionIcon>
+        )}
       </FlexRow>
-
+      <FlexRow fullWidth mt={'md'}>
+        <Text>Predictions</Text>
+        <Badge variant={'light'}>
+          {rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0)} / {currentRound + 1}
+        </Badge>
+      </FlexRow>
       {/* Alert for rule “No matching prediction” */}
       {rules[0].active && rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0) === currentRound + 1 && (
         <Alert
-          mb="md"
+          my="md"
           variant="light"
           color="blue"
           radius="md"
@@ -99,7 +115,7 @@ export const GameScreen: FunctionComponent = () => {
           {t('alerts.predictionMatches.message')}
         </Alert>
       )}
-      <Grid>
+      <Grid mt={'md'}>
         {players.map((name, idx) => (
           <GridCol span={6} key={idx}>
             <PlayerCard name={name} idx={idx} />

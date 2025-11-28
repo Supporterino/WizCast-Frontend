@@ -1,9 +1,10 @@
-import { IconGoGame, IconHome, IconList, IconSettings } from '@tabler/icons-react';
+import { IconGoGame, IconHome, IconList, IconPlus, IconSettings } from '@tabler/icons-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import classes from './NavBar.module.css';
 import type { FunctionComponent } from 'react';
 import { Route as HomeRoute } from '@/routes/index';
+import { Route as NewRoute } from '@/routes/game/new';
 import { Route as GameRoute } from '@/routes/game/playing';
 import { Route as ResultRoute } from '@/routes/results/overview';
 import { Route as SettingsRoute } from '@/routes/settings';
@@ -15,7 +16,7 @@ type SimpleNavbarProps = {
 
 export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
   const location = useLocation();
-  const { startDate } = useGame();
+  const { active } = useGame();
 
   const { t } = useTranslation();
 
@@ -24,13 +25,19 @@ export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
       link: HomeRoute.to,
       label: t('nav.home'),
       icon: IconHome,
-      disabled: startDate,
+      disabled: undefined,
+    },
+    {
+      link: NewRoute.to,
+      label: t('nav.new'),
+      icon: IconPlus,
+      disabled: active,
     },
     {
       link: GameRoute.to,
       label: t('nav.game'),
       icon: IconGoGame,
-      disabled: !startDate,
+      disabled: !active,
     },
     {
       link: ResultRoute.to,
@@ -45,10 +52,10 @@ export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
       to={item.link}
       className={classes.link}
       data-active={item.link === location.pathname || undefined}
-      data-disabled={item.disabled}
+      // data-disabled={item.disabled ?? undefined}
       key={item.label}
-      disabled={item.disabled as boolean}
-      onClick={() => closeNav()}
+      disabled={item.disabled}
+      // onClick={() => closeNav()}
     >
       <item.icon className={classes.linkIcon} />
       {item.label}

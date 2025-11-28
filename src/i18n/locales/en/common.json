@@ -24,18 +24,15 @@
   },
   "buttons": {
     "view": "View",
-    "previousRound": "Previous Round",
-    "nextRound": "Next Round",
-    "endGame": "End Game",
     "rules": "Rules",
     "play": "Play"
   },
   "labels": {
-    "currentRound": "Current Round: {{current}} / {{total}}",
+    "currentRound": "{{current}} / {{total}}",
     "numberOfPlayers": "Number of Players"
   },
   "placeholder": {
-    "playerName": "Player {index} name"
+    "playerName": "Player {{index}} name"
   },
   "alerts": {
     "predictionMatches": {
@@ -49,6 +46,7 @@
   },
   "nav": {
     "home": "Home",
+    "new": "New",
     "game": "Game",
     "results": "Results",
     "settings": "Settings"
@@ -71,5 +69,11 @@
       "name": "No matching prediction",
       "description": "Players are not allowed to set predictions equal to the number of hits per round."
     }
+  },
+  "errors": {
+    "required": "All fields must have a valid value"
+  },
+  "titles": {
+    "new": "Creating new game"
   }
 }

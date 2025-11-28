@@ -17,6 +17,7 @@ export interface RoundData {
 
 export interface GameContextProps {
   id: string;
+  active: boolean;
   startDate?: Date;
   endDate?: Date;
   location: string;
@@ -59,6 +60,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const [gameId, setGameId] = useState<string>(() =>
     typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
+  const [active, setActive] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [location, setLocation] = useState<string>('');
@@ -130,6 +132,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   };
 
   const endGame = () => {
+    setActive(false);
     setGameId(typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
     setStartDate(undefined);
     setEndDate(undefined);
@@ -144,13 +147,17 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setCurrentRound(0);
   };
 
-  const startGame = () => setStartDate(new Date());
+  const startGame = () => {
+    setStartDate(new Date());
+    setActive(true);
+  };
 
   /* ------------------------------------------------------------------ */
   /*  Context value                                                    */
   /* ------------------------------------------------------------------ */
   const ctx: GameContextProps = {
     id: gameId,
+    active,
     startDate,
     endDate,
     location,

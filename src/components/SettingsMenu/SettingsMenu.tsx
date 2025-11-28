@@ -3,7 +3,7 @@ import {
   Select,
   Text,
   useComputedColorScheme,
-  useMantineColorScheme,                     // <-- added
+  useMantineColorScheme, // <-- added
 } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -50,7 +50,7 @@ export const SettingsMenu: FunctionComponent = () => {
       <FlexRow fullWidth>
         <Text>{t('settingsMenu.labelLanguage')}</Text>
         <Select
-          ml={"auto"}
+          ml={'auto'}
           value={i18n.language}
           onChange={(value) => i18n.changeLanguage(value!)}
           data={[
