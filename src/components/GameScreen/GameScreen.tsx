@@ -66,9 +66,7 @@ export const GameScreen: FunctionComponent = () => {
     };
 
     setCompletedGames((prev) => [...prev, finishedGame]);
-
     endGame();
-
     navigate({ to: ResultRoute.to });
   };
 

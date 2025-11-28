@@ -2,6 +2,7 @@ import { Button, Table } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import type { FunctionComponent } from 'react';
 import { useStore } from '@/hooks/useStore.tsx';
+import { Route as ResultRoute } from '@/routes/results/$resultID'
 
 export const GameOverview: FunctionComponent = () => {
   const { gameOverview } = useStore();
@@ -39,7 +40,7 @@ export const GameOverview: FunctionComponent = () => {
                   mx={'auto'}
                   onClick={() =>
                     navigate({
-                      to: '/results/$resultID',
+                      to: ResultRoute.to,
                       params: { resultID: g.id },
                     })
                   }
