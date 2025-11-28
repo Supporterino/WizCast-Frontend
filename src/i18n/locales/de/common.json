@@ -12,8 +12,8 @@
   "notifications": {
     "roundIncomplete": {
       "title": "Runde unvollständig",
-      "predictionMissing": "Nicht alle Spieler haben gültige Vorhersage.",
-      "actualMissing": "Nicht alle Spieler haben gültige tatsächliche Ergebnisse."
+      "predictionMissing": "Nicht alle Spieler haben gültige Vorhersagen.",
+      "actualMissing": "Nicht alle Spieler haben gültige Ergebnisse."
     },
     "roundIncorrect": {
       "title": "Runde inkorrekt",
@@ -24,15 +24,12 @@
   },
   "buttons": {
     "view": "Ansehen",
-    "previousRound": "Vorherige Runde",
-    "nextRound": "Nächste Runde",
-    "endGame": "Spiel beenden",
     "rules": "Regeln",
     "play": "Spielen"
   },
   "labels": {
-    "currentRound": "Aktuelle Runde: {{current}} / {{total}}",
-    "numberOfPlayers": "Anzahl der Spieler"
+    "currentRound": "{{current}} / {{total}}",
+    "numberOfPlayers": "Anzahl Spieler"
   },
   "placeholder": {
     "playerName": "Spieler {{index}} Name"
@@ -40,7 +37,7 @@
   "alerts": {
     "predictionMatches": {
       "title": "Vorhersageanzahl stimmt überein",
-      "message": "Ihre aktuelle Vorhersage entspricht der Anzahl der Karten in dieser Runde. Dies ist nicht erlaubt, da die Regel (Keine passende Vorhersage) aktiv ist."
+      "message": "Ihre aktuelle Vorhersage stimmt mit der Anzahl der Karten in dieser Runde überein. Dies ist nicht erlaubt, da die Regel (Keine passende Vorhersage) aktiv ist."
     },
     "playerCount": {
       "title": "Spieleranzahl",
@@ -49,6 +46,7 @@
   },
   "nav": {
     "home": "Startseite",
+    "new": "Neu",
     "game": "Spiel",
     "results": "Ergebnisse",
     "settings": "Einstellungen"
@@ -73,6 +71,9 @@
     }
   },
   "errors": {
-    "required": "Alle Felder müssen asugefüllt sein"
+    "required": "Alle Felder müssen einen gültigen Wert haben"
+  },
+  "titles": {
+    "new": "Neues Spiel erstellen"
   }
 }
