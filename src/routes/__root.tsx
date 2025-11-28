@@ -30,7 +30,6 @@ const Layout = () => {
       </AppShell.Navbar>
       <AppShell.Main h={height - 60} pb={0} px={width < 768 ? 0 : undefined}>
         <Container h={height - 60 - 2 * 16}>
-          {/* bg = "var(--mantine-color-blue-light)" > */}
           <Outlet />
           <TanStackRouterDevtools />
         </Container>

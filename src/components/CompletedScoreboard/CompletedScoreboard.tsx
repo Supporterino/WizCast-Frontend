@@ -14,12 +14,10 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
   const { height, width } = useViewportSize();
 
   const getScoreTillRound = (end: number) => {
-    const result = rounds.slice(0, end).reduce((acc, r) => {
+    return rounds.slice(0, end).reduce((acc, r) => {
       r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
       return acc;
     }, Array(players.length).fill(0));
-
-    return result;
   };
 
   const roundElements = rounds.map((round: RoundData, idx) => (

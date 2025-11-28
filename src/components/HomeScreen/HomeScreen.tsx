@@ -1,22 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Alert, Box, Button, Group, NumberInput, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
+import { checkPermissions, getCurrentPosition, requestPermissions } from '@tauri-apps/plugin-geolocation';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
 
 export const HomeScreen: React.FC = () => {
-  /* ---------- Navigation ---------- */
   const navigate = useNavigate();
-  const { setPlayers, startGame } = useGame();
-
-  /* ---------- Modal for special rules ---------- */
+  const { setPlayers, startGame, setLocation } = useGame();
   const [opened, { open, close }] = useDisclosure(false);
+  const theme = useMantineTheme();
 
-  /* ---------- Form state ---------- */
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -25,8 +23,19 @@ export const HomeScreen: React.FC = () => {
     },
   });
 
-  /* ---------- Keep the player array length in sync with the counter ---------- */
-  React.useEffect(() => {
+  const getLocation = async () => {
+    let permissions = await checkPermissions();
+    if (permissions.location === 'prompt' || permissions.location === 'prompt-with-rationale') {
+      permissions = await requestPermissions(['location']);
+    }
+
+    if (permissions.location === 'granted') {
+      const pos = await getCurrentPosition();
+      return `${pos.coords.latitude} ${pos.coords.longitude}`;
+    } else return 'unknown';
+  };
+
+  useEffect(() => {
     const count = form.getValues().playerCount;
     const current = form.getValues().players;
 
@@ -38,9 +47,6 @@ export const HomeScreen: React.FC = () => {
     }
   }, [form.getValues().playerCount]);
 
-  /* ---------- Theme for positioning the settings icon ---------- */
-  const theme = useMantineTheme();
-
   return (
     <Box
       style={{
@@ -49,13 +55,13 @@ export const HomeScreen: React.FC = () => {
       }}
     >
       <form
-        onSubmit={form.onSubmit((values) => {
+        onSubmit={form.onSubmit(async (values) => {
           setPlayers(values.players);
+          setLocation(await getLocation());
           startGame();
           navigate({ to: GameRoute.to });
         })}
       >
-        {/* ---------- Counter for number of players ---------- */}
         <Group gap="xs">
           <Text mr={'auto'}>Number of Players</Text>
           <Button
@@ -71,7 +77,7 @@ export const HomeScreen: React.FC = () => {
             max={6}
             onChange={(value) => form.setFieldValue('playerCount', +value)}
             style={{ width: 40 }}
-            hideControls // removes the up/down arrows
+            hideControls
           />
           <Button
             variant="light"
@@ -82,7 +88,6 @@ export const HomeScreen: React.FC = () => {
           </Button>
         </Group>
 
-        {/* ---------- Simple list of player name inputs ---------- */}
         <Box style={{ marginTop: theme.spacing.lg }}>
           {form.values.players.map((_, index) => (
             <Box
@@ -104,7 +109,6 @@ export const HomeScreen: React.FC = () => {
           </Alert>
         )}
 
-        {/* ---------- Bottom action buttons ---------- */}
         <Group align="center" gap="md" style={{ marginTop: theme.spacing.xl }}>
           <Button onClick={open} variant={'light'}>
             Rules
@@ -115,7 +119,6 @@ export const HomeScreen: React.FC = () => {
         </Group>
       </form>
 
-      {/* ---------- Modal for special rules ---------- */}
       <RuleModal opened={opened} onClose={close} />
     </Box>
   );

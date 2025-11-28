@@ -1,7 +1,7 @@
 import { Stack, Switch, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
-import { useRules } from '@/hooks/useRule.tsx';
+import { useGame } from '@/hooks/useGame.tsx';
 
 type RuleItemProps = {
   name: string;
@@ -11,7 +11,7 @@ type RuleItemProps = {
 };
 
 export const RuleItem: FunctionComponent<RuleItemProps> = ({ name, description, state, idx }) => {
-  const { toggleRule } = useRules();
+  const { toggleRule } = useGame();
   return (
     <FlexRow fullWidth>
       <Stack gap={'xs'}>

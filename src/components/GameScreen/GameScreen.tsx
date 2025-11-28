@@ -5,14 +5,12 @@ import { useNavigate } from '@tanstack/react-router';
 import type { FunctionComponent } from 'react';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
-import { useRules } from '@/hooks/useRule.tsx';
 import { Route as ResultRoute } from '@/routes/results/overview';
 import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
 
 export const GameScreen: FunctionComponent = () => {
-  const { players, currentRound, rounds, setCurrentRound, roundCount, endGame } = useGame();
-  const { rules } = useRules();
+  const { rules, id, players, currentRound, rounds, setCurrentRound, roundCount, endGame, scores, startDate, location } = useGame();
   const navigate = useNavigate();
   const { setCompletedGames } = useStore();
 
@@ -55,26 +53,22 @@ export const GameScreen: FunctionComponent = () => {
     } else setCurrentRound(currentRound + 1);
   };
 
-  /* ---------- save the finished game -------------------------------- */
   const handleFinishGame = () => {
     const finishedGame = {
-      id: useGame().id, // grab the uuid from context
-      startDate: useGame().startDate!,
-      endDate: new Date(), // current timestamp
-      location: useGame().location,
+      id: id,
+      startDate: startDate!,
+      endDate: new Date(),
+      location: location,
       players,
       rules,
       rounds,
-      scores: useGame().scores, // we expose scores in GameProvider
+      scores: scores,
     };
 
-    // Persist locally
     setCompletedGames((prev) => [...prev, finishedGame]);
 
-    // Mark the game as ended in the provider (sets endDate)
     endGame();
 
-    // Navigate to results
     navigate({ to: ResultRoute.to });
   };
 

@@ -13,6 +13,7 @@ export const GameOverview: FunctionComponent = () => {
         <Table.Tr>
           <Table.Th>Date</Table.Th>
           <Table.Th>Time</Table.Th>
+          <Table.Th>Location</Table.Th>
           <Table.Th># Players</Table.Th>
           <Table.Th>Action</Table.Th>
         </Table.Tr>
@@ -26,19 +27,16 @@ export const GameOverview: FunctionComponent = () => {
           return (
             <Table.Tr key={g.id}>
               <Table.Td>{start.toLocaleDateString()}</Table.Td>
-
               <Table.Td>
                 {start.toLocaleTimeString()} – {end ? end.toLocaleTimeString() : '…'}
               </Table.Td>
-
               <Table.Td>{g.location}</Table.Td>
-
               <Table.Td>{g.playerCount}</Table.Td>
-
-              <Table.Td style={{ textAlign: 'right' }}>
+              <Table.Td>
                 <Button
                   size="xs"
                   variant="outline"
+                  mx={'auto'}
                   onClick={() =>
                     navigate({
                       to: '/results/$resultID',

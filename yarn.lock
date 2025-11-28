@@ -1024,6 +1024,13 @@
     "@tauri-apps/cli-win32-ia32-msvc" "2.9.4"
     "@tauri-apps/cli-win32-x64-msvc" "2.9.4"
 
+"@tauri-apps/plugin-geolocation@~2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-geolocation/-/plugin-geolocation-2.3.2.tgz#a81b5491b31d222b03bf787746c85617769a9345"
+  integrity sha512-ONCwav1monafjeO8/JdXtRlbhZ3xgAdBYxo/62qgw99u9+y6xGsohy3avZgFZsBHA0JVNe1uJnMi+vfT5ZSFUA==
+  dependencies:
+    "@tauri-apps/api" "^2.8.0"
+
 "@tauri-apps/plugin-opener@^2":
   version "2.5.2"
   resolved "https://registry.npmjs.org/@tauri-apps/plugin-opener/-/plugin-opener-2.5.2.tgz"

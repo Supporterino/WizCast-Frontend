@@ -1,6 +1,6 @@
 import { Card, Grid, GridCol, NumberInput, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
-import { useScoreboard } from '@/hooks/useScoreboard.tsx';
+import { useGame } from '@/hooks/useGame.tsx';
 
 type PlayerCardProps = {
   name: string;
@@ -8,22 +8,12 @@ type PlayerCardProps = {
 };
 
 export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) => {
-  /* ------------------------------------------------------------------
-   * Pull everything we need from the scoreboard context
-   * ------------------------------------------------------------------ */
-  const { rounds, currentRound, setPrediction, setActual, scores, setScoreChange } = useScoreboard();
-
-  /* ------------------------------------------------------------------
-   * Derived values – read‑only, always up‑to‑date
-   * ------------------------------------------------------------------ */
+  const { rounds, currentRound, setPrediction, setActual, scores, setScoreChange } = useGame();
   const prediction = rounds[currentRound].predictions[idx];
   const actual = rounds[currentRound].actuals[idx];
   const score = scores[idx];
   const scoreChange = rounds[currentRound].scoreChanges[idx];
 
-  /* ------------------------------------------------------------------
-   * Handlers – update the context directly
-   * ------------------------------------------------------------------ */
   const handlePredictionChange = (value: number | string) => {
     const n = typeof value === 'string' ? parseInt(value, 10) : value;
     setPrediction(currentRound, idx, n);
@@ -33,7 +23,6 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
     const newActual = typeof value === 'string' ? parseInt(value, 10) : value;
     setActual(currentRound, idx, newActual);
 
-    /* ---- calculate score immediately, no useEffect needed ---- */
     const currentPrediction = rounds[currentRound].predictions[idx];
     if (currentPrediction === newActual) {
       setScoreChange(currentRound, idx, 20 + 10 * newActual);
@@ -43,9 +32,6 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
     }
   };
 
-  /* ------------------------------------------------------------------
-   * UI
-   * ------------------------------------------------------------------ */
   return (
     <Card shadow="sm" padding="sm" radius="md" withBorder>
       <Card.Section withBorder inheritPadding>
@@ -53,7 +39,6 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
       </Card.Section>
 
       <Grid gutter="xs" mt="sm">
-        {/* Score & change */}
         <GridCol m={'auto'} span={6}>
           <Text size="lg">{score}</Text>
           <Text c="dimmed" size="sm">
@@ -61,10 +46,23 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
           </Text>
         </GridCol>
 
-        {/* Inputs */}
         <GridCol span={6}>
-          <NumberInput min={0} label="Prediction" value={prediction} onChange={handlePredictionChange} />
-          <NumberInput min={0} label="Actual" value={actual} onChange={handleActualChange} />
+          <NumberInput
+            key={`prediction-${currentRound}-${idx}`}
+            min={0}
+            label="Prediction"
+            value={prediction ?? undefined}
+            onChange={handlePredictionChange}
+            hideControls
+          />
+          <NumberInput
+            key={`actual-${currentRound}-${idx}`}
+            min={0}
+            label="Actual"
+            value={actual ?? undefined}
+            onChange={handleActualChange}
+            hideControls
+          />
         </GridCol>
       </Grid>
     </Card>
