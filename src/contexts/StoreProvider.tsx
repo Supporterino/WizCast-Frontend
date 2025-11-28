@@ -49,7 +49,7 @@ export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ chi
   useEffect(() => {
     const init = async () => {
       try {
-        const store = new LazyStore('settings.json');
+        const store = new LazyStore('games.json');
         const stored = await store.get<{ value: Array<StoredGame> }>('completedGames');
         if (stored && Array.isArray(stored.value)) {
           setCompletedGames(stored.value);
@@ -64,7 +64,7 @@ export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ chi
   useEffect(() => {
     const persist = async () => {
       try {
-        const store = new LazyStore('settings.json');
+        const store = new LazyStore('games.json');
         await store.set('completedGames', { value: completedGames });
         await store.save();
       } catch (e) {

@@ -125,7 +125,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const endGame = () => {
     setGameId(typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    setStartDate(new Date());
+    setStartDate(undefined);
     setEndDate(undefined);
 
     /* reset all state to defaults */
