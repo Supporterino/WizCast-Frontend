@@ -125,7 +125,7 @@ release() {
 
   print "Uploading App to AppStoreConnect"
 
-#  xcrun altool --upload-app --type ios --file src-tauri/gen/apple/build/arm64/YARM.ipa --apiKey $APPLE_API_KEY --apiIssuer $APPLE_API_ISSUER
+#  xcrun altool --upload-app --type ios --file src-tauri/gen/apple/build/arm64/wizcast.ipa --apiKey $APPLE_API_KEY --apiIssuer $APPLE_API_ISSUER
 #
 #  git add .
 #  git commit -m "chore: :bookmark: Release $NEW_VER"

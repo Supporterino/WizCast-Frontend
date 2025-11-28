@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "wizcast",
+        "title": "WizCast",
         "width": 800,
         "height": 600
       }

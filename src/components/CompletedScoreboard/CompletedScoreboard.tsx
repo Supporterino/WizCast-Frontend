@@ -1,66 +1,80 @@
-import { useMemo } from 'react';
-import { Badge, Box, Group, ScrollArea, Table, Text } from '@mantine/core';
+import { Badge, Table, Text } from '@mantine/core';
 import type { RoundData } from '@/contexts/ScoreboardProvider.tsx';
 import { useScoreboard } from '@/hooks/useScoreboard.tsx';
+import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { useViewportSize } from '@mantine/hooks';
 
 export const CompletedScoreboard = () => {
   const { players, rounds, scores } = useScoreboard();
+  const { height, width } = useViewportSize();
 
-  const renderValue = (value: number | undefined) => (value === undefined ? <Text c="dimmed">—</Text> : <Text>{value}</Text>);
+  const getScoreTillRound = (end: number) => {
+    const result = rounds.slice(0, end).reduce((acc, r) => {
+      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
+      return acc;
+    }, Array(players.length).fill(0));
 
-  const rows = useMemo(() => {
-    return rounds.map((r: RoundData) => (
-      <tr key={r.id}>
-        {/* round number */}
-        <td>{r.id + 1}</td>
+    return result;
+  };
 
-        {/* per‑player cells */}
-        {players.map((_, i) => (
-          <td key={i}>
-            <Group gap={4} align="center">
-              {/* Prediction */}
-              {renderValue(r.predictions[i])}
-              {/* Actual */}
-              {renderValue(r.actuals[i])}
-              {/* Δ – badge with colour */}
-              {r.scoreChanges[i] !== undefined ? (
-                <Badge color={r.scoreChanges[i] >= 0 ? 'green' : 'red'} variant="light">
-                  {r.scoreChanges[i].toString()}
-                </Badge>
-              ) : (
-                <Text color="dimmed">—</Text>
-              )}
-            </Group>
-          </td>
-        ))}
+  const roundElements = rounds.map((round: RoundData, idx) => (
+    <Table.Tr key={idx}>
+      <Table.Td>
+        <FlexRow>{idx + 1}</FlexRow>
+      </Table.Td>
+      {players.map((_, index) => {
+        const roundScores = getScoreTillRound(idx + 1);
+        return (
+          <Table.Td>
+            <FlexRow>
+              <Text>{roundScores[index]}</Text>
+              <Text size={'sm'} c={'dimmed'}>
+                ({round.scoreChanges[index]})
+              </Text>
+              <Badge color={round.actuals[index] == round.predictions[index] ? 'green' : 'red'}>
+                {round.actuals[index]} / {round.predictions[index]}
+              </Badge>
+            </FlexRow>
+          </Table.Td>
+        );
+      })}
+    </Table.Tr>
+  ));
 
-        {/* cumulative score after this round */}
-        <td>
-          {scores.reduce((sum, s) => sum + s, 0)} {/* or keep a running total */}
-        </td>
-      </tr>
-    ));
-  }, [rounds, players, scores]);
-
-  /* ------------------------------------------------------------------ */
   return (
-    <Box>
-      <Table striped highlightOnHover verticalSpacing="xs" horizontalSpacing="md">
-        <thead>
-          <tr>
-            <th>#</th>
-            {players.map((p, i) => (
-              <th key={i}>{p}</th>
-            ))}
-            <th>Total</th>
-          </tr>
-        </thead>
+    <Table.ScrollContainer minWidth={width} maxHeight={height - 100}>
+    <Table stickyHeader withColumnBorders>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>
+            <FlexRow>Round</FlexRow>
+          </Table.Th>
+          {players.map((player) => (
+            <Table.Th>
+              <FlexRow>{player}</FlexRow>
+            </Table.Th>
+          ))}
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {roundElements}
+        <Table.Tr>
+          <Table.Td>
+            <FlexRow>
+              <Text>Final</Text>
+            </FlexRow>
+          </Table.Td>
 
-        {/* Body – wrapped in ScrollArea so header stays fixed */}
-        <ScrollArea style={{ maxHeight: 400 }}>
-          <tbody>{rows}</tbody>
-        </ScrollArea>
-      </Table>
-    </Box>
+          {players.map((_, index) => (
+            <Table.Td>
+              <FlexRow>
+                <Text>{scores[index]}</Text>
+              </FlexRow>
+            </Table.Td>
+          ))}
+        </Table.Tr>
+      </Table.Tbody>
+    </Table>
+      </Table.ScrollContainer>
   );
 };

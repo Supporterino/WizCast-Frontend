@@ -6,8 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { usePlayers } from '@/hooks/usePlayers.tsx';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
-import { Route as GameRoute} from '@/routes/game/playing.tsx'
-import {GameScreen} from "@/components/GameScreen/GameScreen.tsx";
+import { Route as GameRoute } from '@/routes/game/playing.tsx';
 
 export const HomeScreen: React.FC = () => {
   /* ---------- Navigation ---------- */

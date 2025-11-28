@@ -7,7 +7,7 @@ import { useScoreboard } from '@/hooks/useScoreboard.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { useRules } from '@/hooks/useRule.tsx';
-import { Route as ResultRoute } from '@/routes/game/result.tsx'
+import { Route as ResultRoute } from '@/routes/game/result.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const { players, currentRound, rounds, setCurrentRound, roundCount } = useScoreboard();
@@ -83,7 +83,7 @@ export const GameScreen: FunctionComponent = () => {
           </GridCol>
         ))}
       </Grid>
-        <Button onClick={() => navigate({ to: ResultRoute.to })}>Results</Button>
+      <Button onClick={() => navigate({ to: ResultRoute.to })}>Results</Button>
     </Box>
   );
 };
