@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		14CF479C11531B777B92B1AB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2B30C600B9FB3ED071482EBB /* LaunchScreen.storyboard */; };
 		1D83039FA9154DB102A289D5 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DA0ACFA5124EB20FBD25FA2 /* Metal.framework */; };
+		2E20D5CA2ED9DCCE006870DC /* WizCastIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2E20D5C92ED9DCCE006870DC /* WizCastIcon.icon */; };
 		49F9F63343941C1AF2672319 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9C53B6E87E9408556A8 /* main.mm */; };
 		5A5E5262A9F66D284B6B9CD3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FADC21EADBE36BD7F9C2846 /* Security.framework */; };
 		5CB36C6EFBF31592AC26F0E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61C88FC205C56F7E4022D713 /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 		1E40E36BA94371F3A882C020 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		26955455E298D2B907FBAD50 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
 		2B30C600B9FB3ED071482EBB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		2E20D5C92ED9DCCE006870DC /* WizCastIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WizCastIcon.icon; sourceTree = "<group>"; };
 		36680340771F3F8D47998B65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		497D392DB6FC6A251FC21C54 /* wizcast_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wizcast_iOS.entitlements; sourceTree = "<group>"; };
 		4DBB112C571D02E615F166B5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -138,6 +140,7 @@
 		E0C645C146FEA04F7F2AFF13 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				2E20D5C92ED9DCCE006870DC /* WizCastIcon.icon */,
 				B96BF9FC8A17D2734434AA27 /* wizcast.app */,
 			);
 			name = Products;
@@ -206,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CB36C6EFBF31592AC26F0E4 /* Assets.xcassets in Resources */,
+				2E20D5CA2ED9DCCE006870DC /* WizCastIcon.icon in Resources */,
 				14CF479C11531B777B92B1AB /* LaunchScreen.storyboard in Resources */,
 				B28C592A1414A9083AAEC61F /* assets in Resources */,
 			);
@@ -310,7 +314,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
 				CODE_SIGN_ENTITLEMENTS = wizcast_iOS/wizcast_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9687ZZBJM5;
@@ -417,7 +421,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
 				CODE_SIGN_ENTITLEMENTS = wizcast_iOS/wizcast_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9687ZZBJM5;
