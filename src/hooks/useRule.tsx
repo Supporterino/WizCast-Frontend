@@ -1,11 +1,16 @@
 import { useContext } from 'react';
-import type { RulesContextProps } from '@/contexts/RulesProvider.tsx';
-import { RulesContext } from '@/contexts/RulesProvider.tsx';
+import { GameContext } from '@/contexts/GameProvider.tsx';
 
-export const useRules = (): RulesContextProps => {
-  const ctx = useContext(RulesContext);
-  if (!ctx) {
-    throw new Error('useRules must be used within a RulesProvider');
-  }
-  return ctx;
+export const useRules = (): {
+  rules: Array<{
+    name: string;
+    description: string;
+    active: boolean;
+  }>;
+  toggleRule: (index: number) => void;
+} => {
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('useRules must be used within a GameProvider');
+  const { rules, toggleRule } = ctx;
+  return { rules, toggleRule };
 };

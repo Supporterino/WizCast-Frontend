@@ -3,12 +3,9 @@ import '@mantine/notifications/styles.css';
 
 import { Button, MantineProvider, Stack, Text, createTheme, localStorageColorSchemeManager } from '@mantine/core';
 import { Link, RouterProvider, createRouter } from '@tanstack/react-router';
-import { Notifications } from '@mantine/notifications';
 import { routeTree } from './routeTree.gen';
-import { PlayersProvider } from '@/contexts/PlayerProvider.tsx';
-import { RulesProvider } from '@/contexts/RulesProvider.tsx';
-import { ScoreboardProvider } from '@/contexts/ScoreboardProvider.tsx';
-import { usePlayers } from '@/hooks/usePlayers.tsx';
+import { GameProvider } from '@/contexts/GameProvider.tsx';
+import { StoreProvider } from '@/contexts/StoreProvider.tsx';
 
 const InnerApp = () => {
   const router = createRouter({
@@ -39,15 +36,7 @@ const InnerApp = () => {
     },
   });
 
-  const { players } = usePlayers();
-  return (
-    <RulesProvider>
-      <ScoreboardProvider players={players}>
-        <Notifications position="top-center" />
-        <RouterProvider router={router} />
-      </ScoreboardProvider>
-    </RulesProvider>
-  );
+  return <RouterProvider router={router} />;
 };
 
 function App() {
@@ -63,9 +52,11 @@ function App() {
 
   return (
     <MantineProvider theme={globalTheme} colorSchemeManager={colorSchemeManager} defaultColorScheme="auto">
-      <PlayersProvider>
-        <InnerApp />
-      </PlayersProvider>
+      <StoreProvider>
+        <GameProvider>
+          <InnerApp />
+        </GameProvider>
+      </StoreProvider>
     </MantineProvider>
   );
 }

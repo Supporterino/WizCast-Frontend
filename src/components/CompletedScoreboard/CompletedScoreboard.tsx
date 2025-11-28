@@ -1,11 +1,16 @@
 import { Badge, Table, Text } from '@mantine/core';
-import type { RoundData } from '@/contexts/ScoreboardProvider.tsx';
-import { useScoreboard } from '@/hooks/useScoreboard.tsx';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { useViewportSize } from '@mantine/hooks';
+import type { RoundData } from '@/contexts/GameProvider.tsx';
+import type { FunctionComponent } from 'react';
+import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 
-export const CompletedScoreboard = () => {
-  const { players, rounds, scores } = useScoreboard();
+type CompletedScoreboardProps = {
+  players: Array<string>;
+  rounds: Array<RoundData>;
+  scores: Array<number>;
+};
+
+export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = ({ players, rounds, scores }) => {
   const { height, width } = useViewportSize();
 
   const getScoreTillRound = (end: number) => {
@@ -43,38 +48,38 @@ export const CompletedScoreboard = () => {
 
   return (
     <Table.ScrollContainer minWidth={width} maxHeight={height - 100}>
-    <Table stickyHeader withColumnBorders>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>
-            <FlexRow>Round</FlexRow>
-          </Table.Th>
-          {players.map((player) => (
+      <Table stickyHeader withColumnBorders>
+        <Table.Thead>
+          <Table.Tr>
             <Table.Th>
-              <FlexRow>{player}</FlexRow>
+              <FlexRow>Round</FlexRow>
             </Table.Th>
-          ))}
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {roundElements}
-        <Table.Tr>
-          <Table.Td>
-            <FlexRow>
-              <Text>Final</Text>
-            </FlexRow>
-          </Table.Td>
-
-          {players.map((_, index) => (
+            {players.map((player) => (
+              <Table.Th>
+                <FlexRow>{player}</FlexRow>
+              </Table.Th>
+            ))}
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {roundElements}
+          <Table.Tr>
             <Table.Td>
               <FlexRow>
-                <Text>{scores[index]}</Text>
+                <Text>Final</Text>
               </FlexRow>
             </Table.Td>
-          ))}
-        </Table.Tr>
-      </Table.Tbody>
-    </Table>
-      </Table.ScrollContainer>
+
+            {players.map((_, index) => (
+              <Table.Td>
+                <FlexRow>
+                  <Text>{scores[index]}</Text>
+                </FlexRow>
+              </Table.Td>
+            ))}
+          </Table.Tr>
+        </Table.Tbody>
+      </Table>
+    </Table.ScrollContainer>
   );
 };

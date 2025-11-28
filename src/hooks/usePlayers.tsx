@@ -1,9 +1,13 @@
 import { useContext } from 'react';
-import type { PlayersContextProps } from '@/contexts/PlayerProvider.tsx';
-import { PlayersContext } from '@/contexts/PlayerProvider.tsx';
+import type { Dispatch, SetStateAction } from 'react';
+import { GameContext } from '@/contexts/GameProvider.tsx';
 
-export const usePlayers = (): PlayersContextProps => {
-  const ctx = useContext(PlayersContext);
-  if (!ctx) throw new Error('usePlayers must be used within a PlayersProvider');
-  return ctx;
+export const usePlayers = (): {
+  players: Array<string>;
+  setPlayers: Dispatch<SetStateAction<Array<string>>>;
+} => {
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('usePlayers must be used within a GameProvider');
+  const { players, setPlayers } = ctx;
+  return { players, setPlayers };
 };

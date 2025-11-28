@@ -3,16 +3,18 @@ import { notifications } from '@mantine/notifications';
 import { IconInfoCircle, IconX } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import type { FunctionComponent } from 'react';
-import { useScoreboard } from '@/hooks/useScoreboard.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { useRules } from '@/hooks/useRule.tsx';
-import { Route as ResultRoute } from '@/routes/game/result.tsx';
+import { Route as ResultRoute } from '@/routes/results/overview';
+import { useGame } from '@/hooks/useGame.tsx';
+import { useStore } from '@/hooks/useStore.tsx';
 
 export const GameScreen: FunctionComponent = () => {
-  const { players, currentRound, rounds, setCurrentRound, roundCount } = useScoreboard();
+  const { players, currentRound, rounds, setCurrentRound, roundCount, endGame } = useGame();
   const { rules } = useRules();
   const navigate = useNavigate();
+  const { setCompletedGames } = useStore();
 
   const handleNextRound = () => {
     if (!rounds[currentRound].predictions.every((value) => value != undefined)) {
@@ -52,13 +54,32 @@ export const GameScreen: FunctionComponent = () => {
       });
     } else setCurrentRound(currentRound + 1);
   };
+
+  /* ---------- save the finished game -------------------------------- */
+  const handleFinishGame = () => {
+    const finishedGame = {
+      id: useGame().id, // grab the uuid from context
+      startDate: useGame().startDate!,
+      endDate: new Date(), // current timestamp
+      location: useGame().location,
+      players,
+      rules,
+      rounds,
+      scores: useGame().scores, // we expose scores in GameProvider
+    };
+
+    // Persist locally
+    setCompletedGames((prev) => [...prev, finishedGame]);
+
+    // Mark the game as ended in the provider (sets endDate)
+    endGame();
+
+    // Navigate to results
+    navigate({ to: ResultRoute.to });
+  };
+
   return (
-    <Box
-      style={{
-        position: 'relative',
-        minHeight: '100%',
-      }}
-    >
+    <Box style={{ position: 'relative', minHeight: '100%' }}>
       <FlexRow fullWidth gap={'md'} mb={'md'}>
         <Button mr={'auto'} variant={'light'} onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound == 0}>
           Previous Round
@@ -69,21 +90,22 @@ export const GameScreen: FunctionComponent = () => {
         <Button ml={'auto'} variant={'light'} onClick={handleNextRound} disabled={currentRound + 1 == roundCount}>
           Next Round
         </Button>
-        {currentRound + 1 == roundCount && <Button onClick={() => navigate({ to: '/game/result' })}>Results</Button>}
+        {currentRound + 1 == roundCount && <Button onClick={handleFinishGame}>End Game</Button>}
       </FlexRow>
-      {rules[0].active && rounds[currentRound].predictions.reduce((acc, val) => acc! + val!, 0) == currentRound + 1 && (
+
+      {rules[0].active && rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0) == currentRound + 1 && (
         <Alert mb={'md'} variant="light" color="blue" radius="md" title="Prediction count matches" icon={<IconInfoCircle stroke={1.5} />}>
           Your current prediction matches the number of cards this round. This isn't allowed since rule (No matching prediction) is active.
         </Alert>
       )}
+
       <Grid>
         {players.map((name, idx) => (
-          <GridCol span={6}>
+          <GridCol span={6} key={idx}>
             <PlayerCard name={name} idx={idx} />
           </GridCol>
         ))}
       </Grid>
-      <Button onClick={() => navigate({ to: ResultRoute.to })}>Results</Button>
     </Box>
   );
 };

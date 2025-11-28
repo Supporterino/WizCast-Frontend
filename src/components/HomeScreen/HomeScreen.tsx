@@ -4,14 +4,14 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
-import { usePlayers } from '@/hooks/usePlayers.tsx';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
+import { useGame } from '@/hooks/useGame.tsx';
 
 export const HomeScreen: React.FC = () => {
   /* ---------- Navigation ---------- */
   const navigate = useNavigate();
-  const { setPlayers } = usePlayers();
+  const { setPlayers, startGame } = useGame();
 
   /* ---------- Modal for special rules ---------- */
   const [opened, { open, close }] = useDisclosure(false);
@@ -51,6 +51,7 @@ export const HomeScreen: React.FC = () => {
       <form
         onSubmit={form.onSubmit((values) => {
           setPlayers(values.players);
+          startGame();
           navigate({ to: GameRoute.to });
         })}
       >

@@ -1,18 +1,34 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { AppShell, Container } from '@mantine/core';
-import { useViewportSize } from '@mantine/hooks';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { Header } from '@/components/Header/Header.tsx';
+import { NavBar } from '@/components/NavBar/NavBar.tsx';
 
 const Layout = () => {
   const { height, width } = useViewportSize();
+  const [opened, { toggle, close }] = useDisclosure();
 
   return (
-    <AppShell header={{ height: 60 }} padding="md" withBorder h={height} w={width}>
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 250,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+      withBorder
+      h={height}
+      w={width}
+    >
       <AppShell.Header>
-        <Header />
+        <Header toggle={toggle} opened={opened} />
       </AppShell.Header>
-      <AppShell.Main h={height - 60} pb={0}>
+      <AppShell.Navbar p={0}>
+        <NavBar closeNav={close} />
+      </AppShell.Navbar>
+      <AppShell.Main h={height - 60} pb={0} px={width < 768 ? 0 : undefined}>
         <Container h={height - 60 - 2 * 16}>
           {/* bg = "var(--mantine-color-blue-light)" > */}
           <Outlet />

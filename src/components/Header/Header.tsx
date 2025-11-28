@@ -1,10 +1,15 @@
-import { ActionIcon, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Burger, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSettings, IconSun } from '@tabler/icons-react';
 import classes from './Header.module.css';
 import type { FunctionComponent } from 'react';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 
-export const Header: FunctionComponent = () => {
+type HeaderProps = {
+  opened: boolean;
+  toggle: () => void;
+};
+
+export const Header: FunctionComponent<HeaderProps> = ({ toggle, opened }) => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // returns 'light' | 'dark' | 'auto'
   const computedColorScheme = useComputedColorScheme(); // 'light' | 'dark' (resolved)
 
@@ -22,6 +27,7 @@ export const Header: FunctionComponent = () => {
 
   return (
     <FlexRow fullWidth p="sm" gap="sm">
+      <Burger opened={opened} onClick={toggle} size="sm" color={'red'} />
       <Text size={'lg'} fw={700} variant={'gradient'} gradient={{ from: 'red', to: 'orange', deg: 0 }}>
         WizCast
       </Text>
