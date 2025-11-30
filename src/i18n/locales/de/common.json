@@ -1,25 +1,25 @@
 {
   "roundHeader": "Runde",
-  "finalRow": "Endstand",
+  "finalRow": "=",
   "table": {
     "date": "Datum",
     "time": "Uhrzeit",
     "location": "Ort",
-    "playersCount": "# Spieler",
-    "action": "Aktion"
+    "playersCount": "# Personen",
+    "action": "Ergebnisse"
   },
   "ellipsis": "…",
   "notifications": {
     "roundIncomplete": {
       "title": "Runde unvollständig",
-      "predictionMissing": "Nicht alle Spieler haben gültige Vorhersagen.",
-      "actualMissing": "Nicht alle Spieler haben gültige Ergebnisse."
+      "predictionMissing": "Nicht alle haben gültige Vorhersagen.",
+      "actualMissing": "Nicht alle haben gültige Ergebnisse."
     },
     "roundIncorrect": {
       "title": "Runde inkorrekt",
       "tooManyPredictions": "Ein Spieler hat mehr Treffer vorhergesagt als verfügbar.",
-      "noMatchingPrediction": "Die Vorhersagen stimmen mit den tatsächlichen Karten überein. Regel: Keine passende Vorhersage ist aktiv.",
-      "actualMismatch": "Die tatsächlichen Treffer stimmen nicht mit der angegebenen Kartenanzahl überein."
+      "noMatchingPrediction": "Eure aktuelle Prognose stimmt mit der Anzahl der Stiche in dieser Runde überein. Dies ist nicht erlaubt, da die Regel: 'Plus/Minus Eins' ist aktiv.",
+      "actualMismatch": "Die tatsächlichen Treffer stimmen nicht mit der möglichen Stichanzahl überein."
     }
   },
   "buttons": {
@@ -29,16 +29,16 @@
   },
   "labels": {
     "currentRound": "{{current}} / {{total}}",
-    "numberOfPlayers": "Anzahl Spieler"
+    "numberOfPlayers": "Anzahl Personen"
   },
   "placeholder": {
-    "playerName": "Spieler {{index}} Name"
+    "playerName": "Name Person {{index}}"
   },
   "alerts": {
-    "invalidForm": "Eingaben sind ungültig",
+    "invalidForm": "Eingabe ist ungültig",
     "predictionMatches": {
-      "title": "Vorhersageanzahl stimmt überein",
-      "message": "Ihre aktuelle Vorhersage stimmt mit der Anzahl der Karten in dieser Runde überein. Dies ist nicht erlaubt, da die Regel (Keine passende Vorhersage) aktiv ist."
+      "title": "Prognose stimmt überein",
+      "message": "Eure aktuelle Prognose stimmt mit der Anzahl der Stiche in dieser Runde überein. Dies ist nicht erlaubt, da die Regel: 'Plus/Minus Eins' ist aktiv."
     },
     "playerCount": {
       "title": "Spieleranzahl",
@@ -53,8 +53,8 @@
     "settings": "Einstellungen"
   },
   "playerCard": {
-    "prediction": "Vorhersage",
-    "actual": "Tatsächlich"
+    "prediction": "Prognose",
+    "actual": "Wahrheit"
   },
   "modal": {
     "rules": "Regeln"
@@ -70,15 +70,21 @@
   },
   "rule": {
     "noMatchingPrediction": {
-      "name": "Keine passende Vorhersage",
-      "description": "Spieler dürfen keine Vorhersagen gleich der Anzahl der Treffer pro Runde setzen."
+      "name": "Plus/Minus Eins",
+      "description": "Die Anzahl der gewollten Stiche aller Personen muss ungleich der möglichen Stiche sein"
     }
   },
   "errors": {
     "required": "Alle Felder müssen einen gültigen Wert haben",
-    "duplicate": "Gleiche Spielernamen sind nicht erlaubt"
+    "duplicate": "Gleiche Namen sind nicht erlaubt."
   },
   "titles": {
     "new": "Neues Spiel erstellen"
+  },
+  "welcome": {
+    "text": "Der Pfad der Wahrheit"
+  },
+  "gameScreen": {
+    "predictions": "Stiche"
   }
 }

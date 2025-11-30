@@ -1,0 +1,479 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		332819B8424D3E3F4C291B82 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531EBCC228EEF23A29713B6F /* WebKit.framework */; };
+		425615265F73BC4266E1520B /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 7E4CDEE6F0AF8A14A66F6E95 /* assets */; };
+		4984AEECBC7171F5161DA954 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 028141BDD8BA23B093806E78 /* CoreGraphics.framework */; };
+		60F7DC522C55C81B46AAD650 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80A6A4E6ED36E3E3D7E1B832 /* MetalKit.framework */; };
+		62F93CC6A6FDE69500D7D4F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73664A89EF7753660F2F2F8D /* LaunchScreen.storyboard */; };
+		6DB68D7B9C0756C6BE2AACA1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 053792A73DF8BB4A57FAE5B7 /* Security.framework */; };
+		7A860545BCED3CB229A02A3B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B904929D108C6A29DBCEEEC9 /* UIKit.framework */; };
+		7DFA0B2701F2F969184D8890 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24805021A642E924BEEC53D1 /* main.mm */; };
+		81D379CA69EBBB7894777A1D /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0A9310D82BB992E1201C74E /* Metal.framework */; };
+		D1FF246F05606632546E5615 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD7FAD34EB8F758E0C6D1A16 /* QuartzCore.framework */; };
+		E1F043AF03702E188E78CB89 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 39E2B69142658732BEA17294 /* libapp.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		028141BDD8BA23B093806E78 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		053792A73DF8BB4A57FAE5B7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		0A7A7A85B192C1917B61DCBC /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
+		24805021A642E924BEEC53D1 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		2E9AACB02EDCE63D00C1C0C1 /* WizCastIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WizCastIcon.icon; sourceTree = "<group>"; };
+		32638F594D52AF079B7414EE /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
+		39E2B69142658732BEA17294 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
+		531EBCC228EEF23A29713B6F /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		5A4249071E5D6DD14CBEB4E6 /* WizCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WizCast.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		73664A89EF7753660F2F2F8D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		7E4CDEE6F0AF8A14A66F6E95 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
+		80A6A4E6ED36E3E3D7E1B832 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		8FCB8A9317A78C27935E7DD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B904929D108C6A29DBCEEEC9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BAD3DB9F384AAD47B041783A /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
+		D0A9310D82BB992E1201C74E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		FD4E2899A979A0F9F110FF82 /* WizCast_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WizCast_iOS.entitlements; sourceTree = "<group>"; };
+		FD7FAD34EB8F758E0C6D1A16 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		86BF7A0A664E4891395B3FB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1F043AF03702E188E78CB89 /* libapp.a in Frameworks */,
+				4984AEECBC7171F5161DA954 /* CoreGraphics.framework in Frameworks */,
+				81D379CA69EBBB7894777A1D /* Metal.framework in Frameworks */,
+				60F7DC522C55C81B46AAD650 /* MetalKit.framework in Frameworks */,
+				D1FF246F05606632546E5615 /* QuartzCore.framework in Frameworks */,
+				6DB68D7B9C0756C6BE2AACA1 /* Security.framework in Frameworks */,
+				7A860545BCED3CB229A02A3B /* UIKit.framework in Frameworks */,
+				332819B8424D3E3F4C291B82 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0B1CB07220BC83927C94528B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2E9AACB02EDCE63D00C1C0C1 /* WizCastIcon.icon */,
+				5A4249071E5D6DD14CBEB4E6 /* WizCast.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		35BC420414C00764A1213A69 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E38E0BA009D770CAEA8AD86B /* WizCast */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		364DD4DB72A605C524241140 /* bindings */ = {
+			isa = PBXGroup;
+			children = (
+				BAD3DB9F384AAD47B041783A /* bindings.h */,
+			);
+			path = bindings;
+			sourceTree = "<group>";
+		};
+		6C19AFBF4F48DE26312F23A1 /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Externals;
+			sourceTree = "<group>";
+		};
+		6C94086FF8DD86DDE484CEDE /* src */ = {
+			isa = PBXGroup;
+			children = (
+				32638F594D52AF079B7414EE /* lib.rs */,
+				0A7A7A85B192C1917B61DCBC /* main.rs */,
+			);
+			name = src;
+			path = ../../src;
+			sourceTree = "<group>";
+		};
+		A9E3746B1CD670B45E64AA48 = {
+			isa = PBXGroup;
+			children = (
+				7E4CDEE6F0AF8A14A66F6E95 /* assets */,
+				73664A89EF7753660F2F2F8D /* LaunchScreen.storyboard */,
+				6C19AFBF4F48DE26312F23A1 /* Externals */,
+				35BC420414C00764A1213A69 /* Sources */,
+				6C94086FF8DD86DDE484CEDE /* src */,
+				C3C21F6AFE1F0AF9E8FFF93D /* WizCast_iOS */,
+				D91882BD6250BE580D4FEE79 /* Frameworks */,
+				0B1CB07220BC83927C94528B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C3C21F6AFE1F0AF9E8FFF93D /* WizCast_iOS */ = {
+			isa = PBXGroup;
+			children = (
+				8FCB8A9317A78C27935E7DD9 /* Info.plist */,
+				FD4E2899A979A0F9F110FF82 /* WizCast_iOS.entitlements */,
+			);
+			path = WizCast_iOS;
+			sourceTree = "<group>";
+		};
+		D91882BD6250BE580D4FEE79 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				028141BDD8BA23B093806E78 /* CoreGraphics.framework */,
+				39E2B69142658732BEA17294 /* libapp.a */,
+				D0A9310D82BB992E1201C74E /* Metal.framework */,
+				80A6A4E6ED36E3E3D7E1B832 /* MetalKit.framework */,
+				FD7FAD34EB8F758E0C6D1A16 /* QuartzCore.framework */,
+				053792A73DF8BB4A57FAE5B7 /* Security.framework */,
+				B904929D108C6A29DBCEEEC9 /* UIKit.framework */,
+				531EBCC228EEF23A29713B6F /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E38E0BA009D770CAEA8AD86B /* WizCast */ = {
+			isa = PBXGroup;
+			children = (
+				24805021A642E924BEEC53D1 /* main.mm */,
+				364DD4DB72A605C524241140 /* bindings */,
+			);
+			path = WizCast;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		76B5A5CF66C52B7C411B8CC2 /* WizCast_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00AAD2119AFDB294265C63F4 /* Build configuration list for PBXNativeTarget "WizCast_iOS" */;
+			buildPhases = (
+				7A1B0E4A96ACCED1D7EB8A03 /* Build Rust Code */,
+				609E05945CAD94A561DDEEAB /* Sources */,
+				66E81432C9D18F93259EA4EC /* Resources */,
+				86BF7A0A664E4891395B3FB9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WizCast_iOS;
+			packageProductDependencies = (
+			);
+			productName = WizCast_iOS;
+			productReference = 5A4249071E5D6DD14CBEB4E6 /* WizCast.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		389F032A8A9A5419062DB155 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = C8DC4CC7FF0119DC80132D55 /* Build configuration list for PBXProject "WizCast" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A9E3746B1CD670B45E64AA48;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				76B5A5CF66C52B7C411B8CC2 /* WizCast_iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		66E81432C9D18F93259EA4EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				62F93CC6A6FDE69500D7D4F5 /* LaunchScreen.storyboard in Resources */,
+				425615265F73BC4266E1520B /* assets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7A1B0E4A96ACCED1D7EB8A03 /* Build Rust Code */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Rust Code";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Externals/x86_64/${CONFIGURATION}/libapp.a",
+				"$(SRCROOT)/Externals/arm64/${CONFIGURATION}/libapp.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "yarn tauri ios xcode-script -v --platform ${PLATFORM_DISPLAY_NAME:?} --sdk-root ${SDKROOT:?} --framework-search-paths \"${FRAMEWORK_SEARCH_PATHS:?}\" --header-search-paths \"${HEADER_SEARCH_PATHS:?}\" --gcc-preprocessor-definitions \"${GCC_PREPROCESSOR_DEFINITIONS:-}\" --configuration ${CONFIGURATION:?} ${FORCE_COLOR} ${ARCHS:?}";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		609E05945CAD94A561DDEEAB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DFA0B2701F2F969184D8890 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1AF8F9CB96FE5737F918DAD2 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
+				CODE_SIGN_ENTITLEMENTS = WizCast_iOS/WizCast_iOS.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9687ZZBJM5;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
+				INFOPLIST_FILE = WizCast_iOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WizCast;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.supporterino.wizcast;
+				PRODUCT_NAME = "WizCast";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = debug;
+		};
+		6499A2682404CF18243C037F /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = release;
+		};
+		A22EF3ABFF907C5F5188BB4A /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
+				CODE_SIGN_ENTITLEMENTS = WizCast_iOS/WizCast_iOS.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 9687ZZBJM5;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
+				INFOPLIST_FILE = WizCast_iOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WizCast;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION)",
+					"$(SDKROOT)/usr/lib/swift",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
+					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = de.supporterino.wizcast;
+				PRODUCT_NAME = "WizCast";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = release;
+		};
+		BACF5E1D7E7D5224A64092F0 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		00AAD2119AFDB294265C63F4 /* Build configuration list for PBXNativeTarget "WizCast_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AF8F9CB96FE5737F918DAD2 /* debug */,
+				A22EF3ABFF907C5F5188BB4A /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+		C8DC4CC7FF0119DC80132D55 /* Build configuration list for PBXProject "WizCast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BACF5E1D7E7D5224A64092F0 /* debug */,
+				6499A2682404CF18243C037F /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 389F032A8A9A5419062DB155 /* Project object */;
+}

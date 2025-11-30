@@ -107,9 +107,9 @@ export const GameScreen: FunctionComponent = () => {
         )}
       </FlexRow>
       <FlexRow fullWidth mt={'md'}>
-        <Text>Predictions</Text>
+        <Text>{t('gameScreen.predictions')}</Text>
         <Badge variant={'light'}>
-          {rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0)} / {currentRound + 1}
+          {rounds[currentRound].predictions.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
         </Badge>
       </FlexRow>
       {/* Alert for rule “No matching prediction” */}
@@ -127,7 +127,7 @@ export const GameScreen: FunctionComponent = () => {
             {t('alerts.predictionMatches.message')}
           </Alert>
         )}
-      {!rounds[currentRound].predictions.every((v) => (v ?? 0) <= currentRound + 1) && (
+      {!rounds[currentRound].predictions.every((v) => isNaN(v!) ? true : (v ?? 0) <= currentRound + 1) && (
         <Alert
           my={'xs'}
           variant="light"

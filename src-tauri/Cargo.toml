@@ -1,8 +1,8 @@
 [package]
-name = "wizcast"
+name = "WizCast"
 version = "0.10.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "A fan app for the Cardgame Wizard"
+authors = ["Supporterino"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

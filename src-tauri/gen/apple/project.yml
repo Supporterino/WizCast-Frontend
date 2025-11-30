@@ -1,4 +1,4 @@
-name: wizcast
+name: WizCast
 options:
   bundleIdPrefix: de.supporterino.wizcast
   deploymentTarget:
@@ -10,7 +10,7 @@ configs:
 settingGroups:
   app:
     base:
-      PRODUCT_NAME: wizcast
+      PRODUCT_NAME: WizCast
       PRODUCT_BUNDLE_IDENTIFIER: de.supporterino.wizcast
 targetTemplates:
   app:
@@ -24,20 +24,20 @@ targetTemplates:
     settings:
       groups: [app]
 targets:
-  wizcast_iOS:
+  WizCast_iOS:
     type: application
     platform: iOS
     sources:
       - path: Sources
       - path: Assets.xcassets
       - path: Externals
-      - path: wizcast_iOS
+      - path: WizCast_iOS
       - path: assets
         buildPhase: resources
         type: folder
       - path: LaunchScreen.storyboard
     info:
-      path: wizcast_iOS/Info.plist
+      path: WizCast_iOS/Info.plist
       properties:
         LSRequiresIPhoneOS: true
         UILaunchStoryboardName: LaunchScreen
@@ -51,10 +51,10 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        CFBundleShortVersionString: 0.1.0
-        CFBundleVersion: "0.1.0"
+        CFBundleShortVersionString: 0.10.0
+        CFBundleVersion: "0.10.0"
     entitlements:
-      path: wizcast_iOS/wizcast_iOS.entitlements
+      path: WizCast_iOS/WizCast_iOS.entitlements
     scheme:
       environmentVariables:
         RUST_BACKTRACE: full

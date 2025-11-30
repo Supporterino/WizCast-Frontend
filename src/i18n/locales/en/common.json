@@ -80,5 +80,11 @@
   },
   "titles": {
     "new": "Creating new game"
+  },
+  "welcome": {
+    "text": "The path of truth"
+  },
+  "gameScreen": {
+    "predictions": "Predictions"
   }
 }

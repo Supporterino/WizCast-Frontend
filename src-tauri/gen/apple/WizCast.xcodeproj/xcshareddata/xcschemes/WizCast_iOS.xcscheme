@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "754485E3A4BACDC2A760A9F6"
-               BuildableName = "wizcast.app"
-               BlueprintName = "wizcast_iOS"
-               ReferencedContainer = "container:wizcast.xcodeproj">
+               BlueprintIdentifier = "76B5A5CF66C52B7C411B8CC2"
+               BuildableName = "WizCast.app"
+               BlueprintName = "WizCast_iOS"
+               ReferencedContainer = "container:WizCast.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,10 +30,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "754485E3A4BACDC2A760A9F6"
-            BuildableName = "wizcast.app"
-            BlueprintName = "wizcast_iOS"
-            ReferencedContainer = "container:wizcast.xcodeproj">
+            BlueprintIdentifier = "76B5A5CF66C52B7C411B8CC2"
+            BuildableName = "WizCast.app"
+            BlueprintName = "WizCast_iOS"
+            ReferencedContainer = "container:WizCast.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -65,10 +65,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "754485E3A4BACDC2A760A9F6"
-            BuildableName = "wizcast.app"
-            BlueprintName = "wizcast_iOS"
-            ReferencedContainer = "container:wizcast.xcodeproj">
+            BlueprintIdentifier = "76B5A5CF66C52B7C411B8CC2"
+            BuildableName = "WizCast.app"
+            BlueprintName = "WizCast_iOS"
+            ReferencedContainer = "container:WizCast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -94,10 +94,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "754485E3A4BACDC2A760A9F6"
-            BuildableName = "wizcast.app"
-            BlueprintName = "wizcast_iOS"
-            ReferencedContainer = "container:wizcast.xcodeproj">
+            BlueprintIdentifier = "76B5A5CF66C52B7C411B8CC2"
+            BuildableName = "WizCast.app"
+            BlueprintName = "WizCast_iOS"
+            ReferencedContainer = "container:WizCast.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>

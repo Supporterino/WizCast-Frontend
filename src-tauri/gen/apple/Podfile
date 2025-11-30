@@ -1,13 +1,13 @@
 # Uncomment the next line to define a global platform for your project
 
-target 'wizcast_iOS' do
+target 'WizCast_iOS' do
 platform :ios, '14.0'
-  # Pods for wizcast_iOS
+  # Pods for WizCast_iOS
 end
 
-target 'wizcast_macOS' do
+target 'WizCast_macOS' do
 platform :osx, '11.0'
-  # Pods for wizcast_macOS
+  # Pods for WizCast_macOS
 end
 
 # Delete the deployment target for iOS and macOS, causing it to be inherited from the Podfile

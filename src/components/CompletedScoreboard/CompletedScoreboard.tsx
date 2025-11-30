@@ -33,7 +33,7 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
         const roundScores = getScoreTillRound(idx + 1);
         return (
           <Table.Td key={index}>
-            <FlexRow>
+            <FlexRow fullWidth>
               <Text>{roundScores[index]}</Text>
               <Text size="sm" c="dimmed">
                 ({round.scoreChanges[index]})
@@ -54,7 +54,6 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
         <Table.Thead>
           <Table.Tr>
             <Table.Th>
-              <FlexRow>{t('roundHeader')}</FlexRow> {/* 1️⃣ */}
             </Table.Th>
             {players.map((player, i) => (
               <Table.Th key={i}>
@@ -65,7 +64,6 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
         </Table.Thead>
 
         <Table.Tbody>
-          {roundElements}
           <Table.Tr>
             <Table.Td>
               <FlexRow>{t('finalRow')}</FlexRow>
@@ -79,6 +77,7 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
               </Table.Td>
             ))}
           </Table.Tr>
+          {roundElements}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>
