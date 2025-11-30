@@ -55,7 +55,7 @@ export const NavBar: FunctionComponent<SimpleNavbarProps> = ({ closeNav }) => {
       // data-disabled={item.disabled ?? undefined}
       key={item.label}
       disabled={item.disabled}
-      // onClick={() => closeNav()}
+      onClick={() => closeNav()}
     >
       <item.icon className={classes.linkIcon} />
       {item.label}

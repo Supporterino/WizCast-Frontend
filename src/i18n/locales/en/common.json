@@ -35,6 +35,7 @@
     "playerName": "Player {{index}} name"
   },
   "alerts": {
+    "invalidForm": "Form is invalid",
     "predictionMatches": {
       "title": "Prediction count matches",
       "message": "Your current prediction matches the number of cards this round. This isn't allowed since rule (No matching prediction) is active."
@@ -62,7 +63,10 @@
     "label": "Color Scheme",
     "ariaLabel": "Toggle color scheme",
     "title": "Current: {{colorScheme}} ({{computedColorScheme}})",
-    "labelLanguage": "Language"
+    "labelLanguage": "Language",
+    "general": "General",
+    "developer": "Developer Options",
+    "clear": "Clear current game data"
   },
   "rule": {
     "noMatchingPrediction": {
@@ -71,7 +75,8 @@
     }
   },
   "errors": {
-    "required": "All fields must have a valid value"
+    "required": "All fields must have a valid value",
+    "duplicate": "Duplicate player names aren't allowed"
   },
   "titles": {
     "new": "Creating new game"

@@ -1,38 +1,55 @@
-import React, { FormEvent, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Box, Button, Group, NumberInput, Text, TextInput, Title, useMantineTheme } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { checkPermissions, getCurrentPosition, requestPermissions } from '@tauri-apps/plugin-geolocation';
 import { useTranslation } from 'react-i18next';
+import type { FormEvent, FunctionComponent } from 'react';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
 
-export const HomeScreen: React.FC = () => {
+export const HomeScreen: FunctionComponent = () => {
   const navigate = useNavigate();
   const { setPlayers, startGame, setLocation } = useGame();
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const { t } = useTranslation();
 
+  /* ────────────────────── Form Definition ────────────────────── */
   const form = useForm<{
     playerCount: number;
     players: Array<string>;
   }>({
-    mode: 'uncontrolled',
+    mode: 'controlled',
+    validateInputOnChange: true,
+    validateInputOnBlur: true,
     initialValues: {
       playerCount: 3,
       players: Array(3).fill(''),
     },
 
+    /* ────────────────────── Validation ────────────────────── */
     validate: {
       players: (players) => players.map((name) => (name.trim() === '' ? t('errors.required') : null)),
     },
   });
 
+  useEffect(() => {
+    const trimmed = form.getValues().players.map((name) => name.trim());
+    const counts: Record<string, number> = {};
+    console.log(trimmed);
+    trimmed.forEach((name) => {
+      if (name !== '') counts[name] = (counts[name] ?? 0) + 1;
+    });
+    trimmed.every((name) => name === '' || counts[name] == 1) ? setIsValid(true) : setIsValid(false);
+  });
+
+  /* ────────────────────── Location helper ────────────────────── */
   const getLocation = async () => {
     let permissions = await checkPermissions();
     if (permissions.location === 'prompt' || permissions.location === 'prompt-with-rationale') {
@@ -46,6 +63,7 @@ export const HomeScreen: React.FC = () => {
     return 'unknown';
   };
 
+  /* ────────────────────── Sync player count with array length ────────────────────── */
   useEffect(() => {
     const count = form.getValues().playerCount;
     const current = form.getValues().players;
@@ -58,6 +76,7 @@ export const HomeScreen: React.FC = () => {
     }
   }, [form.getValues().playerCount]);
 
+  /* ────────────────────── Form submission ────────────────────── */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setPlayers(form.getValues().players);
@@ -72,6 +91,8 @@ export const HomeScreen: React.FC = () => {
         <Title c={'red'} mb={'lg'}>
           {t('titles.new')}
         </Title>
+
+        {/* Player count controls */}
         <Group gap="xs">
           <Text mr="auto">{t('labels.numberOfPlayers')}</Text>
 
@@ -101,6 +122,7 @@ export const HomeScreen: React.FC = () => {
           </Button>
         </Group>
 
+        {/* Player name inputs */}
         <Box style={{ marginTop: theme.spacing.lg }}>
           {form.values.players.map((_, index) => (
             <Box
@@ -127,11 +149,18 @@ export const HomeScreen: React.FC = () => {
           </Alert>
         )}
 
+        {!isValid && (
+          <Alert variant="light" color="red" radius="md" title={t('alerts.invalidForm')} icon={<IconExclamationCircle stroke={1.5} />}>
+            {t('errors.duplicate')}
+          </Alert>
+        )}
+
+        {/* Action buttons */}
         <Group align="center" gap="md" style={{ marginTop: theme.spacing.xl }}>
           <Button onClick={open} variant="light">
             {t('buttons.rules')}
           </Button>
-          <Button ml="auto" variant="filled" type="submit">
+          <Button ml="auto" variant="filled" type="submit" disabled={!isValid}>
             {t('buttons.play')}
           </Button>
         </Group>

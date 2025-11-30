@@ -4,6 +4,7 @@ import './i18n/i18n';
 
 import { Button, MantineProvider, Stack, Text, createTheme, localStorageColorSchemeManager } from '@mantine/core';
 import { Link, RouterProvider, createRouter } from '@tanstack/react-router';
+import { Notifications } from '@mantine/notifications';
 import { routeTree } from './routeTree.gen';
 import { GameProvider } from '@/contexts/GameProvider.tsx';
 import { StoreProvider } from '@/contexts/StoreProvider.tsx';
@@ -55,6 +56,7 @@ function App() {
     <MantineProvider theme={globalTheme} colorSchemeManager={colorSchemeManager} defaultColorScheme="auto">
       <StoreProvider>
         <GameProvider>
+          <Notifications position={'top-center'} />
           <InnerApp />
         </GameProvider>
       </StoreProvider>

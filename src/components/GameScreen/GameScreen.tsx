@@ -1,6 +1,13 @@
 import { ActionIcon, Alert, Badge, Box, Grid, GridCol, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconArrowNarrowLeft, IconArrowNarrowRight, IconInfoCircle, IconReportAnalytics, IconX } from '@tabler/icons-react';
+import {
+  IconArrowNarrowLeft,
+  IconArrowNarrowRight,
+  IconExclamationCircleFilled,
+  IconInfoCircle,
+  IconReportAnalytics,
+  IconX,
+} from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
@@ -23,6 +30,7 @@ export const GameScreen: FunctionComponent = () => {
       title: t('notifications.roundIncomplete.title'),
       color: 'red',
       icon: <IconX />,
+      autoClose: 5000,
       message: t(msgKey),
     });
 
@@ -36,11 +44,13 @@ export const GameScreen: FunctionComponent = () => {
       title: t('notifications.roundIncorrect.title'),
       color: 'red',
       icon: <IconX />,
+      autoClose: 5000,
       message: t(msgKey),
     });
 
   const handleNextRound = () => {
     if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
+      console.log('not all');
       notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
     } else if (!rounds[currentRound].actuals.every((v) => v != undefined)) {
       notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
@@ -105,7 +115,7 @@ export const GameScreen: FunctionComponent = () => {
       {/* Alert for rule “No matching prediction” */}
       {rules[0].active &&
         rounds[currentRound].predictions.every((val) => val !== undefined) &&
-        rounds[currentRound].predictions.reduce((acc, val) => acc! + (val ?? 0), 0) === currentRound + 1 && (
+        rounds[currentRound].predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1 && (
           <Alert
             my="md"
             variant="light"
@@ -115,6 +125,29 @@ export const GameScreen: FunctionComponent = () => {
             icon={<IconInfoCircle stroke={1.5} />}
           >
             {t('alerts.predictionMatches.message')}
+          </Alert>
+        )}
+      {!rounds[currentRound].predictions.every((v) => (v ?? 0) <= currentRound + 1) && (
+        <Alert
+          my={'xs'}
+          variant="light"
+          color="red"
+          title={t('notifications.roundIncorrect.title')}
+          icon={<IconExclamationCircleFilled stroke={1.5} />}
+        >
+          {t('notifications.roundIncorrect.tooManyPredictions')}
+        </Alert>
+      )}
+      {rounds[currentRound].actuals.every((v) => v !== undefined) &&
+        rounds[currentRound].actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1 && (
+          <Alert
+            my={'xs'}
+            variant="light"
+            color="red"
+            title={t('notifications.roundIncorrect.title')}
+            icon={<IconExclamationCircleFilled stroke={1.5} />}
+          >
+            {t('notifications.roundIncorrect.actualMismatch')}
           </Alert>
         )}
       <Grid mt={'md'}>

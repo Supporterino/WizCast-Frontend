@@ -1,6 +1,7 @@
-import { ActionIcon, Button, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Button, Divider, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import packageJson from '../../../package.json';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
@@ -26,7 +27,8 @@ export const SettingsMenu: FunctionComponent = () => {
   const { t, i18n } = useTranslation();
 
   return (
-    <FlexCol fullWidth>
+    <FlexCol fullWidth h={'100%'}>
+      <Divider my="xs" label={t('settingsMenu.general')} labelPosition="left" w={'100%'} />
       <FlexRow fullWidth align="center">
         <Text>{t('settingsMenu.label')}</Text>
         <ActionIcon
@@ -56,10 +58,16 @@ export const SettingsMenu: FunctionComponent = () => {
           style={{ minWidth: 120, marginLeft: 12 }}
         />
       </FlexRow>
+      <Divider my="xs" label={t('settingsMenu.developer')} labelPosition="left" w={'100%'} />
       <FlexRow fullWidth>
-        <Text>Clear current game data</Text>
-        <Button onClick={() => endGame()}>GO!</Button>
+        <Text>{t('settingsMenu.clear')}</Text>
+        <Button ml={'auto'} onClick={() => endGame()}>
+          Ok
+        </Button>
       </FlexRow>
+      <Text mt={'auto'} size="xs" c="dimmed">
+        Frontend v{packageJson.version}
+      </Text>
     </FlexCol>
   );
 };

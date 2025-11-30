@@ -35,6 +35,7 @@
     "playerName": "Spieler {{index}} Name"
   },
   "alerts": {
+    "invalidForm": "Eingaben sind ungültig",
     "predictionMatches": {
       "title": "Vorhersageanzahl stimmt überein",
       "message": "Ihre aktuelle Vorhersage stimmt mit der Anzahl der Karten in dieser Runde überein. Dies ist nicht erlaubt, da die Regel (Keine passende Vorhersage) aktiv ist."
@@ -62,7 +63,10 @@
     "label": "Farbschema",
     "ariaLabel": "Farbschema wechseln",
     "title": "Aktuell: {{colorScheme}} ({{computedColorScheme}})",
-    "labelLanguage": "Sprache"
+    "labelLanguage": "Sprache",
+    "general": "Allgemein",
+    "developer": "Entwickleroptionen",
+    "clear": "Aktuelle Spieldaten löschen"
   },
   "rule": {
     "noMatchingPrediction": {
@@ -71,7 +75,8 @@
     }
   },
   "errors": {
-    "required": "Alle Felder müssen einen gültigen Wert haben"
+    "required": "Alle Felder müssen einen gültigen Wert haben",
+    "duplicate": "Gleiche Spielernamen sind nicht erlaubt"
   },
   "titles": {
     "new": "Neues Spiel erstellen"
