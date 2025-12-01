@@ -127,7 +127,7 @@ export const GameScreen: FunctionComponent = () => {
             {t('alerts.predictionMatches.message')}
           </Alert>
         )}
-      {!rounds[currentRound].predictions.every((v) => isNaN(v!) ? true : (v ?? 0) <= currentRound + 1) && (
+      {!rounds[currentRound].predictions.every((v) => (isNaN(v!) ? true : (v ?? 0) <= currentRound + 1)) && (
         <Alert
           my={'xs'}
           variant="light"

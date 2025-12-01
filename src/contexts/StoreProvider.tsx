@@ -45,14 +45,17 @@ export const StoreContext = createContext<StoreContextProps | undefined>(undefin
 
 export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
   const [completedGames, setCompletedGames] = useState<Array<StoredGame>>([]);
+  const [store, setStore] = useState<LazyStore | undefined>(undefined);
 
   useEffect(() => {
     const init = async () => {
       try {
-        const store = new LazyStore('games.json');
-        const stored = await store.get<{ value: Array<StoredGame> }>('completedGames');
-        if (stored && Array.isArray(stored.value)) {
-          setCompletedGames(stored.value);
+        setStore(new LazyStore('games.json'));
+        if (store) {
+          const stored = await store.get<{ value: Array<StoredGame> }>('completedGames');
+          if (stored && Array.isArray(stored.value)) {
+            setCompletedGames(stored.value);
+          }
         }
       } catch (e) {
         console.error('StoreProvider: failed to load store', e);
@@ -64,9 +67,10 @@ export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ chi
   useEffect(() => {
     const persist = async () => {
       try {
-        const store = new LazyStore('games.json');
-        await store.set('completedGames', { value: completedGames });
-        await store.save();
+        if (store) {
+          await store.set('completedGames', { value: completedGames });
+          await store.save();
+        }
       } catch (e) {
         console.error('StoreProvider: failed to save store', e);
       }

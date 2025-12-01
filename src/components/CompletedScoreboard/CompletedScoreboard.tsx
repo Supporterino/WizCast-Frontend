@@ -53,8 +53,7 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
       <Table stickyHeader withColumnBorders>
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>
-            </Table.Th>
+            <Table.Th></Table.Th>
             {players.map((player, i) => (
               <Table.Th key={i}>
                 <FlexRow>{player}</FlexRow>

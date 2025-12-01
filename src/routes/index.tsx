@@ -30,7 +30,7 @@ const Home = () => {
           <Image src="/logo.png" h={240} fit="contain" radius="md" />
 
           <Button size="lg" onClick={() => navigate({ to: NewRoute.to })}>
-            {t("buttons.play")}
+            {t('buttons.play')}
           </Button>
         </Stack>
       </FlexCol>
