@@ -12,7 +12,7 @@ type CompletedScoreboardProps = {
 };
 
 export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = ({ players, rounds, scores }) => {
-  const { height, width } = useViewportSize();
+  const { height } = useViewportSize();
 
   const { t } = useTranslation();
 
@@ -49,7 +49,7 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
   ));
 
   return (
-    <Table.ScrollContainer minWidth={width} maxHeight={height - 100}>
+    <Table.ScrollContainer minWidth={200 * players.length} maxHeight={height - 100}>
       <Table stickyHeader withColumnBorders>
         <Table.Thead>
           <Table.Tr>

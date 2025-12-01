@@ -35,6 +35,8 @@ export interface GameContextProps {
   roundCount: number;
   currentRound: number;
   setCurrentRound: Dispatch<SetStateAction<number>>;
+  playingRound: number;
+  setPlayingRound: Dispatch<SetStateAction<number>>;
 
   setPrediction: (roundIdx: number, playerIdx: number, value: number) => void;
   setActual: (roundIdx: number, playerIdx: number, value: number) => void;
@@ -80,6 +82,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
   const [currentRound, setCurrentRound] = useState(0);
+  const [playingRound, setPlayingRound] = useState(0);
 
   /* ------------------------------------------------------------------ */
   /*  State‑updating helpers                                           */
@@ -148,6 +151,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setRules(getDefaultRules());
 
     setCurrentRound(0);
+    setPlayingRound(0);
   };
 
   const startGame = () => {
@@ -176,6 +180,8 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     roundCount,
     currentRound,
     setCurrentRound,
+    playingRound,
+    setPlayingRound,
 
     setPrediction,
     setActual,

@@ -17,7 +17,7 @@
     },
     "roundIncorrect": {
       "title": "Runde inkorrekt",
-      "tooManyPredictions": "Ein Spieler hat mehr Treffer vorhergesagt als verfügbar.",
+      "tooManyPredictions": "Ein Person hat mehr Treffer vorhergesagt als verfügbar.",
       "noMatchingPrediction": "Eure aktuelle Prognose stimmt mit der Anzahl der Stiche in dieser Runde überein. Dies ist nicht erlaubt, da die Regel: 'Plus/Minus Eins' ist aktiv.",
       "actualMismatch": "Die tatsächlichen Treffer stimmen nicht mit der möglichen Stichanzahl überein."
     }
@@ -41,8 +41,8 @@
       "message": "Eure aktuelle Prognose stimmt mit der Anzahl der Stiche in dieser Runde überein. Dies ist nicht erlaubt, da die Regel: 'Plus/Minus Eins' ist aktiv."
     },
     "playerCount": {
-      "title": "Spieleranzahl",
-      "message": "Das Spiel ist für 3‑6 Spieler konzipiert, kann aber mit zwei Spielern gespielt werden, wenn spezielle Regeln verwendet werden."
+      "title": "Personenanzahl",
+      "message": "Das Spiel ist für 3‑6 Personen konzipiert, kann aber zu Zweit gespielt werden, wenn spezielle Regeln verwendet werden."
     }
   },
   "nav": {

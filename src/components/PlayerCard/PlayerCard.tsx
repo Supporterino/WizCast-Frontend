@@ -11,7 +11,7 @@ type PlayerCardProps = {
 };
 
 export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) => {
-  const { rounds, currentRound, setPrediction, setActual, scores, setScoreChange, players } = useGame();
+  const { rounds, currentRound, setPrediction, setActual, scores, setScoreChange, players, playingRound } = useGame();
 
   const prediction = rounds[currentRound].predictions[idx];
   const actual = rounds[currentRound].actuals[idx];
@@ -70,6 +70,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             value={prediction ?? undefined}
             onChange={handlePredictionChange}
             hideControls
+            disabled={currentRound !== playingRound}
             error={isPredictionEmpty}
           />
 
@@ -83,6 +84,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             value={actual ?? undefined}
             onChange={handleActualChange}
             hideControls
+            disabled={currentRound !== playingRound}
             error={isActualEmpty}
           />
         </GridCol>
