@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 
@@ -39,6 +39,7 @@ export interface GameContextProps {
   setPrediction: (roundIdx: number, playerIdx: number, value: number) => void;
   setActual: (roundIdx: number, playerIdx: number, value: number) => void;
   setScoreChange: (roundIdx: number, playerIdx: number, value: number) => void;
+  updatePlayers: (newPlayers: Array<string>) => void;
 
   endGame: () => void;
   startGame: () => void;
@@ -79,11 +80,6 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
   const [currentRound, setCurrentRound] = useState(0);
-
-  useEffect(() => {
-    setRoundCount(Math.ceil(60 / players.length));
-    setRounds(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
-  }, [players]);
 
   /* ------------------------------------------------------------------ */
   /*  State‑updating helpers                                           */
@@ -136,6 +132,12 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setRules((prev) => prev.map((r, i) => (i === index ? { ...r, active: !r.active } : r)));
   };
 
+  const updatePlayers = (newPlayers: Array<string>) => {
+    setPlayers(newPlayers);
+    setRoundCount(Math.ceil(60 / newPlayers.length));
+    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i)));
+  };
+
   const endGame = () => {
     setActive(false);
     setGameId(typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -178,6 +180,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setPrediction,
     setActual,
     setScoreChange,
+    updatePlayers,
 
     endGame,
     startGame,

@@ -1,16 +1,20 @@
 import { ActionIcon, Button, Divider, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 import packageJson from '../../../package.json';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
+import { DebugModal } from '@/DebugModal/DebugModal.tsx';
+import { useStore } from '@/hooks/useStore.tsx';
 
 export const SettingsMenu: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // 'light' | 'dark' | 'auto'
   const computedColorScheme = useComputedColorScheme(); // resolved to 'light' | 'dark'
-  const { endGame } = useGame();
+  const { endGame, rounds } = useGame();
 
   const cycleColorScheme = () => {
     if (colorScheme === 'light') setColorScheme('dark');
@@ -25,6 +29,10 @@ export const SettingsMenu: FunctionComponent = () => {
   };
 
   const { t, i18n } = useTranslation();
+
+  const [debugData, setDebugData] = useState('');
+  const [opened, { open, close }] = useDisclosure(false);
+  const { completedGames } = useStore();
 
   return (
     <FlexCol fullWidth h={'100%'}>
@@ -65,6 +73,31 @@ export const SettingsMenu: FunctionComponent = () => {
           Ok
         </Button>
       </FlexRow>
+      <FlexRow fullWidth>
+        <Text>Show game state</Text>
+        <Button
+          ml={'auto'}
+          onClick={() => {
+            setDebugData(JSON.stringify(rounds, null, 2));
+            open();
+          }}
+        >
+          Open
+        </Button>
+      </FlexRow>
+      <FlexRow fullWidth>
+        <Text>Show stored state</Text>
+        <Button
+          ml={'auto'}
+          onClick={() => {
+            setDebugData(JSON.stringify(completedGames, null, 2));
+            open();
+          }}
+        >
+          Open
+        </Button>
+      </FlexRow>
+      <DebugModal opened={opened} onClose={close} data={debugData} />
       <Text mt={'auto'} size="xs" c="dimmed">
         Frontend v{packageJson.version}
       </Text>
