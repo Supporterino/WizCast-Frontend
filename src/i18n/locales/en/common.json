@@ -12,14 +12,14 @@
   "notifications": {
     "roundIncomplete": {
       "title": "Round incomplete",
-      "predictionMissing": "Not all players have a valid bid.",
-      "actualMissing": "Not all players have provided a valid number of tricks."
+      "predictionMissing": "Not all players have entered a valid bid.",
+      "actualMissing": "Not all players have entered a valid number of tricks."
     },
     "roundIncorrect": {
       "title": "Round incorrect",
-      "tooManyPredictions": "A player bid more tricks than available.",
-      "noMatchingPrediction": "The bids matches the tricks this round, violating the 'Plus/Minus one' rule.",
-      "actualMismatch": "The recorded tricks do not match the available tricks."
+      "tooManyPredictions": "A player has bid more tricks than are possible.",
+      "noMatchingPrediction": "The bids match the number of tricks in this round, violating the ‘Plus/Minus one’ rule.",
+      "actualMismatch": "The recorded number of tricks does not match the expected total."
     }
   },
   "buttons": {
@@ -37,8 +37,8 @@
   "alerts": {
     "invalidForm": "Form is invalid.",
     "predictionMatches": {
-      "title": "Bids matches tricks",
-      "message": "The current bids matches the available tricks this round, which is not allowed by the 'Plus/Minus one' rule."
+      "title": "Bids match tricks",
+      "message": "The current bids match the number of tricks in this round, which is not allowed by the ‘Plus/Minus one’ rule."
     },
     "playerCount": {
       "title": "Player Count",
@@ -71,7 +71,7 @@
   "rule": {
     "noMatchingPrediction": {
       "name": "Plus/Minus one",
-      "description": "Players are not allowed to bid the same amount as the number of tricks of the round."
+      "description": "Players are not allowed to bid a number equal to the total number of tricks in the round."
     }
   },
   "errors": {
