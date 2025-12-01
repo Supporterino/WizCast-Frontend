@@ -51,7 +51,6 @@ export const GameScreen: FunctionComponent = () => {
 
   const handleNextRound = () => {
     if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
-      console.log('not all');
       notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
     } else if (!rounds[currentRound].actuals.every((v) => v != undefined)) {
       notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
@@ -112,6 +111,10 @@ export const GameScreen: FunctionComponent = () => {
         <Text>{t('gameScreen.predictions')}</Text>
         <Badge variant={'light'}>
           {rounds[currentRound].predictions.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
+        </Badge>
+        <Text>{t('gameScreen.actuals')}</Text>
+        <Badge variant={'light'}>
+          {rounds[currentRound].actuals.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
         </Badge>
       </FlexRow>
       {/* Alert for rule “No matching prediction” */}

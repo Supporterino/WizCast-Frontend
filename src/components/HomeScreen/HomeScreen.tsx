@@ -35,14 +35,19 @@ export const HomeScreen: FunctionComponent = () => {
 
     /* ────────────────────── Validation ────────────────────── */
     validate: {
-      players: (players) => players.map((name) => (name.trim() === '' ? t('errors.required') : null)),
+      players: (players) =>
+        players.map((name) => {
+          const trimmed = name.trim();
+          if (trimmed === '') return t('errors.required');
+          if (trimmed.length > 12) return t('errors.maxLength', { max: 12 });
+          return null;
+        }),
     },
   });
 
   useEffect(() => {
     const trimmed = form.getValues().players.map((name) => name.trim());
     const counts: Record<string, number> = {};
-    console.log(trimmed);
     trimmed.forEach((name) => {
       if (name !== '') counts[name] = (counts[name] ?? 0) + 1;
     });
@@ -138,6 +143,7 @@ export const HomeScreen: FunctionComponent = () => {
                 {...form.getInputProps(`players.${index}`)}
                 style={{ flex: 1 }}
                 required
+                maxLength={12}
               />
             </Box>
           ))}

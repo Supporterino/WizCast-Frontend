@@ -76,7 +76,8 @@
   },
   "errors": {
     "required": "All fields must contain a valid value.",
-    "duplicate": "Duplicate player names are not allowed."
+    "duplicate": "Duplicate player names are not allowed.",
+    "maxLength": "Name must be at most {{max}} characters."
   },
   "titles": {
     "new": "Creating a new game"
@@ -85,6 +86,7 @@
     "text": "The path of truth"
   },
   "gameScreen": {
-    "predictions": "Bids"
+    "predictions": "Bids",
+    "actuals": "Tricks"
   }
 }

@@ -73,14 +73,14 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const [rules, setRules] = useState<Array<Rule>>(getDefaultRules());
   const [roundCount, setRoundCount] = useState(Math.ceil(60 / players.length));
 
-  const makeEmptyRound = (id: number): RoundData => ({
+  const makeEmptyRound = (id: number, length: number): RoundData => ({
     id,
-    predictions: Array(players.length).fill(undefined),
-    actuals: Array(players.length).fill(undefined),
-    scoreChanges: Array(players.length).fill(undefined),
+    predictions: Array(length).fill(undefined),
+    actuals: Array(length).fill(undefined),
+    scoreChanges: Array(length).fill(undefined),
   });
 
-  const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i)));
+  const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
   const [currentRound, setCurrentRound] = useState(0);
   const [playingRound, setPlayingRound] = useState(0);
 
@@ -138,7 +138,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const updatePlayers = (newPlayers: Array<string>) => {
     setPlayers(newPlayers);
     setRoundCount(Math.ceil(60 / newPlayers.length));
-    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i)));
+    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i, Math.ceil(60 / newPlayers.length))));
   };
 
   const endGame = () => {
@@ -148,6 +148,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     setEndDate(undefined);
 
     setPlayers(Array(3).fill(''));
+    updatePlayers(players);
     setRules(getDefaultRules());
 
     setCurrentRound(0);

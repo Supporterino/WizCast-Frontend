@@ -76,7 +76,8 @@
   },
   "errors": {
     "required": "Alle Felder müssen einen gültigen Wert haben",
-    "duplicate": "Gleiche Namen sind nicht erlaubt."
+    "duplicate": "Gleiche Namen sind nicht erlaubt.",
+    "maxLength": "Name darf maximal {{max}} Zeichen lang sein."
   },
   "titles": {
     "new": "Neues Spiel erstellen"
@@ -85,6 +86,7 @@
     "text": "Der Pfad der Wahrheit"
   },
   "gameScreen": {
-    "predictions": "Stiche"
+    "predictions": "Vorhersage",
+    "actuals": "Stiche"
   }
 }
