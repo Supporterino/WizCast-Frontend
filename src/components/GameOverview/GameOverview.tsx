@@ -1,12 +1,13 @@
-import { Button, Table } from '@mantine/core';
+import { ActionIcon, Table } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { IconEye, IconTrash } from '@tabler/icons-react';
 import type { FunctionComponent } from 'react';
 import { useStore } from '@/hooks/useStore.tsx';
 import { Route as ResultRoute } from '@/routes/results/$resultID';
 
 export const GameOverview: FunctionComponent = () => {
-  const { gameOverview } = useStore();
+  const { gameOverview, deleteGameById } = useStore();
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -38,10 +39,10 @@ export const GameOverview: FunctionComponent = () => {
               <Table.Td>{g.location}</Table.Td>
               <Table.Td>{g.playerCount}</Table.Td>
               <Table.Td>
-                <Button
-                  size="xs"
-                  variant="outline"
-                  mx="auto"
+                <ActionIcon
+                  size="sm"
+                  ml="auto"
+                  mr={'xs'}
                   onClick={() =>
                     navigate({
                       to: ResultRoute.to,
@@ -49,8 +50,11 @@ export const GameOverview: FunctionComponent = () => {
                     })
                   }
                 >
-                  {t('buttons.view')}
-                </Button>
+                  <IconEye stroke={1.5} />
+                </ActionIcon>
+                <ActionIcon size="sm" mr="auto" onClick={() => deleteGameById(g.id)}>
+                  <IconTrash stroke={1.5} />
+                </ActionIcon>
               </Table.Td>
             </Table.Tr>
           );
