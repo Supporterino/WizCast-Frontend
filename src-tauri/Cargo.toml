@@ -1,6 +1,6 @@
 [package]
 name = "WizCast"
-version = "0.12.0"
+version = "0.13.0"
 description = "A fan app for the Cardgame Wizard"
 authors = ["Supporterino"]
 edition = "2021"
