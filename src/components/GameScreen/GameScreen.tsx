@@ -18,8 +18,21 @@ import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
 
 export const GameScreen: FunctionComponent = () => {
-  const { rules, id, players, currentRound, rounds, setCurrentRound, roundCount, endGame, scores, startDate, location, setPlayingRound } =
-    useGame();
+  const {
+    rules,
+    id,
+    players,
+    currentRound,
+    rounds,
+    setCurrentRound,
+    roundCount,
+    endGame,
+    scores,
+    startDate,
+    location,
+    setPlayingRound,
+    playingRound,
+  } = useGame();
   const navigate = useNavigate();
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
@@ -61,7 +74,7 @@ export const GameScreen: FunctionComponent = () => {
     } else if (rounds[currentRound].actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
       notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
     } else {
-      setPlayingRound((prev) => prev + 1);
+      if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
       setCurrentRound(currentRound + 1);
     }
   };

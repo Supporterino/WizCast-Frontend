@@ -1,7 +1,10 @@
-import { createContext, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 
+/* ------------------------------------------------------------------ */
+/*  Types                                                             */
+/* ------------------------------------------------------------------ */
 export interface Rule {
   name: string;
   description: string;
@@ -41,53 +44,79 @@ export interface GameContextProps {
   setPrediction: (roundIdx: number, playerIdx: number, value: number) => void;
   setActual: (roundIdx: number, playerIdx: number, value: number) => void;
   setScoreChange: (roundIdx: number, playerIdx: number, value: number) => void;
-  updatePlayers: (newPlayers: Array<string>) => void;
 
   endGame: () => void;
   startGame: () => void;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Context                                                            */
+/* ------------------------------------------------------------------ */
 export const GameContext = createContext<GameContextProps | undefined>(undefined);
 
+/* ------------------------------------------------------------------ */
+/*  Provider                                                            */
+/* ------------------------------------------------------------------ */
 export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
 
-  const getDefaultRules = (): Array<Rule> => [
-    {
-      name: t('rule.noMatchingPrediction.name'),
-      description: t('rule.noMatchingPrediction.description'),
-      active: true,
-    },
-  ];
+  /* ---------- Default rules (memoised) --------------------------- */
+  const getDefaultRules = useCallback(
+    (): Array<Rule> => [
+      {
+        name: t('rule.noMatchingPrediction.name'),
+        description: t('rule.noMatchingPrediction.description'),
+        active: true,
+      },
+    ],
+    [t],
+  );
 
+  /* ---------- State ------------------------------------------------ */
   const [gameId, setGameId] = useState<string>(() =>
     typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
   const [active, setActive] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
   const [location, setLocation] = useState<string>('');
-
   const [players, setPlayers] = useState<Array<string>>(Array(3).fill(''));
-
   const [rules, setRules] = useState<Array<Rule>>(getDefaultRules());
-  const [roundCount, setRoundCount] = useState(Math.ceil(60 / players.length));
-
-  const makeEmptyRound = (id: number, length: number): RoundData => ({
-    id,
-    predictions: Array(length).fill(undefined),
-    actuals: Array(length).fill(undefined),
-    scoreChanges: Array(length).fill(undefined),
-  });
-
-  const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
   const [currentRound, setCurrentRound] = useState(0);
   const [playingRound, setPlayingRound] = useState(0);
 
-  /* ------------------------------------------------------------------ */
-  /*  State‑updating helpers                                           */
-  /* ------------------------------------------------------------------ */
-  const setPrediction = (roundIdx: number, playerIdx: number, value: number) => {
+  /* ---------- Derived state --------------------------------------- */
+  const roundCount = useMemo(() => Math.ceil(60 / players.length), [players.length]);
+
+  /* ---------- Helper for an empty round -------------------------- */
+  const makeEmptyRound = useCallback(
+    (id: number, length: number): RoundData => ({
+      id,
+      predictions: Array(length).fill(undefined),
+      actuals: Array(length).fill(undefined),
+      scoreChanges: Array(length).fill(undefined),
+    }),
+    [],
+  );
+
+  /* ---------- Rounds state ---------------------------------------- */
+  const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
+
+  /* ---------- Keep rounds in sync with player count ---------------- */
+  useEffect(() => {
+    setRounds(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
+  }, [roundCount, players.length, makeEmptyRound]);
+
+  /* ---------- Scores (derived) ------------------------------------ */
+  const scores = useMemo(() => {
+    return rounds.reduce((acc, r) => {
+      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
+      return acc;
+    }, Array(players.length).fill(0));
+  }, [rounds, players.length]);
+
+  /* ---------- Mutator helpers ------------------------------------- */
+  const setPrediction = useCallback((roundIdx: number, playerIdx: number, value: number) => {
     setRounds((prev) =>
       prev.map((r) =>
         r.id === roundIdx
@@ -98,9 +127,9 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
           : r,
       ),
     );
-  };
+  }, []);
 
-  const setActual = (roundIdx: number, playerIdx: number, value: number) => {
+  const setActual = useCallback((roundIdx: number, playerIdx: number, value: number) => {
     setRounds((prev) =>
       prev.map((r) =>
         r.id === roundIdx
@@ -111,9 +140,9 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
           : r,
       ),
     );
-  };
+  }, []);
 
-  const setScoreChange = (roundIdx: number, playerIdx: number, value: number) => {
+  const setScoreChange = useCallback((roundIdx: number, playerIdx: number, value: number) => {
     setRounds((prev) =>
       prev.map((r) =>
         r.id === roundIdx
@@ -124,75 +153,94 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
           : r,
       ),
     );
-  };
+  }, []);
 
-  const scores = rounds.reduce((acc, r) => {
-    r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
-    return acc;
-  }, Array(players.length).fill(0));
+  const toggleRule = useCallback(
+    (index: number) => setRules((prev) => prev.map((r, i) => (i === index ? { ...r, active: !r.active } : r))),
+    [],
+  );
 
-  const toggleRule = (index: number) => {
-    setRules((prev) => prev.map((r, i) => (i === index ? { ...r, active: !r.active } : r)));
-  };
-
-  const updatePlayers = (newPlayers: Array<string>) => {
-    setPlayers(newPlayers);
-    setRoundCount(Math.ceil(60 / newPlayers.length));
-    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i, newPlayers.length)));
-  };
-
-  const endGame = () => {
+  const endGame = useCallback(() => {
     setActive(false);
     setGameId(typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
     setStartDate(undefined);
     setEndDate(undefined);
 
-    setPlayers(Array(3).fill(''));
-    updatePlayers(players);
+    // Reset to defaults
+    const defaultPlayers = Array(3).fill('');
+    setPlayers(defaultPlayers);
     setRules(getDefaultRules());
 
     setCurrentRound(0);
     setPlayingRound(0);
-  };
+  }, [getDefaultRules]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     setStartDate(new Date());
     setActive(true);
-  };
+  }, []);
 
-  /* ------------------------------------------------------------------ */
-  /*  Context value                                                    */
-  /* ------------------------------------------------------------------ */
-  const ctx: GameContextProps = {
-    id: gameId,
-    active,
-    startDate,
-    endDate,
-    location,
-    setLocation,
+  /* ---------- Memoised context value ----------------------------- */
+  const ctx: GameContextProps = useMemo(
+    () => ({
+      id: gameId,
+      active,
+      startDate,
+      endDate,
+      location,
+      setLocation,
 
-    players,
-    setPlayers,
+      players,
+      setPlayers,
 
-    rules,
-    setRules,
-    rounds,
-    scores,
-    roundCount,
-    currentRound,
-    setCurrentRound,
-    playingRound,
-    setPlayingRound,
+      rules,
+      setRules,
+      rounds,
+      scores,
+      roundCount,
+      currentRound,
+      setCurrentRound,
+      playingRound,
+      setPlayingRound,
 
-    setPrediction,
-    setActual,
-    setScoreChange,
-    updatePlayers,
+      setPrediction,
+      setActual,
+      setScoreChange,
 
-    endGame,
-    startGame,
-    toggleRule,
-  };
+      endGame,
+      startGame,
+      toggleRule,
+    }),
+    [
+      gameId,
+      active,
+      startDate,
+      endDate,
+      location,
+      setLocation,
+
+      players,
+      setPlayers,
+
+      rules,
+      setRules,
+      rounds,
+      scores,
+      roundCount,
+      currentRound,
+      setCurrentRound,
+      playingRound,
+      setPlayingRound,
+
+      setPrediction,
+      setActual,
+      setScoreChange,
+
+      endGame,
+      startGame,
+      toggleRule,
+    ],
+  );
 
   return <GameContext.Provider value={ctx}>{children}</GameContext.Provider>;
 };

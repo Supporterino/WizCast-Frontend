@@ -13,7 +13,7 @@ import { useGame } from '@/hooks/useGame.tsx';
 
 export const HomeScreen: FunctionComponent = () => {
   const navigate = useNavigate();
-  const { updatePlayers, startGame, setLocation } = useGame();
+  const { setPlayers, startGame, setLocation } = useGame();
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export const HomeScreen: FunctionComponent = () => {
   /* ────────────────────── Form submission ────────────────────── */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updatePlayers(form.getValues().players);
+    setPlayers(form.getValues().players);
     setLocation(await getLocation());
     startGame();
     navigate({ to: GameRoute.to });
