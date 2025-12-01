@@ -20,8 +20,18 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
   const { t } = useTranslation();
 
   const handlePredictionChange = (value: number | string) => {
-    const n = typeof value === 'string' ? parseInt(value, 10) : value;
-    setPrediction(currentRound, idx, n);
+    const newPrediction = typeof value === 'string' ? parseInt(value, 10) : value;
+    setPrediction(currentRound, idx, newPrediction);
+
+    const currentActual = rounds[currentRound].actuals[idx];
+    if (currentActual || currentActual == 0) {
+      if (newPrediction === currentActual) {
+        setScoreChange(currentRound, idx, 20 + 10 * currentActual);
+      } else {
+        const diff = Math.abs(newPrediction - currentActual);
+        setScoreChange(currentRound, idx, diff * -10);
+      }
+    }
   };
 
   const handleActualChange = (value: number | string) => {
@@ -29,11 +39,13 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
     setActual(currentRound, idx, newActual);
 
     const currentPrediction = rounds[currentRound].predictions[idx];
-    if (currentPrediction === newActual) {
-      setScoreChange(currentRound, idx, 20 + 10 * newActual);
-    } else {
-      const diff = Math.abs(currentPrediction! - newActual);
-      setScoreChange(currentRound, idx, diff * -10);
+    if (currentPrediction || currentPrediction == 0) {
+      if (currentPrediction === newActual) {
+        setScoreChange(currentRound, idx, 20 + 10 * newActual);
+      } else {
+        const diff = Math.abs(currentPrediction - newActual);
+        setScoreChange(currentRound, idx, diff * -10);
+      }
     }
   };
 
