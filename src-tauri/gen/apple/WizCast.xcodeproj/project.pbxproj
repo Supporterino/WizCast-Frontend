@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E50F6C72EDD7EC100868A95 /* WizCastIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2E50F6C62EDD7EC100868A95 /* WizCastIcon.icon */; };
 		332819B8424D3E3F4C291B82 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531EBCC228EEF23A29713B6F /* WebKit.framework */; };
 		425615265F73BC4266E1520B /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 7E4CDEE6F0AF8A14A66F6E95 /* assets */; };
 		4984AEECBC7171F5161DA954 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 028141BDD8BA23B093806E78 /* CoreGraphics.framework */; };
+		4C13ED00E33ECC7C4486CD90 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDFA59C72EB90C5EE201CA6F /* Assets.xcassets */; };
 		60F7DC522C55C81B46AAD650 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80A6A4E6ED36E3E3D7E1B832 /* MetalKit.framework */; };
 		62F93CC6A6FDE69500D7D4F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73664A89EF7753660F2F2F8D /* LaunchScreen.storyboard */; };
 		6DB68D7B9C0756C6BE2AACA1 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 053792A73DF8BB4A57FAE5B7 /* Security.framework */; };
@@ -25,7 +27,7 @@
 		053792A73DF8BB4A57FAE5B7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		0A7A7A85B192C1917B61DCBC /* main.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.rs; sourceTree = "<group>"; };
 		24805021A642E924BEEC53D1 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
-		2E9AACB02EDCE63D00C1C0C1 /* WizCastIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WizCastIcon.icon; sourceTree = "<group>"; };
+		2E50F6C62EDD7EC100868A95 /* WizCastIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = WizCastIcon.icon; sourceTree = "<group>"; };
 		32638F594D52AF079B7414EE /* lib.rs */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib.rs; sourceTree = "<group>"; };
 		39E2B69142658732BEA17294 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		531EBCC228EEF23A29713B6F /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -37,6 +39,7 @@
 		B904929D108C6A29DBCEEEC9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		BAD3DB9F384AAD47B041783A /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		D0A9310D82BB992E1201C74E /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		DDFA59C72EB90C5EE201CA6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD4E2899A979A0F9F110FF82 /* WizCast_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WizCast_iOS.entitlements; sourceTree = "<group>"; };
 		FD7FAD34EB8F758E0C6D1A16 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -63,7 +66,6 @@
 		0B1CB07220BC83927C94528B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2E9AACB02EDCE63D00C1C0C1 /* WizCastIcon.icon */,
 				5A4249071E5D6DD14CBEB4E6 /* WizCast.app */,
 			);
 			name = Products;
@@ -106,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				7E4CDEE6F0AF8A14A66F6E95 /* assets */,
+				DDFA59C72EB90C5EE201CA6F /* Assets.xcassets */,
 				73664A89EF7753660F2F2F8D /* LaunchScreen.storyboard */,
 				6C19AFBF4F48DE26312F23A1 /* Externals */,
 				35BC420414C00764A1213A69 /* Sources */,
@@ -113,6 +116,7 @@
 				C3C21F6AFE1F0AF9E8FFF93D /* WizCast_iOS */,
 				D91882BD6250BE580D4FEE79 /* Frameworks */,
 				0B1CB07220BC83927C94528B /* Products */,
+				2E50F6C62EDD7EC100868A95 /* WizCastIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -204,6 +208,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C13ED00E33ECC7C4486CD90 /* Assets.xcassets in Resources */,
+				2E50F6C72EDD7EC100868A95 /* WizCastIcon.icon in Resources */,
 				62F93CC6A6FDE69500D7D4F5 /* LaunchScreen.storyboard in Resources */,
 				425615265F73BC4266E1520B /* assets in Resources */,
 			);
@@ -253,6 +259,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = WizCast_iOS/WizCast_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9687ZZBJM5;
@@ -263,7 +270,6 @@
 					"\".\"",
 				);
 				INFOPLIST_FILE = WizCast_iOS/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WizCast;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -352,6 +358,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = WizCastIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = WizCast_iOS/WizCast_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 9687ZZBJM5;
@@ -362,7 +369,6 @@
 					"\".\"",
 				);
 				INFOPLIST_FILE = WizCast_iOS/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WizCast;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
