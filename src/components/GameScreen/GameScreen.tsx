@@ -109,10 +109,10 @@ export const GameScreen: FunctionComponent = () => {
       </FlexRow>
       <FlexRow fullWidth mt={'md'}>
         <Text>{t('gameScreen.predictions')}</Text>
-        <Badge variant={'light'}>
+        <Badge variant={'light'} mr={'md'}>
           {rounds[currentRound].predictions.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
         </Badge>
-        <Text>{t('gameScreen.actuals')}</Text>
+        <Text ml={'md'}>{t('gameScreen.actuals')}</Text>
         <Badge variant={'light'}>
           {rounds[currentRound].actuals.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
         </Badge>

@@ -138,7 +138,7 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const updatePlayers = (newPlayers: Array<string>) => {
     setPlayers(newPlayers);
     setRoundCount(Math.ceil(60 / newPlayers.length));
-    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i, Math.ceil(60 / newPlayers.length))));
+    setRounds(Array.from({ length: Math.ceil(60 / newPlayers.length) }, (_, i) => makeEmptyRound(i, newPlayers.length)));
   };
 
   const endGame = () => {
