@@ -12,14 +12,14 @@
   "notifications": {
     "roundIncomplete": {
       "title": "Round incomplete",
-      "predictionMissing": "Not all players have valid prediction.",
-      "actualMissing": "Not all players have valid actual."
+      "predictionMissing": "Not all players have a valid bid.",
+      "actualMissing": "Not all players have provided a valid number of tricks."
     },
     "roundIncorrect": {
       "title": "Round incorrect",
-      "tooManyPredictions": "A player predicted more hits than available",
-      "noMatchingPrediction": "The predictions match the actual cards. Rule: No matching prediction is active",
-      "actualMismatch": "The actual hits do not align with the given number of cards"
+      "tooManyPredictions": "A player bid more tricks than available.",
+      "noMatchingPrediction": "The bids matches the tricks this round, violating the 'Plus/Minus one' rule.",
+      "actualMismatch": "The recorded tricks do not match the available tricks."
     }
   },
   "buttons": {
@@ -35,14 +35,14 @@
     "playerName": "Player {{index}} name"
   },
   "alerts": {
-    "invalidForm": "Form is invalid",
+    "invalidForm": "Form is invalid.",
     "predictionMatches": {
-      "title": "Prediction count matches",
-      "message": "Your current prediction matches the number of cards this round. This isn't allowed since rule (No matching prediction) is active."
+      "title": "Bids matches tricks",
+      "message": "The current bids matches the available tricks this round, which is not allowed by the 'Plus/Minus one' rule."
     },
     "playerCount": {
       "title": "Player Count",
-      "message": "The game is designed for 3-6 players but can be played with two players when special rules are used."
+      "message": "The game is designed for 3–6 players, but it can be played with two players if special rules are applied."
     }
   },
   "nav": {
@@ -53,8 +53,8 @@
     "settings": "Settings"
   },
   "playerCard": {
-    "prediction": "Prediction",
-    "actual": "Actual"
+    "prediction": "Bid",
+    "actual": "Truth"
   },
   "modal": {
     "rules": "Rules"
@@ -70,21 +70,21 @@
   },
   "rule": {
     "noMatchingPrediction": {
-      "name": "No matching prediction",
-      "description": "Players are not allowed to set predictions equal to the number of hits per round."
+      "name": "Plus/Minus one",
+      "description": "Players are not allowed to bid the same amount as the number of tricks of the round."
     }
   },
   "errors": {
-    "required": "All fields must have a valid value",
-    "duplicate": "Duplicate player names aren't allowed"
+    "required": "All fields must contain a valid value.",
+    "duplicate": "Duplicate player names are not allowed."
   },
   "titles": {
-    "new": "Creating new game"
+    "new": "Creating a new game"
   },
   "welcome": {
     "text": "The path of truth"
   },
   "gameScreen": {
-    "predictions": "Predictions"
+    "predictions": "Bids"
   }
 }
