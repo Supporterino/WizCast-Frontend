@@ -94,6 +94,10 @@
     "charts": "Charts",
     "diffHeading": "Difference between Bids and Tricks",
     "scoreDevelopment": "Score Development",
-    "accuracyHeading": "Player Accuracy"
+    "accuracyHeading": "Player Accuracy",
+    "deleteConfirmationTitle": "Delete Game",
+    "deleteConfirmationMessage": "Are you sure you want to delete this game?",
+    "cancel": "Cancel",
+    "delete": "Delete"
   }
 }

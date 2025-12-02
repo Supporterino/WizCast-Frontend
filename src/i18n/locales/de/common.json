@@ -94,6 +94,10 @@
     "charts": "Graphen",
     "diffHeading": "Unterschied Vorhersage und Wahrheit",
     "scoreDevelopment": "Punkte-Entwicklung",
-    "accuracyHeading": "Treffergenauigkeit"
+    "accuracyHeading": "Treffergenauigkeit",
+    "deleteConfirmationTitle": "Spiel löschen",
+    "deleteConfirmationMessage": "Bist du sicher, dass du das Spiel löschen möchtest?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
   }
 }
