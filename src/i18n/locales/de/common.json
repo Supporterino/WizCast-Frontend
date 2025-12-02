@@ -88,5 +88,12 @@
   "gameScreen": {
     "predictions": "Vorhersage",
     "actuals": "Stiche"
+  },
+  "gameOverview": {
+    "scoreboard": "Scoreboard",
+    "charts": "Graphen",
+    "diffHeading": "Unterschied Vorhersage und Wahrheit",
+    "scoreDevelopment": "Punkte-Entwicklung",
+    "accuracyHeading": "Treffergenauigkeit"
   }
 }

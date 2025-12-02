@@ -88,5 +88,12 @@
   "gameScreen": {
     "predictions": "Bids",
     "actuals": "Tricks"
+  },
+  "gameOverview": {
+    "scoreboard": "Scoreboard",
+    "charts": "Charts",
+    "diffHeading": "Difference between Bids and Tricks",
+    "scoreDevelopment": "Score Development",
+    "accuracyHeading": "Player Accuracy"
   }
 }
