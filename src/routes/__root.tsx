@@ -1,7 +1,6 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { AppShell, Container } from '@mantine/core';
 import { useDisclosure, useViewportSize } from '@mantine/hooks';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useCallback, useRef } from 'react';
 import type { TouchEvent } from 'react';
 import { Header } from '@/components/Header/Header.tsx';
@@ -90,7 +89,6 @@ const Layout = () => {
       >
         <Container h={height - 60 - 2 * 16}>
           <Outlet />
-          <TanStackRouterDevtools />
         </Container>
       </AppShell.Main>
     </AppShell>
