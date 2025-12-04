@@ -1024,6 +1024,13 @@
     "@tauri-apps/cli-win32-ia32-msvc" "2.9.4"
     "@tauri-apps/cli-win32-x64-msvc" "2.9.4"
 
+"@tauri-apps/plugin-fs@~2":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-fs/-/plugin-fs-2.4.4.tgz#b5111e02ca8b632588ff192bb0be6dd4eb2c9a63"
+  integrity sha512-MTorXxIRmOnOPT1jZ3w96vjSuScER38ryXY88vl5F0uiKdnvTKKTtaEjTEo8uPbl4e3gnUtfsDVwC7h77GQLvQ==
+  dependencies:
+    "@tauri-apps/api" "^2.8.0"
+
 "@tauri-apps/plugin-geolocation@~2":
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-geolocation/-/plugin-geolocation-2.3.2.tgz#a81b5491b31d222b03bf787746c85617769a9345"

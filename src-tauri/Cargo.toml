@@ -1,6 +1,6 @@
 [package]
 name = "WizCast"
-version = "0.24.0"
+version = "0.25.0"
 description = "A fan app for the Cardgame Wizard"
 authors = ["Supporterino"]
 edition = "2021"
@@ -24,4 +24,5 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-store = "2"
 tauri-plugin-geolocation = "2"
+tauri-plugin-fs = "2"
 

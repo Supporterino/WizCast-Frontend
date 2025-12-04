@@ -29,11 +29,7 @@ export const GameOverview: FunctionComponent = () => {
 
   return (
     <>
-      <Modal
-        opened={modalOpened}
-        onClose={() => setModalOpened(false)}
-        title={t('gameOverview.deleteConfirmationTitle')}
-      >
+      <Modal opened={modalOpened} onClose={() => setModalOpened(false)} title={t('gameOverview.deleteConfirmationTitle')}>
         <p>{t('gameOverview.deleteConfirmationMessage')}</p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
           <Button variant="default" onClick={() => setModalOpened(false)}>

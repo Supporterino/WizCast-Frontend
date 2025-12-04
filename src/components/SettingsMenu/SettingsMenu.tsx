@@ -1,20 +1,48 @@
 import { ActionIcon, Button, Divider, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-// import { useDisclosure } from '@mantine/hooks';
-// import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
 import packageJson from '../../../package.json';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
-// import { DebugModal } from '@/DebugModal/DebugModal.tsx';
-// import { useStore } from '@/hooks/useStore.tsx';
 
 export const SettingsMenu: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // 'light' | 'dark' | 'auto'
   const computedColorScheme = useComputedColorScheme(); // resolved to 'light' | 'dark'
   const { endGame } = useGame();
+  const navigate = useNavigate();
+  const clickCountRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  const handleVersionClick = () => {
+    clickCountRef.current += 1;
+
+    // Reset counter if more than 500ms has passed since the first click
+    if (!timerRef.current) {
+      timerRef.current = setTimeout(() => {
+        clickCountRef.current = 0;
+        timerRef.current = null;
+      }, 500);
+    }
+
+    if (clickCountRef.current === 3) {
+      // Navigate to the debug route
+      navigate({ to: '/debug' });
+      // Reset counter and timer
+      clickCountRef.current = 0;
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   const cycleColorScheme = () => {
     if (colorScheme === 'light') setColorScheme('dark');
@@ -29,10 +57,6 @@ export const SettingsMenu: FunctionComponent = () => {
   };
 
   const { t, i18n } = useTranslation();
-
-  // const [debugData, setDebugData] = useState('');
-  // const [opened, { open, close }] = useDisclosure(false);
-  // const { completedGames } = useStore();
 
   return (
     <FlexCol fullWidth h={'100%'}>
@@ -73,32 +97,7 @@ export const SettingsMenu: FunctionComponent = () => {
           Ok
         </Button>
       </FlexRow>
-      {/* <FlexRow fullWidth>*/}
-      {/*  <Text>Show game state</Text>*/}
-      {/*  <Button*/}
-      {/*    ml={'auto'}*/}
-      {/*    onClick={() => {*/}
-      {/*      setDebugData(JSON.stringify(rounds, null, 2));*/}
-      {/*      open();*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    Open*/}
-      {/*  </Button>*/}
-      {/* </FlexRow>*/}
-      {/* <FlexRow fullWidth>*/}
-      {/*  <Text>Show stored state</Text>*/}
-      {/*  <Button*/}
-      {/*    ml={'auto'}*/}
-      {/*    onClick={() => {*/}
-      {/*      setDebugData(JSON.stringify(completedGames, null, 2));*/}
-      {/*      open();*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    Open*/}
-      {/*  </Button>*/}
-      {/* </FlexRow>*/}
-      {/* <DebugModal opened={opened} onClose={close} data={debugData} />*/}
-      <Text mt={'auto'} size="xs" c="dimmed">
+      <Text mt={'auto'} size="xs" c="dimmed" onClick={handleVersionClick}>
         Frontend v{packageJson.version}
       </Text>
     </FlexCol>
