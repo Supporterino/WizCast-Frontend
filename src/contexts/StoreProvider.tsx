@@ -1,4 +1,4 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 
@@ -46,28 +46,37 @@ export const StoreContext = createContext<StoreContextProps | undefined>(undefin
 
 export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
   const [completedGames, setCompletedGames] = useState<Array<StoredGame>>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  const storeRef = useRef<LazyStore | null>(null);
+  if (!storeRef.current) {
+    storeRef.current = new LazyStore('games.json', { defaults: {}, createNew: false, autoSave: false });
+  }
+  const store = storeRef.current;
 
   /* ---------- Load persisted games on mount ---------- */
   useEffect(() => {
     const init = async () => {
       try {
-        const store = new LazyStore('games.json');
         const stored = await store.get<{ value: Array<StoredGame> }>('completedGames');
         if (stored && Array.isArray(stored.value)) {
           setCompletedGames(stored.value);
         }
       } catch (e) {
         console.error('StoreProvider: failed to load store', e);
+      } finally {
+        setLoaded(true);
       }
     };
     init();
-  }, []);
+  }, [store]);
 
-  /* ---------- Persist changes whenever the list updates ---------- */
+  /* ---- persist changes whenever the list updates (after load) --- */
   useEffect(() => {
+    if (!loaded) return;
+
     const persist = async () => {
       try {
-        const store = new LazyStore('games.json');
         await store.set('completedGames', { value: completedGames });
         await store.save();
       } catch (e) {
@@ -75,7 +84,7 @@ export const StoreProvider: FunctionComponent<{ children?: ReactNode }> = ({ chi
       }
     };
     persist();
-  }, [completedGames]);
+  }, [completedGames, loaded, store]);
 
   /* ---------- Helper methods ---------- */
   const getGameById = (id: string) => completedGames.find((g) => g.id === id);
