@@ -11,7 +11,6 @@ const MANTINE_COLOR_NAMES = [
   'yellow',
   'lime',
   'green',
-  'teal',
   'cyan',
   'gray',
 ] as const;
@@ -21,9 +20,6 @@ const MANTINE_SHADES = Array.from({ length: 10 }, (_, i) => i);
 
 /** Pick a random element from an array */
 const pickRandom = <T>(arr: ReadonlyArray<T>): T => arr[Math.floor(Math.random() * arr.length)];
-
-/** Build a random Mantine color string (e.g. 'indigo.6') */
-const getRandomMantineColor = (): string => `${pickRandom(MANTINE_COLOR_NAMES)}.${pickRandom(MANTINE_SHADES)}`;
 
 /** Series item used by Mantine charts */
 export interface SeriesItem {
@@ -35,14 +31,33 @@ export interface SeriesItem {
  * From a StoredGame (or just an array of player names) create a series
  * array suitable for Mantine chart components.
  *
+ * Each series receives a **unique base color** (no duplicates).
+ * The shade is still random.
+ *
  * @param gameOrPlayers – either a StoredGame or an array of names
  * @returns [{ name: 'Alice', color: 'indigo.6' }, ...]
  */
 export function buildMantineSeries(gameOrPlayers: StoredGame | Array<string>): Array<SeriesItem> {
   const players = Array.isArray(gameOrPlayers) ? gameOrPlayers : gameOrPlayers.players;
 
-  return players.map((name) => ({
-    name,
-    color: getRandomMantineColor(),
-  }));
+  // Copy of the base colors so we can remove used ones
+  const availableColors = [...MANTINE_COLOR_NAMES];
+
+  return players.map((name) => {
+    if (availableColors.length === 0) {
+      throw new Error(`Not enough unique Mantine base colors for ${players.length} players.`);
+    }
+
+    // Pick a unique base color and remove it from the pool
+    const base = pickRandom(availableColors);
+    const idx = availableColors.indexOf(base);
+    if (idx > -1) {
+      availableColors.splice(idx, 1);
+    }
+
+    // Random shade
+    const shade = pickRandom(MANTINE_SHADES);
+
+    return { name, color: `${base}.${shade}` };
+  });
 }

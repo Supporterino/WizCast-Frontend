@@ -27,10 +27,37 @@ export const CompletedGraphs: FunctionComponent<CompletedGraphsProps> = ({ round
         dataKey="round"
         series={[{ name: 'diff', color: 'indigo.6' }]}
         curveType="monotone"
+        xAxisLabel="Round"
+        yAxisLabel="Difference"
+        withTooltip={false}
+        withPointLabels
+        type="gradient"
+        gradientStops={[
+          { offset: 0, color: 'red.6' },
+          { offset: 20, color: 'orange.6' },
+          { offset: 40, color: 'yellow.5' },
+          { offset: 50, color: 'lime.5' },
+          { offset: 60, color: 'yellow.5' },
+          { offset: 80, color: 'orange.6' },
+          { offset: 100, color: 'red.6' },
+        ]}
+        yAxisProps={{ domain: [-10, 10] }}
         tickLine="xy"
       />
       <Text fw={600}>{t('gameOverview.scoreDevelopment')}</Text>
-      <LineChart h={300} data={scoreDevelopment} dataKey="round" series={playerSeries} curveType="monotone" tickLine="xy" />
+      <LineChart
+        h={300}
+        data={scoreDevelopment}
+        dataKey="round"
+        series={playerSeries}
+        withPointLabels
+        xAxisLabel="Round"
+        yAxisLabel="Points"
+        withTooltip={false}
+        curveType="monotone"
+        withLegend
+        tickLine="xy"
+      />
       <Text fw={600}>{t('gameOverview.accuracyHeading')}</Text>
       <BarChart
         h={300}
@@ -40,6 +67,8 @@ export const CompletedGraphs: FunctionComponent<CompletedGraphsProps> = ({ round
         series={playerSeries}
         tickLine="y"
         withXAxis={false}
+        withTooltip={false}
+        withBarValueLabel
         withLegend
         yAxisProps={{ domain: [0, 100] }}
         valueFormatter={(value) => `${value}%`}

@@ -78,6 +78,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             min={0}
             max={currentRound + 1}
             clampBehavior="strict"
+            allowDecimal={false}
+            allowNegative={false}
             label={t('playerCard.prediction')}
             value={prediction ?? undefined}
             onChange={handlePredictionChange}
@@ -92,6 +94,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             min={0}
             max={currentRound + 1}
             clampBehavior="strict"
+            allowDecimal={false}
+            allowNegative={false}
             label={t('playerCard.actual')}
             value={actual ?? undefined}
             onChange={handleActualChange}

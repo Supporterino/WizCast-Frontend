@@ -113,6 +113,9 @@ export const HomeScreen: FunctionComponent = () => {
             value={form.values.playerCount}
             min={2}
             max={6}
+            clampBehavior={'strict'}
+            allowDecimal={false}
+            allowNegative={false}
             onChange={(value) => form.setFieldValue('playerCount', +value)}
             style={{ width: 40 }}
             hideControls

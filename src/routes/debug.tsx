@@ -22,8 +22,10 @@ const RouteComponent = () => {
   };
 
   return (
-    <FlexCol fullWidth p={"md"}>
-      <Code m={"sm"} style={{ textWrap: 'balance'}}>{debugDir}</Code>
+    <FlexCol fullWidth p={'md'}>
+      <Code m={'sm'} style={{ textWrap: 'balance' }}>
+        {debugDir}
+      </Code>
       <Code block>{debugText}</Code>
       <Button onClick={list}>List Files</Button>
       <Button onClick={read}>Read state file</Button>
