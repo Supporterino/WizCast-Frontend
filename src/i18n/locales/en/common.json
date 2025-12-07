@@ -98,6 +98,9 @@
     "deleteConfirmationTitle": "Delete Game",
     "deleteConfirmationMessage": "Are you sure you want to delete this game?",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "xAxis": "Rounds",
+    "diff": "Difference",
+    "points": "Points"
   }
 }

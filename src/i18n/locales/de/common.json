@@ -98,6 +98,9 @@
     "deleteConfirmationTitle": "Spiel löschen",
     "deleteConfirmationMessage": "Bist du sicher, dass du das Spiel löschen möchtest?",
     "cancel": "Abbrechen",
-    "delete": "Löschen"
+    "delete": "Löschen",
+    "xAxis": "Runden",
+    "diff": "Differenz",
+    "points": "Punkte"
   }
 }

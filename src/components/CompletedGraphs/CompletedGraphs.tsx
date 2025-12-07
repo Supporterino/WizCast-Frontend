@@ -5,6 +5,7 @@ import type { FunctionComponent } from 'react';
 import type { CumulativeScoreEntry, RoundDiff } from '@/utils/gameDiff.ts';
 import type { SeriesItem } from '@/utils/seriesGen.ts';
 import type { PlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { getLargestDiff } from '@/utils/gameDiff.ts';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 
 type CompletedGraphsProps = {
@@ -25,10 +26,10 @@ export const CompletedGraphs: FunctionComponent<CompletedGraphsProps> = ({ round
         w={'100%'}
         data={roundDiff}
         dataKey="round"
-        series={[{ name: 'diff', color: 'indigo.6' }]}
+        series={[{ name: 'diff' }]}
         curveType="monotone"
-        xAxisLabel="Round"
-        yAxisLabel="Difference"
+        xAxisLabel={t('gameOverview.xAxis')}
+        yAxisLabel={t('gameOverview.diff')}
         withTooltip={false}
         withPointLabels
         type="gradient"
@@ -41,7 +42,7 @@ export const CompletedGraphs: FunctionComponent<CompletedGraphsProps> = ({ round
           { offset: 80, color: 'orange.6' },
           { offset: 100, color: 'red.6' },
         ]}
-        yAxisProps={{ domain: [-10, 10] }}
+        yAxisProps={{ domain: [getLargestDiff(roundDiff) * -1, getLargestDiff(roundDiff)] }}
         tickLine="xy"
       />
       <Text fw={600}>{t('gameOverview.scoreDevelopment')}</Text>
@@ -51,8 +52,8 @@ export const CompletedGraphs: FunctionComponent<CompletedGraphsProps> = ({ round
         dataKey="round"
         series={playerSeries}
         withPointLabels
-        xAxisLabel="Round"
-        yAxisLabel="Points"
+        xAxisLabel={t('gameOverview.xAxis')}
+        yAxisLabel={t('gameOverview.points')}
         withTooltip={false}
         curveType="monotone"
         withLegend

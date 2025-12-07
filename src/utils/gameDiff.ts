@@ -75,3 +75,34 @@ export function buildCumulativeScores(game: StoredGame): Array<CumulativeScoreEn
 
   return table;
 }
+
+/**
+ * Finds the diff with the largest absolute value in a list of RoundDiffs.
+ *
+ * @param roundDiffs - An array of `RoundDiff` objects.
+ * @returns The diff value that has the greatest magnitude, or `undefined`
+ *          if no valid diffs are present.
+ *
+ * @example
+ * const data: RoundDiff[] = [
+ *   { round: 1, diff: 5 },
+ *   { round: 2, diff: -12 },
+ *   { round: 3, diff: undefined }
+ * ];
+ *
+ * console.log(getLargestDiff(data)); // → -12
+ */
+export function getLargestDiff(roundDiffs: Array<RoundDiff>): number {
+  let largest = 0;
+
+  for (const { diff } of roundDiffs) {
+    if (diff === undefined) continue; // ignore missing values
+
+    // If this is the first number or has a larger magnitude than what we have so far
+    if (Math.abs(diff) > Math.abs(largest)) {
+      largest = Math.abs(diff);
+    }
+  }
+
+  return largest;
+}

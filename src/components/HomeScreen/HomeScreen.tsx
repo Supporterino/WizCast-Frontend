@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Box, Button, Group, NumberInput, Text, TextInput, Title, useMantineTheme } from '@mantine/core';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
@@ -6,6 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { checkPermissions, getCurrentPosition, requestPermissions } from '@tauri-apps/plugin-geolocation';
 import { useTranslation } from 'react-i18next';
+import type { NumberInputHandlers} from '@mantine/core';
 import type { FormEvent, FunctionComponent } from 'react';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
@@ -17,6 +18,7 @@ export const HomeScreen: FunctionComponent = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
   const [isValid, setIsValid] = useState<boolean>(false);
+  const handlersRef = useRef<NumberInputHandlers>(null);
 
   const { t } = useTranslation();
 
@@ -101,11 +103,7 @@ export const HomeScreen: FunctionComponent = () => {
         <Group gap="xs">
           <Text mr="auto">{t('labels.numberOfPlayers')}</Text>
 
-          <Button
-            variant="light"
-            onClick={() => form.setFieldValue('playerCount', Math.max(2, form.values.playerCount - 1))}
-            disabled={form.values.playerCount <= 2}
-          >
+          <Button variant="light" onClick={() => handlersRef.current?.decrement()} disabled={form.values.playerCount <= 2}>
             –
           </Button>
 
@@ -113,19 +111,15 @@ export const HomeScreen: FunctionComponent = () => {
             value={form.values.playerCount}
             min={2}
             max={6}
-            clampBehavior={'strict'}
             allowDecimal={false}
             allowNegative={false}
+            handlersRef={handlersRef}
             onChange={(value) => form.setFieldValue('playerCount', +value)}
             style={{ width: 40 }}
             hideControls
           />
 
-          <Button
-            variant="light"
-            onClick={() => form.setFieldValue('playerCount', Math.min(6, form.values.playerCount + 1))}
-            disabled={form.values.playerCount >= 6}
-          >
+          <Button variant="light" onClick={() => handlersRef.current?.increment()} disabled={form.values.playerCount >= 6}>
             +
           </Button>
         </Group>

@@ -1,19 +1,7 @@
 import type { StoredGame } from '@/contexts/StoreProvider.tsx';
 
 /** Mantine color names (you can add/remove as needed) */
-const MANTINE_COLOR_NAMES = [
-  'indigo',
-  'blue',
-  'violet',
-  'pink',
-  'red',
-  'orange',
-  'yellow',
-  'lime',
-  'green',
-  'cyan',
-  'gray',
-] as const;
+const MANTINE_COLOR_NAMES = ['indigo', 'blue', 'violet', 'pink', 'red', 'orange', 'yellow', 'lime', 'green', 'cyan', 'gray'] as const;
 
 /** Shades that Mantine exposes – 0 … 9 */
 const MANTINE_SHADES = Array.from({ length: 10 }, (_, i) => i);
