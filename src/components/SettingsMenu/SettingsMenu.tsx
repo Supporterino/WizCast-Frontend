@@ -8,6 +8,7 @@ import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { useGame } from '@/hooks/useGame.tsx';
+import './SettingsMenu.css';
 
 export const SettingsMenu: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme(); // 'light' | 'dark' | 'auto'
@@ -45,9 +46,15 @@ export const SettingsMenu: FunctionComponent = () => {
   };
 
   const cycleColorScheme = () => {
-    if (colorScheme === 'light') setColorScheme('dark');
+    if (colorScheme === 'light')
+      document.startViewTransition(() => {
+        setColorScheme('dark');
+      });
     else if (colorScheme === 'dark') setColorScheme('auto');
-    else setColorScheme('light');
+    else
+      document.startViewTransition(() => {
+        setColorScheme('light');
+      });
   };
 
   const icon = {

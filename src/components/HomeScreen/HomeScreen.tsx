@@ -6,7 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
 import { checkPermissions, getCurrentPosition, requestPermissions } from '@tauri-apps/plugin-geolocation';
 import { useTranslation } from 'react-i18next';
-import type { NumberInputHandlers} from '@mantine/core';
+import type { NumberInputHandlers } from '@mantine/core';
 import type { FormEvent, FunctionComponent } from 'react';
 import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
 import { Route as GameRoute } from '@/routes/game/playing.tsx';
