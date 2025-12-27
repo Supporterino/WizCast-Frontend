@@ -19,6 +19,13 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
   const scoreChange = rounds[currentRound].scoreChanges[idx];
   const { t } = useTranslation();
 
+  const getScoreTillRound = (end: number) => {
+    return rounds.slice(0, end).reduce((acc, r) => {
+      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
+      return acc;
+    }, Array(players.length).fill(0));
+  };
+
   const handlePredictionChange = (value: number | string) => {
     const newPrediction = typeof value === 'string' ? parseInt(value, 10) : value;
     setPrediction(currentRound, idx, newPrediction);
@@ -65,7 +72,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
 
       <Grid gutter="xs" mt="sm">
         <GridCol m={'auto'} span={6}>
-          <Text size="xl">{score}</Text>
+          <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(currentRound + 1)[idx]}</Text>
           <Text c="dimmed" size="sm">
             {scoreChange}
           </Text>
