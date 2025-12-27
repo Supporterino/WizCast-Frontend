@@ -80,20 +80,32 @@ export const GameScreen: FunctionComponent = () => {
   };
 
   const handleFinishGame = () => {
-    const finishedGame = {
-      id,
-      startDate: startDate!,
-      endDate: new Date(),
-      location,
-      players,
-      rules,
-      rounds,
-      scores,
-    };
+    if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
+      notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
+    } else if (!rounds[currentRound].actuals.every((v) => v != undefined)) {
+      notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
+    } else if (!rounds[currentRound].predictions.every((v) => v <= currentRound + 1)) {
+      notifyRoundIncorrect('notifications.roundIncorrect.tooManyPredictions');
+    } else if (rounds[currentRound].predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1 && rules[0].active) {
+      notifyRoundIncorrect('notifications.roundIncorrect.noMatchingPrediction');
+    } else if (rounds[currentRound].actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
+      notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
+    } else {
+      const finishedGame = {
+        id,
+        startDate: startDate!,
+        endDate: new Date(),
+        location,
+        players,
+        rules,
+        rounds,
+        scores,
+      };
 
-    setCompletedGames((prev) => [...prev, finishedGame]);
-    endGame();
-    navigate({ to: ResultRoute.to });
+      setCompletedGames((prev) => [...prev, finishedGame]);
+      endGame();
+      navigate({ to: ResultRoute.to });
+    }
   };
 
   return (
