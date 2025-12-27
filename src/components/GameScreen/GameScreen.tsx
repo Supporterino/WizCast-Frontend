@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Badge, Box, Grid, GridCol, Text } from '@mantine/core';
+import { ActionIcon, Alert, Badge, Grid, GridCol, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   IconArrowNarrowLeft,
@@ -18,6 +18,7 @@ import { Route as ResultRoute } from '@/routes/results/overview';
 import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -129,8 +130,8 @@ export const GameScreen: FunctionComponent = () => {
   };
 
   return (
-    <Box style={{ position: 'relative', minHeight: '100%' }}>
-      <FlexRow fullWidth gap="md" mb="md">
+    <FlexCol fullWidth h={'100%'} justify={'flex-start'} mb={'md'}>
+      <FlexRow fullWidth gap="md">
         <ActionIcon size="lg" mr="auto" variant="light" onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound === 0}>
           <IconArrowNarrowLeft stroke={1.5} />
         </ActionIcon>
@@ -153,7 +154,7 @@ export const GameScreen: FunctionComponent = () => {
         )}
       </FlexRow>
 
-      <FlexRow fullWidth mt={'md'}>
+      <FlexRow fullWidth>
         <Text>{t('gameScreen.predictions')}</Text>
         <Badge variant={'light'} mr={'md'}>
           {rounds[currentRound].predictions.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
@@ -208,7 +209,7 @@ export const GameScreen: FunctionComponent = () => {
         ))}
       </Grid>
 
-      <Grid mt="md">
+      <Grid mt="auto" w={'100%'}>
         {players.map((name, idx) => {
           const val = playerAccuracy[name];
           const pct = typeof val === 'number' ? val : 0;
@@ -224,6 +225,6 @@ export const GameScreen: FunctionComponent = () => {
           );
         })}
       </Grid>
-    </Box>
+    </FlexCol>
   );
 };

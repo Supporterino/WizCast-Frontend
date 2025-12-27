@@ -12,11 +12,12 @@ type FlexRowProps = {
   ml?: StyleProp<MantineSpacing>;
   mt?: StyleProp<MantineSpacing>;
   mb?: StyleProp<MantineSpacing>;
+  my?: StyleProp<MantineSpacing>;
   fullWidth?: boolean;
   children: ReactNode;
 };
 
-export const FlexRow: FunctionComponent<FlexRowProps> = ({ gap, justify, align, wrap, p, mr, ml, mt, mb, fullWidth, children }) => {
+export const FlexRow: FunctionComponent<FlexRowProps> = ({ gap, justify, align, wrap, p, mr, ml, mt, mb, my, fullWidth, children }) => {
   return (
     <Flex
       gap={gap ?? 'md'}
@@ -25,6 +26,7 @@ export const FlexRow: FunctionComponent<FlexRowProps> = ({ gap, justify, align, 
       ml={ml ?? undefined}
       mt={mt ?? undefined}
       mb={mb ?? undefined}
+      my={my ?? undefined}
       direction={'row'}
       justify={justify ?? 'center'}
       align={align ?? 'center'}
