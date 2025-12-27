@@ -10,12 +10,14 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { Route as ResultRoute } from '@/routes/results/overview';
 import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
+import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -37,6 +39,7 @@ export const GameScreen: FunctionComponent = () => {
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
 
+  /* ---------- Notification helpers (unchanged) ----------------------- */
   const notifyRoundIncomplete = (
     msgKey: 'notifications.roundIncomplete.predictionMissing' | 'notifications.roundIncomplete.actualMissing',
   ) =>
@@ -62,6 +65,22 @@ export const GameScreen: FunctionComponent = () => {
       message: t(msgKey),
     });
 
+  const [playerAccuracy, setPlayerAccuracy] = useState<Record<string, number | string>>({ idx: 'game' });
+
+  const recalcAccuracy = () => {
+    const gameSnapshot = {
+      id,
+      startDate: startDate!,
+      endDate: new Date(),
+      location,
+      players,
+      rules,
+      rounds,
+      scores,
+    };
+    setPlayerAccuracy(calculatePlayerAccuracy(gameSnapshot));
+  };
+
   const handleNextRound = () => {
     if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
       notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
@@ -76,6 +95,7 @@ export const GameScreen: FunctionComponent = () => {
     } else {
       if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
       setCurrentRound(currentRound + 1);
+      recalcAccuracy();
     }
   };
 
@@ -132,6 +152,7 @@ export const GameScreen: FunctionComponent = () => {
           </ActionIcon>
         )}
       </FlexRow>
+
       <FlexRow fullWidth mt={'md'}>
         <Text>{t('gameScreen.predictions')}</Text>
         <Badge variant={'light'} mr={'md'}>
@@ -142,7 +163,6 @@ export const GameScreen: FunctionComponent = () => {
           {rounds[currentRound].actuals.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)} / {currentRound + 1}
         </Badge>
       </FlexRow>
-      {/* Alert for rule “No matching prediction” */}
       {rules[0].active &&
         rounds[currentRound].predictions.every((val) => val !== undefined) &&
         rounds[currentRound].predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1 && (
@@ -186,6 +206,23 @@ export const GameScreen: FunctionComponent = () => {
             <PlayerCard name={name} idx={idx} />
           </GridCol>
         ))}
+      </Grid>
+
+      <Grid mt="md">
+        {players.map((name, idx) => {
+          const val = playerAccuracy[name];
+          const pct = typeof val === 'number' ? val : 0;
+          return (
+            <GridCol span={4} key={idx}>
+              <FlexRow align="center">
+                <Text>{name}</Text>
+                <Badge variant="light" ml={8}>
+                  {pct.toFixed(2)}%
+                </Badge>
+              </FlexRow>
+            </GridCol>
+          );
+        })}
       </Grid>
     </Box>
   );
