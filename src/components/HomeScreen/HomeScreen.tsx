@@ -27,9 +27,9 @@ export const HomeScreen: FunctionComponent = () => {
     playerCount: number;
     players: Array<string>;
   }>({
-    mode: 'controlled',
-    validateInputOnChange: true,
-    validateInputOnBlur: true,
+    mode: 'uncontrolled',
+    // validateInputOnChange: true,
+    // validateInputOnBlur: true,
     initialValues: {
       playerCount: 3,
       players: Array(3).fill(''),
@@ -37,13 +37,12 @@ export const HomeScreen: FunctionComponent = () => {
 
     /* ────────────────────── Validation ────────────────────── */
     validate: {
-      players: (players) =>
-        players.map((name) => {
-          const trimmed = name.trim();
-          if (trimmed === '') return t('errors.required');
-          if (trimmed.length > 12) return t('errors.maxLength', { max: 12 });
-          return null;
-        }),
+      players: (value) =>
+        value.every((player) => player.trim() !== '')
+          ? value.every((player) => player.trim().length < 12)
+            ? null
+            : t('errors.maxLength', { max: 12 })
+          : t('errors.required'),
     },
   });
 
@@ -86,10 +85,13 @@ export const HomeScreen: FunctionComponent = () => {
   /* ────────────────────── Form submission ────────────────────── */
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPlayers(form.getValues().players);
-    setLocation(await getLocation());
-    startGame();
-    navigate({ to: GameRoute.to });
+    form.validate();
+    if (form.isValid()) {
+      setPlayers(form.getValues().players);
+      setLocation(await getLocation());
+      startGame();
+      navigate({ to: GameRoute.to });
+    }
   };
 
   return (
@@ -126,7 +128,7 @@ export const HomeScreen: FunctionComponent = () => {
 
         {/* Player name inputs */}
         <Box style={{ marginTop: theme.spacing.lg }}>
-          {form.values.players.map((_, index) => (
+          {form.getValues().players.map((_, index) => (
             <Box
               key={index}
               style={{
@@ -138,6 +140,7 @@ export const HomeScreen: FunctionComponent = () => {
               <TextInput
                 placeholder={t('placeholder.playerName', { index: index + 1 })}
                 {...form.getInputProps(`players.${index}`)}
+                key={form.key(`players.${index}`)}
                 style={{ flex: 1 }}
                 required
                 maxLength={12}

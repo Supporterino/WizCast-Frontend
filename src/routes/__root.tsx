@@ -81,14 +81,8 @@ const Layout = () => {
       <AppShell.Navbar p={0} onTouchStart={handleNavbarTouchStart} onTouchEnd={handleNavbarTouchEnd}>
         <NavBar closeNav={close} />
       </AppShell.Navbar>
-      <AppShell.Main
-        h={height - 60}
-        pb={0}
-        px={width < 768 ? 0 : undefined}
-        onTouchStart={handleMainTouchStart}
-        onTouchEnd={handleMainTouchEnd}
-      >
-        <Container h={height - 60 - 2 * 16}>
+      <AppShell.Main pb={0} px={width < 768 ? 0 : undefined} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
+        <Container h={height - 60 - 2 * 16} p={'xs'}>
           <Outlet />
           <TanStackRouterDevtools />
         </Container>
