@@ -70,7 +70,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
         </FlexRow>
       </Card.Section>
 
-      <Grid gutter="xs" mt="sm">
+      <Grid gap="xs" mt="sm">
         <GridCol m={'auto'} span={6}>
           <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(currentRound + 1)[idx]}</Text>
           <Text c="dimmed" size="sm">
