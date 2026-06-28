@@ -1,22 +1,9 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
+import type { PlayerSlot, RoundData, Rule } from '@/types/game.ts';
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                             */
-/* ------------------------------------------------------------------ */
-export interface Rule {
-  name: string;
-  description: string;
-  active: boolean;
-}
-
-export interface RoundData {
-  id: number;
-  predictions: Array<number | undefined>;
-  actuals: Array<number | undefined>;
-  scoreChanges: Array<number | undefined>;
-}
+export type { RoundData, Rule } from '@/types/game.ts';
 
 export interface GameContextProps {
   id: string;
@@ -44,6 +31,10 @@ export interface GameContextProps {
   setPrediction: (roundIdx: number, playerIdx: number, value: number) => void;
   setActual: (roundIdx: number, playerIdx: number, value: number) => void;
   setScoreChange: (roundIdx: number, playerIdx: number, value: number) => void;
+
+  playerSlots: Array<PlayerSlot>;
+  setPlayerSlot: (playerIndex: number, updates: Partial<PlayerSlot>) => void;
+  updateSlotStatus: (playerIndex: number, status: PlayerSlot['slotStatus']) => void;
 
   endGame: () => void;
   startGame: () => void;
@@ -102,10 +93,32 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   /* ---------- Rounds state ---------------------------------------- */
   const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
 
+  /* ---------- Player slots state ---------------------------------- */
+  const [playerSlots, setPlayerSlots] = useState<Array<PlayerSlot>>([]);
+
+  const setPlayerSlot = useCallback((playerIndex: number, updates: Partial<PlayerSlot>) => {
+    setPlayerSlots((prev) => prev.map((slot) => (slot.playerIndex === playerIndex ? { ...slot, ...updates } : slot)));
+  }, []);
+
+  const updateSlotStatus = useCallback((playerIndex: number, status: PlayerSlot['slotStatus']) => {
+    setPlayerSlots((prev) => prev.map((slot) => (slot.playerIndex === playerIndex ? { ...slot, slotStatus: status } : slot)));
+  }, []);
+
   /* ---------- Keep rounds in sync with player count ---------------- */
   useEffect(() => {
     setRounds(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
   }, [roundCount, players.length, makeEmptyRound]);
+
+  /* ---------- Keep player slots in sync with players --------------- */
+  useEffect(() => {
+    setPlayerSlots((prev) => {
+      if (prev.length === players.length) return prev;
+      return players.map((name, i) => {
+        const existing = prev.find((s) => s.playerIndex === i);
+        return existing ?? { playerIndex: i, playerName: name, inputSource: 'host', slotStatus: 'unclaimed' };
+      });
+    });
+  }, [players]);
 
   /* ---------- Scores (derived) ------------------------------------ */
   const scores = useMemo(() => {
@@ -207,6 +220,10 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
       setActual,
       setScoreChange,
 
+      playerSlots,
+      setPlayerSlot,
+      updateSlotStatus,
+
       endGame,
       startGame,
       toggleRule,
@@ -235,6 +252,10 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
       setPrediction,
       setActual,
       setScoreChange,
+
+      playerSlots,
+      setPlayerSlot,
+      updateSlotStatus,
 
       endGame,
       startGame,

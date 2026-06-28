@@ -25,7 +25,8 @@
   "buttons": {
     "view": "Ansehen",
     "rules": "Regeln",
-    "play": "Spielen"
+    "play": "Spielen",
+    "join": "Spiel beitreten"
   },
   "labels": {
     "currentRound": "{{current}} / {{total}}",
@@ -49,6 +50,7 @@
     "home": "Startseite",
     "new": "Neu",
     "game": "Spiel",
+    "join": "Beitreten",
     "results": "Ergebnisse",
     "settings": "Einstellungen"
   },
@@ -102,5 +104,28 @@
     "xAxis": "Runden",
     "diff": "Differenz",
     "points": "Punkte"
+  },
+  "join": {
+    "enterCode": "Beitrittscode eingeben",
+    "connect": "Verbinden",
+    "connecting": "Verbinde...",
+    "notConnected": "Nicht mit Relay verbunden",
+    "notReady": "Verbindung nicht bereit. Bitte warten...",
+    "timeout": "Verbindung abgelaufen"
+  },
+  "multiplayer": {
+    "shareJoinCode": "Beitrittscode teilen",
+    "hostLobby": "Mehrspieler",
+    "joinCode": "Beitrittscode",
+    "copied": "Kopiert!",
+    "shareInstructions": "Teile diesen Code mit anderen Spielern, damit sie beitreten können",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt",
+    "claimed": "vergeben",
+    "disconnectedSlots": "getrennt",
+    "playerSlots": "Spielerplätze",
+    "closeRoom": "Raum schließen",
+    "enableRemotePlayers": "Remote-Spieler aktivieren",
+    "createRoom": "Raum erstellen"
   }
 }

@@ -1,4 +1,4 @@
-import type { StoredGame } from '@/contexts/StoreProvider.tsx';
+import type { StoredGame } from '@/types/game.ts';
 
 export type PlayerAccuracy = Record<string, number | string>;
 

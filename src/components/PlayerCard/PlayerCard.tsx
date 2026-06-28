@@ -4,6 +4,7 @@ import { IconCardsFilled } from '@tabler/icons-react';
 import type { FunctionComponent } from 'react';
 import { useGame } from '@/hooks/useGame.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { computeSingleScoreChange, getScoreTillRound } from '@/utils/scoring.ts';
 
 type PlayerCardProps = {
   name: string;
@@ -19,25 +20,13 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
   const scoreChange = rounds[currentRound].scoreChanges[idx];
   const { t } = useTranslation();
 
-  const getScoreTillRound = (end: number) => {
-    return rounds.slice(0, end).reduce((acc, r) => {
-      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
-      return acc;
-    }, Array(players.length).fill(0));
-  };
-
   const handlePredictionChange = (value: number | string) => {
     const newPrediction = typeof value === 'string' ? parseInt(value, 10) : value;
     setPrediction(currentRound, idx, newPrediction);
 
     const currentActual = rounds[currentRound].actuals[idx];
-    if (currentActual || currentActual == 0) {
-      if (newPrediction === currentActual) {
-        setScoreChange(currentRound, idx, 20 + 10 * currentActual);
-      } else {
-        const diff = Math.abs(newPrediction - currentActual);
-        setScoreChange(currentRound, idx, diff * -10);
-      }
+    if (currentActual !== undefined) {
+      setScoreChange(currentRound, idx, computeSingleScoreChange(newPrediction, currentActual));
     }
   };
 
@@ -46,13 +35,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
     setActual(currentRound, idx, newActual);
 
     const currentPrediction = rounds[currentRound].predictions[idx];
-    if (currentPrediction || currentPrediction == 0) {
-      if (currentPrediction === newActual) {
-        setScoreChange(currentRound, idx, 20 + 10 * newActual);
-      } else {
-        const diff = Math.abs(currentPrediction - newActual);
-        setScoreChange(currentRound, idx, diff * -10);
-      }
+    if (currentPrediction !== undefined) {
+      setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, newActual));
     }
   };
 
@@ -72,7 +56,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
 
       <Grid gap="xs" mt="sm">
         <GridCol m={'auto'} span={6}>
-          <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(currentRound + 1)[idx]}</Text>
+          <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(rounds, currentRound + 1, players.length)[idx]}</Text>
           <Text c="dimmed" size="sm">
             {scoreChange}
           </Text>

@@ -1,38 +1,9 @@
 import { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { LazyStore } from '@tauri-apps/plugin-store';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
+import type { GameOverview, StoredGame } from '@/types/game.ts';
 
-export interface StoredGame {
-  id: string;
-  startDate: Date;
-  endDate?: Date;
-  location: string;
-
-  players: Array<string>;
-
-  rules: Array<{
-    name: string;
-    description: string;
-    active: boolean;
-  }>;
-
-  rounds: Array<{
-    id: number;
-    predictions: Array<number | undefined>;
-    actuals: Array<number | undefined>;
-    scoreChanges: Array<number | undefined>;
-  }>;
-
-  scores: Array<number>;
-}
-
-export interface GameOverview {
-  id: string;
-  playerCount: number;
-  startDate: Date;
-  endDate?: Date;
-  location: string;
-}
+export type { GameOverview, StoredGame } from '@/types/game.ts';
 
 export interface StoreContextProps {
   completedGames: Array<StoredGame>;

@@ -19,6 +19,8 @@ import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { validateRoundSubmission } from '@/utils/scoring.ts';
+import { HostLobby } from '@/components/HostLobby/HostLobby.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -83,50 +85,57 @@ export const GameScreen: FunctionComponent = () => {
   };
 
   const handleNextRound = () => {
-    if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
-      notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
-    } else if (!rounds[currentRound].actuals.every((v) => v != undefined)) {
-      notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
-    } else if (!rounds[currentRound].predictions.every((v) => v <= currentRound + 1)) {
-      notifyRoundIncorrect('notifications.roundIncorrect.tooManyPredictions');
-    } else if (rounds[currentRound].predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1 && rules[0].active) {
-      notifyRoundIncorrect('notifications.roundIncorrect.noMatchingPrediction');
-    } else if (rounds[currentRound].actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
-      notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
-    } else {
-      if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
-      setCurrentRound(currentRound + 1);
-      recalcAccuracy();
+    const result = validateRoundSubmission(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules);
+    if (!result.valid) {
+      if (result.errorCode === 'INCOMPLETE_PREDICTIONS') {
+        notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
+      } else if (result.errorCode === 'INCOMPLETE_ACTUALS') {
+        notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
+      } else if (result.errorCode === 'TOO_MANY_PREDICTIONS') {
+        notifyRoundIncorrect('notifications.roundIncorrect.tooManyPredictions');
+      } else if (result.errorCode === 'NO_MATCHING_PREDICTION') {
+        notifyRoundIncorrect('notifications.roundIncorrect.noMatchingPrediction');
+      } else if (result.errorCode === 'INVALID_ACTUALS_TOTAL') {
+        notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
+      }
+      return;
     }
+    if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
+    setCurrentRound(currentRound + 1);
+    recalcAccuracy();
   };
 
   const handleFinishGame = () => {
-    if (!rounds[currentRound].predictions.every((v) => v != undefined)) {
-      notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
-    } else if (!rounds[currentRound].actuals.every((v) => v != undefined)) {
-      notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
-    } else if (!rounds[currentRound].predictions.every((v) => v <= currentRound + 1)) {
-      notifyRoundIncorrect('notifications.roundIncorrect.tooManyPredictions');
-    } else if (rounds[currentRound].predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1 && rules[0].active) {
-      notifyRoundIncorrect('notifications.roundIncorrect.noMatchingPrediction');
-    } else if (rounds[currentRound].actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
-      notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
-    } else {
-      const finishedGame = {
-        id,
-        startDate: startDate!,
-        endDate: new Date(),
-        location,
-        players,
-        rules,
-        rounds,
-        scores,
-      };
-
-      setCompletedGames((prev) => [...prev, finishedGame]);
-      endGame();
-      navigate({ to: ResultRoute.to });
+    const result = validateRoundSubmission(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules);
+    if (!result.valid) {
+      if (result.errorCode === 'INCOMPLETE_PREDICTIONS') {
+        notifyRoundIncomplete('notifications.roundIncomplete.predictionMissing');
+      } else if (result.errorCode === 'INCOMPLETE_ACTUALS') {
+        notifyRoundIncomplete('notifications.roundIncomplete.actualMissing');
+      } else if (result.errorCode === 'TOO_MANY_PREDICTIONS') {
+        notifyRoundIncorrect('notifications.roundIncorrect.tooManyPredictions');
+      } else if (result.errorCode === 'NO_MATCHING_PREDICTION') {
+        notifyRoundIncorrect('notifications.roundIncorrect.noMatchingPrediction');
+      } else if (result.errorCode === 'INVALID_ACTUALS_TOTAL') {
+        notifyRoundIncorrect('notifications.roundIncorrect.actualMismatch');
+      }
+      return;
     }
+
+    const finishedGame = {
+      id,
+      startDate: startDate!,
+      endDate: new Date(),
+      location,
+      players,
+      rules,
+      rounds,
+      scores,
+    };
+
+    setCompletedGames((prev) => [...prev, finishedGame]);
+    endGame();
+    navigate({ to: ResultRoute.to });
   };
 
   return (
@@ -146,6 +155,8 @@ export const GameScreen: FunctionComponent = () => {
         <ActionIcon size="lg" ml="auto" variant="light" onClick={handleNextRound} disabled={currentRound + 1 === roundCount}>
           <IconArrowNarrowRight stroke={1.5} />
         </ActionIcon>
+
+        <HostLobby />
 
         {currentRound + 1 === roundCount && (
           <ActionIcon onClick={handleFinishGame}>

@@ -18,14 +18,15 @@
     "roundIncorrect": {
       "title": "Round incorrect",
       "tooManyPredictions": "A player has bid more tricks than are possible.",
-      "noMatchingPrediction": "The bids match the number of tricks in this round, violating the ‘Plus/Minus one’ rule.",
+      "noMatchingPrediction": "The bids match the number of tricks in this round, violating the 'Plus/Minus one' rule.",
       "actualMismatch": "The recorded number of tricks does not match the expected total."
     }
   },
   "buttons": {
     "view": "View",
     "rules": "Rules",
-    "play": "Play"
+    "play": "Play",
+    "join": "Join Game"
   },
   "labels": {
     "currentRound": "{{current}} / {{total}}",
@@ -38,7 +39,7 @@
     "invalidForm": "Form is invalid.",
     "predictionMatches": {
       "title": "Bids match tricks",
-      "message": "The current bids match the number of tricks in this round, which is not allowed by the ‘Plus/Minus one’ rule."
+      "message": "The current bids match the number of tricks in this round, which is not allowed by the 'Plus/Minus one' rule."
     },
     "playerCount": {
       "title": "Player Count",
@@ -49,6 +50,7 @@
     "home": "Home",
     "new": "New",
     "game": "Game",
+    "join": "Join",
     "results": "Results",
     "settings": "Settings"
   },
@@ -102,5 +104,28 @@
     "xAxis": "Rounds",
     "diff": "Difference",
     "points": "Points"
+  },
+  "join": {
+    "enterCode": "Enter Join Code",
+    "connect": "Connect",
+    "connecting": "Connecting...",
+    "notConnected": "Not connected to relay",
+    "notReady": "Connection not ready. Please wait...",
+    "timeout": "Connection timed out"
+  },
+  "multiplayer": {
+    "shareJoinCode": "Share join code",
+    "hostLobby": "Multiplayer",
+    "joinCode": "Join Code",
+    "copied": "Copied!",
+    "shareInstructions": "Share this code with other players so they can join",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "claimed": "claimed",
+    "disconnectedSlots": "disconnected",
+    "playerSlots": "Player Slots",
+    "closeRoom": "Close Room",
+    "enableRemotePlayers": "Enable Remote Players",
+    "createRoom": "Create Room"
   }
 }

@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Container, Image, Stack, Text, Title } from '@mantine/core';
+import { Button, Container, Group, Image, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { Route as NewRoute } from '@/routes/game/new';
+import { Route as JoinRoute } from '@/routes/join';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -29,9 +30,14 @@ const Home = () => {
 
           <Image src="/logo.png" h={240} fit="contain" radius="md" />
 
-          <Button size="lg" onClick={() => navigate({ to: NewRoute.to })}>
-            {t('buttons.play')}
-          </Button>
+          <Group>
+            <Button size="lg" onClick={() => navigate({ to: NewRoute.to })}>
+              {t('buttons.play')}
+            </Button>
+            <Button size="lg" variant="outline" onClick={() => navigate({ to: JoinRoute.to })}>
+              {t('buttons.join')}
+            </Button>
+          </Group>
         </Stack>
       </FlexCol>
     </Container>

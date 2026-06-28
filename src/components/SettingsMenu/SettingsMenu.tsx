@@ -1,8 +1,8 @@
-import { ActionIcon, Button, Divider, Select, Text, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Button, Divider, Select, Text, TextInput, useComputedColorScheme, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import packageJson from '../../../package.json';
 import type { FunctionComponent } from 'react';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
@@ -65,6 +65,12 @@ export const SettingsMenu: FunctionComponent = () => {
 
   const { t, i18n } = useTranslation();
 
+  const [relayUrl, setRelayUrl] = useState(() => localStorage.getItem('relayUrl') ?? 'ws://localhost:3000');
+
+  useEffect(() => {
+    localStorage.setItem('relayUrl', relayUrl);
+  }, [relayUrl]);
+
   return (
     <FlexCol fullWidth h={'100%'}>
       <Divider my="xs" label={t('settingsMenu.general')} labelPosition="left" w={'100%'} />
@@ -98,6 +104,16 @@ export const SettingsMenu: FunctionComponent = () => {
         />
       </FlexRow>
       <Divider my="xs" label={t('settingsMenu.developer')} labelPosition="left" w={'100%'} />
+      <FlexRow fullWidth>
+        <Text>{t('settingsMenu.relayUrl', 'Relay URL')}</Text>
+        <TextInput
+          ml="auto"
+          value={relayUrl}
+          onChange={(e) => setRelayUrl(e.target.value)}
+          placeholder="ws://localhost:3000"
+          style={{ minWidth: 200, marginLeft: 12 }}
+        />
+      </FlexRow>
       <FlexRow fullWidth>
         <Text>{t('settingsMenu.clear')}</Text>
         <Button ml={'auto'} onClick={() => endGame()}>

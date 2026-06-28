@@ -1,46 +1,20 @@
-import { Badge, Table, Text } from '@mantine/core';
+import { Table, Text } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
-import type { RoundData } from '@/types/game.ts';
 import type { FunctionComponent } from 'react';
+import type { RoundData } from '@/types/game.ts';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { getScoreTillRound } from '@/utils/scoring.ts';
 
-type CompletedScoreboardProps = {
+interface ContestantGameViewProps {
   players: Array<string>;
   rounds: Array<RoundData>;
   scores: Array<number>;
-};
+}
 
-export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = ({ players, rounds, scores }) => {
+export const ContestantGameView: FunctionComponent<ContestantGameViewProps> = ({ players, rounds, scores }) => {
   const { height } = useViewportSize();
-
   const { t } = useTranslation();
-
-  const roundElements = rounds.map((round: RoundData, idx) => (
-    <Table.Tr key={idx}>
-      <Table.Td>
-        <FlexRow>{idx + 1}</FlexRow>
-      </Table.Td>
-
-      {players.map((_, index) => {
-        const roundScores = getScoreTillRound(rounds, idx + 1, players.length);
-        return (
-          <Table.Td key={index}>
-            <FlexRow fullWidth>
-              <Text>{roundScores[index]}</Text>
-              <Text size="sm" c="dimmed">
-                ({round.scoreChanges[index]})
-              </Text>
-              <Badge color={round.actuals[index] === round.predictions[index] ? 'green' : 'red'}>
-                {round.actuals[index]} / {round.predictions[index]}
-              </Badge>
-            </FlexRow>
-          </Table.Td>
-        );
-      })}
-    </Table.Tr>
-  ));
 
   return (
     <Table.ScrollContainer minWidth={200 * players.length} maxHeight={height - 100}>
@@ -55,13 +29,11 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
             ))}
           </Table.Tr>
         </Table.Thead>
-
         <Table.Tbody>
           <Table.Tr>
             <Table.Td>
               <FlexRow>{t('finalRow')}</FlexRow>
             </Table.Td>
-
             {players.map((_, index) => (
               <Table.Td key={index}>
                 <FlexRow>
@@ -70,7 +42,26 @@ export const CompletedScoreboard: FunctionComponent<CompletedScoreboardProps> = 
               </Table.Td>
             ))}
           </Table.Tr>
-          {roundElements}
+          {rounds.map((round, idx) => {
+            const roundScores = getScoreTillRound(rounds, idx + 1, players.length);
+            return (
+              <Table.Tr key={idx}>
+                <Table.Td>
+                  <FlexRow>{idx + 1}</FlexRow>
+                </Table.Td>
+                {players.map((_, index) => (
+                  <Table.Td key={index}>
+                    <FlexRow fullWidth>
+                      <Text>{roundScores[index]}</Text>
+                      <Text size="sm" c="dimmed">
+                        ({round.scoreChanges[index]})
+                      </Text>
+                    </FlexRow>
+                  </Table.Td>
+                ))}
+              </Table.Tr>
+            );
+          })}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultsOverviewRouteImport } from './routes/results/overview'
@@ -20,6 +21,11 @@ import { Route as GameNewRouteImport } from './routes/game/new'
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugRoute = DebugRouteImport.update({
@@ -56,6 +62,7 @@ const GameNewRoute = GameNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/debug': typeof DebugRoute
+  '/join': typeof JoinRoute
   '/settings': typeof SettingsRoute
   '/game/new': typeof GameNewRoute
   '/game/playing': typeof GamePlayingRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/debug': typeof DebugRoute
+  '/join': typeof JoinRoute
   '/settings': typeof SettingsRoute
   '/game/new': typeof GameNewRoute
   '/game/playing': typeof GamePlayingRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/debug': typeof DebugRoute
+  '/join': typeof JoinRoute
   '/settings': typeof SettingsRoute
   '/game/new': typeof GameNewRoute
   '/game/playing': typeof GamePlayingRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/debug'
+    | '/join'
     | '/settings'
     | '/game/new'
     | '/game/playing'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/debug'
+    | '/join'
     | '/settings'
     | '/game/new'
     | '/game/playing'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/debug'
+    | '/join'
     | '/settings'
     | '/game/new'
     | '/game/playing'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DebugRoute: typeof DebugRoute
+  JoinRoute: typeof JoinRoute
   SettingsRoute: typeof SettingsRoute
   GameNewRoute: typeof GameNewRoute
   GamePlayingRoute: typeof GamePlayingRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug': {
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DebugRoute: DebugRoute,
+  JoinRoute: JoinRoute,
   SettingsRoute: SettingsRoute,
   GameNewRoute: GameNewRoute,
   GamePlayingRoute: GamePlayingRoute,
