@@ -145,8 +145,9 @@ release() {
 
   echo "🚀  Uploading App to AppStoreConnect"
   run "xcrun altool upload" \
-      xcrun altool --upload-app --type ios --file src-tauri/gen/apple/build/arm64/wizcast.ipa \
-      --apiKey "$APPLE_API_KEY" --apiIssuer "$APPLE_API_ISSUER"
+      xcrun altool --upload-app --type ios --file src-tauri/gen/apple/build/arm64/WizCast.ipa \
+      --apiKey "$APPLE_API_KEY" --apiIssuer "$APPLE_API_ISSUER" \
+      --apiKeyFile "$HOME/.appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY}.p8"
 
   # ------------------------------------------------------------
   echo "💾  Committing changes"
