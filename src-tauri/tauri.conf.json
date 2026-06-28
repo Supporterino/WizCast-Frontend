@@ -1,12 +1,12 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "WizCast",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "identifier": "de.supporterino.wizcast",
   "build": {
-    "beforeDevCommand": "yarn dev",
+    "beforeDevCommand": "bun dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "yarn build",
+    "beforeBuildCommand": "bun build",
     "frontendDist": "../dist"
   },
   "app": {

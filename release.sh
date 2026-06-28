@@ -8,7 +8,7 @@
 #      source release.sh
 #      release --minor
 #
-#  Requires: zsh, jq, sed (BSD or GNU), git, yarn, xcrun
+#  Requires: zsh, jq, sed (BSD or GNU), git, bun, xcrun
 # ------------------------------------------------------------------
 
 set -euo pipefail
@@ -30,7 +30,7 @@ run() {
 
 # ------------------------------------------------------------
 #  Verify prerequisites
-for cmd in jq sed git yarn xcrun; do
+for cmd in jq sed git bun xcrun; do
   command -v $cmd >/dev/null || die "❌  Required tool not found: $cmd"
 done
 
@@ -140,8 +140,8 @@ release() {
   # ------------------------------------------------------------
   # Optional: build & upload
   echo "📦  Building App for iOS"
-  run "yarn tauri ios build" \
-      yarn tauri ios build --export-method app-store-connect
+  run "bun tauri ios build" \
+      bun tauri ios build --export-method app-store-connect
 
   echo "🚀  Uploading App to AppStoreConnect"
   run "xcrun altool upload" \
