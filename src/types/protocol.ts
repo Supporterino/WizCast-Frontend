@@ -42,6 +42,12 @@ export interface StateSyncPayload {
   matchState: unknown;
 }
 
+export interface RoundCompletedPayload {
+  roundIndex: number;
+  scoreChanges: Array<number>;
+  players: Array<string>;
+}
+
 export type ClientToRelayPayload =
   | JoinRoomPayload
   | ClaimSlotPayload
@@ -49,7 +55,8 @@ export type ClientToRelayPayload =
   | CreateRoomPayload
   | CloseRoomPayload
   | ReleaseSlotPayload
-  | StateSyncPayload;
+  | StateSyncPayload
+  | RoundCompletedPayload;
 
 // === Relay → Client payloads ===
 
@@ -111,7 +118,8 @@ export type RelayToClientPayload =
   | ScoreSubmittedPayload
   | ContestantJoinedPayload
   | ContestantLeftPayload
-  | StateSyncPayload;
+  | StateSyncPayload
+  | RoundCompletedPayload;
 
 // === Envelope types ===
 
@@ -131,4 +139,5 @@ export type RelayToClientEnvelope =
   | { event: 'score-submitted'; data: ScoreSubmittedPayload }
   | { event: 'contestant-joined'; data: ContestantJoinedPayload }
   | { event: 'contestant-left'; data: ContestantLeftPayload }
-  | { event: 'state-sync'; data: StateSyncPayload };
+  | { event: 'state-sync'; data: StateSyncPayload }
+  | { event: 'round-completed'; data: RoundCompletedPayload };

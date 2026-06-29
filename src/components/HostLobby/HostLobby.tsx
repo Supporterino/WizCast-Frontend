@@ -5,7 +5,7 @@ import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from '
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { useGame } from '@/hooks/useGame.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
-import { accumulateScores, computeScoreChanges, validateRoundSubmission } from '@/utils/scoring.ts';
+import { accumulateScores, computeScoreChanges } from '@/utils/scoring.ts';
 
 const colorMap: Record<string, string> = {
   unclaimed: 'gray',
@@ -15,6 +15,8 @@ const colorMap: Record<string, string> = {
 
 export interface HostLobbyHandle {
   broadcastState: () => void;
+  sendEvent: (event: string, data: Record<string, unknown>) => void;
+  isRoomActive: () => boolean;
 }
 
 export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
@@ -68,6 +70,10 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
           },
         });
       },
+      sendEvent: (event: string, data: Record<string, unknown>) => {
+        send(event, data);
+      },
+      isRoomActive: () => !!wsRef.current,
     }),
     [send, rules, currentRound],
   );
@@ -112,22 +118,29 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
             break;
           case 'score-submitted': {
             const { playerIndex, roundIndex, predictions, actuals } = msg.data;
+            if (roundIndex < 0 || roundIndex >= roundsRef.current.length) {
+              send('error', { code: 'INVALID_SLOT', message: 'Invalid round index' });
+              break;
+            }
+            if (playerIndex < 0 || playerIndex >= playersRef.current.length) {
+              send('error', { code: 'INVALID_SLOT', message: 'Invalid player index' });
+              break;
+            }
+
             const round = roundsRef.current[roundIndex];
             const mergedPredictions = [...round.predictions];
             mergedPredictions[playerIndex] = predictions[0];
             const mergedActuals = [...round.actuals];
             mergedActuals[playerIndex] = actuals[0];
-            const validation = validateRoundSubmission(roundIndex, mergedPredictions, mergedActuals, rules);
-            if (!validation.valid) {
-              send('error', { code: validation.errorCode, message: validation.message, playerIndex });
-              break;
-            }
+
             setPrediction(roundIndex, playerIndex, predictions[0]);
             setActual(roundIndex, playerIndex, actuals[0]);
+
             const changes = computeScoreChanges(mergedPredictions, mergedActuals);
             changes.forEach((change, i) => {
               setScoreChange(roundIndex, i, change);
             });
+
             const updatedRounds = roundsRef.current.map((r) => {
               if (r.id === roundIndex) {
                 return { ...r, predictions: mergedPredictions, actuals: mergedActuals, scoreChanges: changes };

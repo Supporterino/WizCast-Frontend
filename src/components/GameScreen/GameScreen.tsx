@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import type {HostLobbyHandle} from '@/components/HostLobby/HostLobby.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
@@ -20,7 +20,7 @@ import { useGame } from '@/hooks/useGame.tsx';
 import { useStore } from '@/hooks/useStore.tsx';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
-import { validateRoundSubmission } from '@/utils/scoring.ts';
+import { computeSingleScoreChange, validateRoundSubmission } from '@/utils/scoring.ts';
 import { HostLobby  } from '@/components/HostLobby/HostLobby.tsx';
 
 export const GameScreen: FunctionComponent = () => {
@@ -38,12 +38,32 @@ export const GameScreen: FunctionComponent = () => {
     location,
     setPlayingRound,
     playingRound,
+    playerSlots,
+    setPrediction,
+    setActual,
+    setScoreChange,
   } = useGame();
   const navigate = useNavigate();
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
 
   const hostLobbyRef = useRef<HostLobbyHandle>(null);
+
+  const broadcastTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const debouncedBroadcast = useCallback(() => {
+    if (!hostLobbyRef.current) return;
+    if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
+    broadcastTimerRef.current = setTimeout(() => {
+      hostLobbyRef.current?.broadcastState();
+    }, 300);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
+    };
+  }, []);
 
   /* ---------- Notification helpers (unchanged) ----------------------- */
   const notifyRoundIncomplete = (
@@ -104,6 +124,11 @@ export const GameScreen: FunctionComponent = () => {
       return;
     }
     if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
+    hostLobbyRef.current?.sendEvent('round-completed', {
+      roundIndex: currentRound,
+      scoreChanges: rounds[currentRound].scoreChanges.map((sc) => sc ?? 0),
+      players,
+    });
     setCurrentRound(currentRound + 1);
     recalcAccuracy();
     hostLobbyRef.current?.broadcastState();
@@ -138,6 +163,11 @@ export const GameScreen: FunctionComponent = () => {
     };
 
     setCompletedGames((prev) => [...prev, finishedGame]);
+    hostLobbyRef.current?.sendEvent('round-completed', {
+      roundIndex: currentRound,
+      scoreChanges: rounds[currentRound].scoreChanges.map((sc) => sc ?? 0),
+      players,
+    });
     endGame();
     hostLobbyRef.current?.broadcastState();
     navigate({ to: ResultRoute.to });
@@ -218,11 +248,44 @@ export const GameScreen: FunctionComponent = () => {
           </Alert>
         )}
       <Grid mt={'md'}>
-        {players.map((name, idx) => (
-          <GridCol span={6} key={idx}>
-            <PlayerCard name={name} idx={idx} />
-          </GridCol>
-        ))}
+        {players.map((name, idx) => {
+          const isRemote = playerSlots[idx]?.slotStatus === 'claimed' || playerSlots[idx]?.slotStatus === 'disconnected';
+          const roomActive = hostLobbyRef.current?.isRoomActive() ?? false;
+          return (
+            <GridCol span={6} key={idx}>
+              <PlayerCard
+                name={name}
+                idx={idx}
+                slotStatus={playerSlots[idx]?.slotStatus}
+                isRemoteConnected={isRemote}
+                onPredictionChange={
+                  roomActive
+                    ? (value) => {
+                        setPrediction(currentRound, idx, value);
+                        const currentActual = rounds[currentRound].actuals[idx];
+                        if (currentActual !== undefined) {
+                          setScoreChange(currentRound, idx, computeSingleScoreChange(value, currentActual));
+                        }
+                        debouncedBroadcast();
+                      }
+                    : undefined
+                }
+                onActualChange={
+                  roomActive
+                    ? (value) => {
+                        setActual(currentRound, idx, value);
+                        const currentPrediction = rounds[currentRound].predictions[idx];
+                        if (currentPrediction !== undefined) {
+                          setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, value));
+                        }
+                        debouncedBroadcast();
+                      }
+                    : undefined
+                }
+              />
+            </GridCol>
+          );
+        })}
       </Grid>
 
       <Grid mt="auto" w={'100%'}>

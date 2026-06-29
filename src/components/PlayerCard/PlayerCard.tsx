@@ -1,7 +1,9 @@
-import { Card, Grid, GridCol, NumberInput, Text } from '@mantine/core';
+import { Badge, Card, Grid, GridCol, NumberInput, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { IconCardsFilled } from '@tabler/icons-react';
+import { useEffect, useRef } from 'react';
 import type { FunctionComponent } from 'react';
+import type { SlotStatus } from '@/types/game.ts';
 import { useGame } from '@/hooks/useGame.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { computeSingleScoreChange, getScoreTillRound } from '@/utils/scoring.ts';
@@ -9,61 +11,131 @@ import { computeSingleScoreChange, getScoreTillRound } from '@/utils/scoring.ts'
 type PlayerCardProps = {
   name: string;
   idx: number;
+  prediction?: number;
+  actual?: number;
+  score?: number;
+  scoreChange?: number;
+  currentRound?: number;
+  playingRound?: number;
+  playerCount?: number;
+  onPredictionChange?: (value: number) => void;
+  onActualChange?: (value: number) => void;
+  isRemoteConnected?: boolean;
+  slotStatus?: SlotStatus;
 };
 
-export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) => {
-  const { rounds, currentRound, setPrediction, setActual, scores, setScoreChange, players, playingRound } = useGame();
+export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
+  name,
+  idx,
+  prediction: overridePrediction,
+  actual: overrideActual,
+  score: overrideScore,
+  scoreChange: overrideScoreChange,
+  currentRound: overrideCurrentRound,
+  playingRound: overridePlayingRound,
+  playerCount: overridePlayerCount,
+  onPredictionChange,
+  onActualChange,
+  isRemoteConnected,
+  slotStatus,
+}) => {
+  const { rounds, currentRound: ctxCurrentRound, setPrediction, setActual, scores, setScoreChange, players, playingRound: ctxPlayingRound } = useGame();
 
-  const prediction = rounds[currentRound].predictions[idx];
-  const actual = rounds[currentRound].actuals[idx];
-  const score = scores[idx];
-  const scoreChange = rounds[currentRound].scoreChanges[idx];
+  const currentRound = overrideCurrentRound ?? ctxCurrentRound;
+  const playingRound = overridePlayingRound ?? ctxPlayingRound;
+  const playerCount = overridePlayerCount ?? players.length;
+
+  const prediction = overridePrediction ?? rounds[currentRound]?.predictions[idx];
+  const actual = overrideActual ?? rounds[currentRound]?.actuals[idx];
+  const score = overrideScore ?? scores[idx];
+  const scoreChange = overrideScoreChange ?? rounds[currentRound]?.scoreChanges[idx];
   const { t } = useTranslation();
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const handlePredictionChange = (value: number | string) => {
     const newPrediction = typeof value === 'string' ? parseInt(value, 10) : value;
-    setPrediction(currentRound, idx, newPrediction);
 
-    const currentActual = rounds[currentRound].actuals[idx];
-    if (currentActual !== undefined) {
-      setScoreChange(currentRound, idx, computeSingleScoreChange(newPrediction, currentActual));
+    if (onPredictionChange) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        onPredictionChange(newPrediction);
+      }, 300);
+    } else {
+      setPrediction(currentRound, idx, newPrediction);
+
+      const currentActual = rounds[currentRound]?.actuals[idx];
+      if (currentActual !== undefined) {
+        setScoreChange(currentRound, idx, computeSingleScoreChange(newPrediction, currentActual));
+      }
     }
   };
 
   const handleActualChange = (value: number | string) => {
     const newActual = typeof value === 'string' ? parseInt(value, 10) : value;
-    setActual(currentRound, idx, newActual);
 
-    const currentPrediction = rounds[currentRound].predictions[idx];
-    if (currentPrediction !== undefined) {
-      setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, newActual));
+    if (onActualChange) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        onActualChange(newActual);
+      }, 300);
+    } else {
+      setActual(currentRound, idx, newActual);
+
+      const currentPrediction = rounds[currentRound]?.predictions[idx];
+      if (currentPrediction !== undefined) {
+        setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, newActual));
+      }
     }
   };
 
   const isPredictionEmpty = prediction === undefined;
   const isActualEmpty = actual === undefined;
+  const hasOverrides = overrideCurrentRound !== undefined;
+  const hasCallbacks = onPredictionChange !== undefined || onActualChange !== undefined;
+  const inputsDisabled = hasOverrides ? !hasCallbacks : currentRound !== playingRound;
+
+  const badgeLabel =
+    slotStatus === 'disconnected' ? t('playerCard.disconnected', 'Disconnected') : t('playerCard.remote', 'Remote');
+  const badgeColor = slotStatus === 'disconnected' ? 'orange' : 'green';
 
   return (
-    <Card shadow="sm" padding="sm" radius="md" withBorder>
+    <Card
+      shadow="sm"
+      padding="sm"
+      radius="md"
+      withBorder
+      bg={isRemoteConnected ? 'var(--mantine-color-green-light-hover)' : undefined}
+    >
       <Card.Section withBorder inheritPadding>
         <FlexRow fullWidth p={'xs'}>
           <Text mr={'auto'} fw={500}>
             {name}
           </Text>
-          {idx == currentRound % players.length && <IconCardsFilled color={'red'} stroke={1.5} />}
+          {isRemoteConnected && (
+            <Badge color={badgeColor} variant="light" size="xs" mr="xs">
+              {badgeLabel}
+            </Badge>
+          )}
+          {idx == currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
         </FlexRow>
       </Card.Section>
 
       <Grid gap="xs" mt="sm">
         <GridCol m={'auto'} span={6}>
-          <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(rounds, currentRound + 1, players.length)[idx]}</Text>
+          <Text size="xl">{currentRound === playingRound ? score : getScoreTillRound(rounds, currentRound + 1, playerCount)[idx]}</Text>
           <Text c="dimmed" size="sm">
             {scoreChange}
           </Text>
         </GridCol>
 
         <GridCol span={6}>
-          {/* Prediction input */}
           <NumberInput
             key={`prediction-${currentRound}-${idx}`}
             min={0}
@@ -75,11 +147,10 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             value={prediction ?? undefined}
             onChange={handlePredictionChange}
             hideControls
-            disabled={currentRound !== playingRound}
+            disabled={inputsDisabled}
             error={isPredictionEmpty}
           />
 
-          {/* Actual input */}
           <NumberInput
             key={`actual-${currentRound}-${idx}`}
             min={0}
@@ -91,7 +162,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({ name, idx }) =>
             value={actual ?? undefined}
             onChange={handleActualChange}
             hideControls
-            disabled={currentRound !== playingRound}
+            disabled={inputsDisabled}
             error={isActualEmpty}
           />
         </GridCol>

@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container, Stack, Text, Title } from '@mantine/core';
+import { Container, Grid, GridCol, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import type { RoundData, Rule, SlotStatus } from '@/types/game.ts';
 import { JoinMatch } from '@/components/JoinMatch/JoinMatch.tsx';
 import { ClaimSlot } from '@/components/ClaimSlot/ClaimSlot.tsx';
-import { ContestantGameView } from '@/components/ContestantGameView/ContestantGameView.tsx';
-import { ContestantScoreInput } from '@/components/ContestantScoreInput/ContestantScoreInput.tsx';
+import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
+import { RoundSummary } from '@/components/RoundSummary/RoundSummary.tsx';
 import { useMatchSocket } from '@/hooks/useMatchSocket.ts';
 
 const DEFAULT_RELAY_URL = 'ws://localhost:3000';
@@ -21,6 +21,15 @@ type AppState =
       sessionToken: string;
       claimedIndex: number;
       matchState: { players: Array<string>; rounds: Array<RoundData>; scores: Array<number>; rules: Array<Rule>; currentRound: number };
+    }
+  | {
+      phase: 'round-summary';
+      joinCode: string;
+      sessionToken: string;
+      claimedIndex: number;
+      matchState: { players: Array<string>; rounds: Array<RoundData>; scores: Array<number>; rules: Array<Rule>; currentRound: number };
+      roundIndex: number;
+      scoreChanges: Array<number>;
     };
 
 function JoinPage() {
@@ -30,6 +39,14 @@ function JoinPage() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const joinCodeRef = useRef<string | null>(null);
   const joinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const appStateRef = useRef(appState);
+  appStateRef.current = appState;
+
+  const contestantDebounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const latestPredRef = useRef<number | undefined>(undefined);
+  const latestActualRef = useRef<number | undefined>(undefined);
+  const summaryDismissRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const handleMessage = (message: RelayToClientEnvelope) => {
     setAppState((current) => {
@@ -49,6 +66,8 @@ function JoinPage() {
         }
         case 'slot-claimed': {
           if (current.phase === 'claim-slot') {
+            latestPredRef.current = undefined;
+            latestActualRef.current = undefined;
             return {
               phase: 'playing',
               joinCode: current.joinCode,
@@ -68,8 +87,23 @@ function JoinPage() {
           return current;
         }
         case 'state-sync': {
-          if (current.phase === 'playing') {
+          if (current.phase === 'playing' || current.phase === 'round-summary') {
             return { ...current, matchState: message.data.matchState as typeof current.matchState };
+          }
+          return current;
+        }
+        case 'round-completed': {
+          if (current.phase === 'playing') {
+            if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
+            return {
+              phase: 'round-summary',
+              joinCode: current.joinCode,
+              sessionToken: current.sessionToken,
+              claimedIndex: current.claimedIndex,
+              matchState: current.matchState,
+              roundIndex: message.data.roundIndex,
+              scoreChanges: message.data.scoreChanges,
+            };
           }
           return current;
         }
@@ -107,15 +141,59 @@ function JoinPage() {
     sendEvent('claim-slot', { playerIndex });
   };
 
-  const handleScoreSubmit = (predictions: Array<number>, actuals: Array<number>) => {
-    if (appState.phase !== 'playing') return;
-    sendEvent('submit-score', {
-      playerIndex: appState.claimedIndex,
-      roundIndex: appState.matchState.currentRound,
-      predictions,
-      actuals,
+  const sendScoreDebounced = useCallback(() => {
+    if (contestantDebounceRef.current) clearTimeout(contestantDebounceRef.current);
+    contestantDebounceRef.current = setTimeout(() => {
+      const state = appStateRef.current;
+      if (state.phase !== 'playing') return;
+      sendEvent('submit-score', {
+        playerIndex: state.claimedIndex,
+        roundIndex: state.matchState.currentRound,
+        predictions: latestPredRef.current !== undefined ? [latestPredRef.current] : [],
+        actuals: latestActualRef.current !== undefined ? [latestActualRef.current] : [],
+      });
+    }, 300);
+  }, [sendEvent]);
+
+  const handlePredictionChange = useCallback(
+    (value: number) => {
+      latestPredRef.current = value;
+      sendScoreDebounced();
+    },
+    [sendScoreDebounced],
+  );
+
+  const handleActualChange = useCallback(
+    (value: number) => {
+      latestActualRef.current = value;
+      sendScoreDebounced();
+    },
+    [sendScoreDebounced],
+  );
+
+  const handleDismissSummary = useCallback(() => {
+    setAppState((current) => {
+      if (current.phase === 'round-summary') {
+        latestPredRef.current = undefined;
+        latestActualRef.current = undefined;
+        return {
+          phase: 'playing',
+          joinCode: current.joinCode,
+          sessionToken: current.sessionToken,
+          claimedIndex: current.claimedIndex,
+          matchState: current.matchState,
+        };
+      }
+      return current;
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (contestantDebounceRef.current) clearTimeout(contestantDebounceRef.current);
+      if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
+    };
+  }, []);
 
   return (
     <Container size="sm" py="xl">
@@ -151,21 +229,39 @@ function JoinPage() {
 
       {appState.phase === 'playing' && (
         <Stack>
-          <ContestantGameView
-            players={appState.matchState.players}
-            rounds={appState.matchState.rounds}
-            scores={appState.matchState.scores}
-            currentRound={appState.matchState.currentRound}
-          />
-          <ContestantScoreInput
-            playerIndex={appState.claimedIndex}
-            roundIndex={appState.matchState.currentRound}
-            maxValue={appState.matchState.currentRound + 1}
-            rules={appState.matchState.rules}
-            onSubmit={handleScoreSubmit}
-            disabled={!isConnected}
-          />
+          <Grid>
+            {appState.matchState.players.map((name, idx) => {
+              const isOwnCard = idx === appState.claimedIndex;
+              const round = appState.matchState.rounds[appState.matchState.currentRound] as RoundData | undefined;
+              return (
+                <GridCol span={6} key={idx}>
+                  <PlayerCard
+                    name={name}
+                    idx={idx}
+                    prediction={round?.predictions[idx]}
+                    actual={round?.actuals[idx]}
+                    score={appState.matchState.scores[idx]}
+                    scoreChange={round?.scoreChanges[idx]}
+                    currentRound={appState.matchState.currentRound}
+                    playingRound={appState.matchState.currentRound}
+                    playerCount={appState.matchState.players.length}
+                    onPredictionChange={isOwnCard ? handlePredictionChange : undefined}
+                    onActualChange={isOwnCard ? handleActualChange : undefined}
+                  />
+                </GridCol>
+              );
+            })}
+          </Grid>
         </Stack>
+      )}
+
+      {appState.phase === 'round-summary' && (
+        <RoundSummary
+          players={appState.matchState.players}
+          scoreChanges={appState.scoreChanges}
+          roundIndex={appState.roundIndex}
+          onDismiss={handleDismissSummary}
+        />
       )}
     </Container>
   );
