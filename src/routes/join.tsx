@@ -37,6 +37,8 @@ function JoinPage() {
   const [appState, setAppState] = useState<AppState>({ phase: 'enter-code' });
   const [claimError, setClaimError] = useState<string | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
+  const [localPrediction, setLocalPrediction] = useState<number | undefined>(undefined);
+  const [localActual, setLocalActual] = useState<number | undefined>(undefined);
   const joinCodeRef = useRef<string | null>(null);
   const joinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -88,12 +90,16 @@ function JoinPage() {
         }
         case 'state-sync': {
           if (current.phase === 'playing' || current.phase === 'round-summary') {
+            setLocalPrediction(undefined);
+            setLocalActual(undefined);
             return { ...current, matchState: message.data.matchState as typeof current.matchState };
           }
           return current;
         }
         case 'round-completed': {
           if (current.phase === 'playing') {
+            setLocalPrediction(undefined);
+            setLocalActual(undefined);
             if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
             return {
               phase: 'round-summary',
@@ -157,6 +163,7 @@ function JoinPage() {
 
   const handlePredictionChange = useCallback(
     (value: number) => {
+      setLocalPrediction(value);
       latestPredRef.current = value;
       sendScoreDebounced();
     },
@@ -165,6 +172,7 @@ function JoinPage() {
 
   const handleActualChange = useCallback(
     (value: number) => {
+      setLocalActual(value);
       latestActualRef.current = value;
       sendScoreDebounced();
     },
@@ -238,8 +246,8 @@ function JoinPage() {
                   <PlayerCard
                     name={name}
                     idx={idx}
-                    prediction={round?.predictions[idx]}
-                    actual={round?.actuals[idx]}
+                    prediction={isOwnCard ? (localPrediction ?? round?.predictions[idx]) : round?.predictions[idx]}
+                    actual={isOwnCard ? (localActual ?? round?.actuals[idx]) : round?.actuals[idx]}
                     score={appState.matchState.scores[idx]}
                     scoreChange={round?.scoreChanges[idx]}
                     currentRound={appState.matchState.currentRound}
