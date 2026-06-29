@@ -10,8 +10,9 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import type {HostLobbyHandle} from '@/components/HostLobby/HostLobby.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { Route as ResultRoute } from '@/routes/results/overview';
@@ -20,7 +21,7 @@ import { useStore } from '@/hooks/useStore.tsx';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { validateRoundSubmission } from '@/utils/scoring.ts';
-import { HostLobby } from '@/components/HostLobby/HostLobby.tsx';
+import { HostLobby  } from '@/components/HostLobby/HostLobby.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -41,6 +42,8 @@ export const GameScreen: FunctionComponent = () => {
   const navigate = useNavigate();
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
+
+  const hostLobbyRef = useRef<HostLobbyHandle>(null);
 
   /* ---------- Notification helpers (unchanged) ----------------------- */
   const notifyRoundIncomplete = (
@@ -103,6 +106,7 @@ export const GameScreen: FunctionComponent = () => {
     if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
     setCurrentRound(currentRound + 1);
     recalcAccuracy();
+    hostLobbyRef.current?.broadcastState();
   };
 
   const handleFinishGame = () => {
@@ -135,6 +139,7 @@ export const GameScreen: FunctionComponent = () => {
 
     setCompletedGames((prev) => [...prev, finishedGame]);
     endGame();
+    hostLobbyRef.current?.broadcastState();
     navigate({ to: ResultRoute.to });
   };
 
@@ -156,7 +161,7 @@ export const GameScreen: FunctionComponent = () => {
           <IconArrowNarrowRight stroke={1.5} />
         </ActionIcon>
 
-        <HostLobby />
+        <HostLobby ref={hostLobbyRef} />
 
         {currentRound + 1 === roundCount && (
           <ActionIcon onClick={handleFinishGame}>

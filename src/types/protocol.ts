@@ -87,6 +87,8 @@ export interface ErrorPayload {
 export interface ScoreSubmittedPayload {
   playerIndex: number;
   roundIndex: number;
+  predictions: Array<number>;
+  actuals: Array<number>;
 }
 
 export interface ContestantJoinedPayload {

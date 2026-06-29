@@ -1,11 +1,11 @@
 import { ActionIcon, Badge, Button, Card, CopyButton, Group, Modal, Stack, Text, Tooltip } from '@mantine/core';
 import { IconShare } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useRef, useState } from 'react';
-import type { FunctionComponent } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { useGame } from '@/hooks/useGame.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { accumulateScores, computeScoreChanges, validateRoundSubmission } from '@/utils/scoring.ts';
 
 const colorMap: Record<string, string> = {
   unclaimed: 'gray',
@@ -13,14 +13,36 @@ const colorMap: Record<string, string> = {
   disconnected: 'orange',
 };
 
-export const HostLobby: FunctionComponent = () => {
+export interface HostLobbyHandle {
+  broadcastState: () => void;
+}
+
+export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   const { t } = useTranslation();
-  const { players, playerSlots, updateSlotStatus } = useGame();
+  const {
+    players,
+    rounds,
+    scores,
+    rules,
+    currentRound,
+    playerSlots,
+    updateSlotStatus,
+    setPrediction,
+    setActual,
+    setScoreChange,
+  } = useGame();
   const [opened, setOpened] = useState(false);
   const [joinCode, setJoinCode] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const playersRef = useRef(players);
+  const roundsRef = useRef(rounds);
+  const scoresRef = useRef(scores);
+  playersRef.current = players;
+  roundsRef.current = rounds;
+  scoresRef.current = scores;
 
   const wsRef = useRef<WebSocket | null>(null);
   const isCreatingRef = useRef(false);
@@ -30,6 +52,25 @@ export const HostLobby: FunctionComponent = () => {
   const send = useCallback((event: string, data: Record<string, unknown>) => {
     wsRef.current?.send(JSON.stringify({ event, data }));
   }, []);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      broadcastState: () => {
+        if (!wsRef.current) return;
+        send('state-sync', {
+          matchState: {
+            players: playersRef.current,
+            rounds: roundsRef.current,
+            scores: scoresRef.current,
+            rules,
+            currentRound,
+          },
+        });
+      },
+    }),
+    [send, rules, currentRound],
+  );
 
   const createRoom = useCallback(() => {
     if (isCreating || wsRef.current) return;
@@ -69,6 +110,42 @@ export const HostLobby: FunctionComponent = () => {
           case 'contestant-left':
             updateSlotStatus(msg.data.playerIndex, 'unclaimed');
             break;
+          case 'score-submitted': {
+            const { playerIndex, roundIndex, predictions, actuals } = msg.data;
+            const round = roundsRef.current[roundIndex];
+            const mergedPredictions = [...round.predictions];
+            mergedPredictions[playerIndex] = predictions[0];
+            const mergedActuals = [...round.actuals];
+            mergedActuals[playerIndex] = actuals[0];
+            const validation = validateRoundSubmission(roundIndex, mergedPredictions, mergedActuals, rules);
+            if (!validation.valid) {
+              send('error', { code: validation.errorCode, message: validation.message, playerIndex });
+              break;
+            }
+            setPrediction(roundIndex, playerIndex, predictions[0]);
+            setActual(roundIndex, playerIndex, actuals[0]);
+            const changes = computeScoreChanges(mergedPredictions, mergedActuals);
+            changes.forEach((change, i) => {
+              setScoreChange(roundIndex, i, change);
+            });
+            const updatedRounds = roundsRef.current.map((r) => {
+              if (r.id === roundIndex) {
+                return { ...r, predictions: mergedPredictions, actuals: mergedActuals, scoreChanges: changes };
+              }
+              return r;
+            });
+            const updatedScores = accumulateScores(updatedRounds, playersRef.current.length);
+            send('state-sync', {
+              matchState: {
+                players: playersRef.current,
+                rounds: updatedRounds,
+                scores: updatedScores,
+                rules,
+                currentRound,
+              },
+            });
+            break;
+          }
           case 'slot-status-changed':
             updateSlotStatus(msg.data.playerIndex, msg.data.status);
             break;
@@ -199,4 +276,5 @@ export const HostLobby: FunctionComponent = () => {
       </Modal>
     </>
   );
-};
+});
+HostLobby.displayName = 'HostLobby';

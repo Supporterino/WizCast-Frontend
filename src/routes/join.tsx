@@ -3,7 +3,7 @@ import { Container, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
-import type { RoundData, SlotStatus } from '@/types/game.ts';
+import type { RoundData, Rule, SlotStatus } from '@/types/game.ts';
 import { JoinMatch } from '@/components/JoinMatch/JoinMatch.tsx';
 import { ClaimSlot } from '@/components/ClaimSlot/ClaimSlot.tsx';
 import { ContestantGameView } from '@/components/ContestantGameView/ContestantGameView.tsx';
@@ -20,7 +20,7 @@ type AppState =
       joinCode: string;
       sessionToken: string;
       claimedIndex: number;
-      matchState: { players: Array<string>; rounds: Array<RoundData>; scores: Array<number> };
+      matchState: { players: Array<string>; rounds: Array<RoundData>; scores: Array<number>; rules: Array<Rule>; currentRound: number };
     };
 
 function JoinPage() {
@@ -54,7 +54,7 @@ function JoinPage() {
               joinCode: current.joinCode,
               sessionToken: current.sessionToken,
               claimedIndex: message.data.playerIndex,
-              matchState: { players: current.players, rounds: [], scores: new Array(current.players.length).fill(0) },
+              matchState: { players: current.players, rounds: [], scores: new Array(current.players.length).fill(0), rules: [], currentRound: 0 },
             };
           }
           return current;
@@ -111,7 +111,7 @@ function JoinPage() {
     if (appState.phase !== 'playing') return;
     sendEvent('submit-score', {
       playerIndex: appState.claimedIndex,
-      roundIndex: 0,
+      roundIndex: appState.matchState.currentRound,
       predictions,
       actuals,
     });
@@ -155,11 +155,13 @@ function JoinPage() {
             players={appState.matchState.players}
             rounds={appState.matchState.rounds}
             scores={appState.matchState.scores}
+            currentRound={appState.matchState.currentRound}
           />
           <ContestantScoreInput
             playerIndex={appState.claimedIndex}
-            roundIndex={0}
-            maxValue={10}
+            roundIndex={appState.matchState.currentRound}
+            maxValue={appState.matchState.currentRound + 1}
+            rules={appState.matchState.rules}
             onSubmit={handleScoreSubmit}
             disabled={!isConnected}
           />
