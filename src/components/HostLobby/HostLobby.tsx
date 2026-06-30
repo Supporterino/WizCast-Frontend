@@ -46,6 +46,9 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   roundsRef.current = rounds;
   scoresRef.current = scores;
 
+  const currentRoundRef = useRef(currentRound);
+  currentRoundRef.current = currentRound;
+
   const wsRef = useRef<WebSocket | null>(null);
   const isCreatingRef = useRef(false);
 
@@ -66,7 +69,7 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
             rounds: roundsRef.current,
             scores: scoresRef.current,
             rules,
-            currentRound,
+            currentRound: currentRoundRef.current,
           },
         });
       },
@@ -154,7 +157,7 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
                 rounds: updatedRounds,
                 scores: updatedScores,
                 rules,
-                currentRound,
+                currentRound: currentRoundRef.current,
               },
             });
             break;
