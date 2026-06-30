@@ -2,34 +2,30 @@ import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, FunctionComponent, MutableRefObject } from 'react';
-import type { ClientToRelayPayload } from '@/types/protocol.ts';
+import { useConnection } from '@/contexts/ConnectionProvider.tsx';
 
 interface JoinMatchProps {
-  sendEvent: (event: string, data: ClientToRelayPayload) => boolean;
-  isConnected: boolean;
-  isConnecting: boolean;
-  disconnect: () => void;
   onJoined: (code: string) => void;
   joinTimeoutRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
   joinError: string | null;
 }
 
 export const JoinMatch: FunctionComponent<JoinMatchProps> = ({
-  sendEvent,
-  isConnected,
-  isConnecting,
-  disconnect,
   onJoined,
   joinTimeoutRef,
   joinError,
 }) => {
   const { t } = useTranslation();
+  const { sendEvent, disconnect, connectionState } = useConnection();
   const [firstPart, setFirstPart] = useState('');
   const [secondPart, setSecondPart] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
   const mountedRef = useRef(true);
   const secondRef = useRef<HTMLInputElement>(null);
+
+  const isConnected = connectionState.transport === 'CONNECTED';
+  const isConnecting = connectionState.transport === 'CONNECTING';
 
   useEffect(() => {
     mountedRef.current = true;

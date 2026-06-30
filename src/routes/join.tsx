@@ -1,14 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Badge, Container, Grid, GridCol, Stack, Text, Title } from '@mantine/core';
+import { Badge, Button, Container, Grid, GridCol, Modal, Stack, Text, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import type { RoundData, Rule, SlotStatus } from '@/types/game.ts';
+import { ErrorCode } from '@/types/protocol.ts';
 import { JoinMatch } from '@/components/JoinMatch/JoinMatch.tsx';
 import { ClaimSlot } from '@/components/ClaimSlot/ClaimSlot.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { RoundSummary } from '@/components/RoundSummary/RoundSummary.tsx';
-import { useMatchSocket } from '@/hooks/useMatchSocket.ts';
+import { ConnectionProvider, useConnection } from '@/contexts/ConnectionProvider.tsx';
 
 type AppState =
   | { phase: 'enter-code' }
@@ -36,6 +38,8 @@ function JoinPage() {
   const [claimError, setClaimError] = useState<string | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [sendError, setSendError] = useState(false);
+  const [hostDisconnected, setHostDisconnected] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [localPrediction, setLocalPrediction] = useState<number | undefined>(undefined);
   const [localActual, setLocalActual] = useState<number | undefined>(undefined);
   const joinCodeRef = useRef<string | null>(null);
@@ -49,7 +53,12 @@ function JoinPage() {
   const latestActualRef = useRef<number | undefined>(undefined);
   const summaryDismissRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const handleMessage = (message: RelayToClientEnvelope) => {
+  const hostDisconnectedRef = useRef(false);
+  hostDisconnectedRef.current = hostDisconnected;
+
+  const conn = useConnection();
+
+  const handleMessage = useCallback((message: RelayToClientEnvelope) => {
     setAppState((current) => {
       switch (message.event) {
         case 'room-joined': {
@@ -57,6 +66,7 @@ function JoinPage() {
             clearTimeout(joinTimeoutRef.current);
             joinTimeoutRef.current = null;
           }
+          conn.setSessionJoined();
           return {
             phase: 'claim-slot',
             joinCode: joinCodeRef.current ?? '',
@@ -69,6 +79,7 @@ function JoinPage() {
           if (current.phase === 'claim-slot') {
             latestPredRef.current = undefined;
             latestActualRef.current = undefined;
+            conn.setSessionActive();
             return {
               phase: 'playing',
               joinCode: current.joinCode,
@@ -112,12 +123,25 @@ function JoinPage() {
           }
           return current;
         }
+        case 'host-disconnected': {
+          setHostDisconnected(true);
+          return current;
+        }
+        case 'host-reconnected': {
+          setHostDisconnected(false);
+          return current;
+        }
         case 'room-closed':
+          conn.setSessionDisconnected();
+          setHostDisconnected(false);
           return { phase: 'enter-code' };
         case 'error': {
           if (joinTimeoutRef.current) {
             clearTimeout(joinTimeoutRef.current);
             joinTimeoutRef.current = null;
+          }
+          if (message.data.code === ErrorCode.SESSION_EXPIRED || message.data.code === ErrorCode.HOST_SESSION_EXPIRED) {
+            setSessionExpired(true);
           }
           if (current.phase === 'enter-code') {
             setJoinError(message.data.message);
@@ -130,20 +154,26 @@ function JoinPage() {
           return current;
       }
     });
-  };
+  }, [conn]);
 
-  const { sendEvent, isConnected, isConnecting, disconnect } = useMatchSocket({
-    url: localStorage.getItem('relayUrl') ?? 'ws://localhost:3000',
-    onMessage: handleMessage,
-  });
+  useEffect(() => {
+    conn.connect('contestant');
+  }, []);
+
+  useEffect(() => {
+    conn.setMessageHandler(handleMessage);
+    return () => conn.setMessageHandler(null);
+  }, [handleMessage]);
 
   const handleJoined = (code: string) => {
     joinCodeRef.current = code;
+    conn.setJoinCode(code);
+    conn.setSessionJoining();
     setJoinError(null);
   };
 
   const handleClaim = (playerIndex: number) => {
-    sendEvent('claim-slot', { playerIndex });
+    conn.sendEvent('claim-slot', { playerIndex });
   };
 
   const sendScoreDebounced = useCallback(() => {
@@ -151,7 +181,7 @@ function JoinPage() {
     contestantDebounceRef.current = setTimeout(() => {
       const state = appStateRef.current;
       if (state.phase !== 'playing') return;
-      const sent = sendEvent('submit-score', {
+      const sent = conn.sendEvent('submit-score', {
         playerIndex: state.claimedIndex,
         roundIndex: state.matchState.currentRound,
         predictions: latestPredRef.current !== undefined ? [latestPredRef.current] : [],
@@ -162,7 +192,7 @@ function JoinPage() {
         setTimeout(() => setSendError(false), 3000);
       }
     }, 300);
-  }, [sendEvent]);
+  }, [conn]);
 
   const handlePredictionChange = useCallback(
     (value: number) => {
@@ -201,12 +231,37 @@ function JoinPage() {
     });
   }, []);
 
+  const handleRejoin = useCallback(() => {
+    setSessionExpired(false);
+    conn.disconnect();
+    setAppState({ phase: 'enter-code' });
+  }, [conn]);
+
   useEffect(() => {
     return () => {
       if (contestantDebounceRef.current) clearTimeout(contestantDebounceRef.current);
       if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
     };
   }, []);
+
+  const prevSessionRef = useRef(conn.connectionState.session);
+  useEffect(() => {
+    const prev = prevSessionRef.current;
+    const curr = conn.connectionState.session;
+    if (prev === 'REJOINING' && (curr === 'JOINED' || curr === 'ACTIVE')) {
+      notifications.show({
+        title: t('join.reconnectedTitle', 'Reconnected'),
+        message: t('join.reconnectedMessage', 'Your connection has been restored.'),
+        color: 'green',
+        autoClose: 2000,
+      });
+    }
+    prevSessionRef.current = curr;
+  }, [conn.connectionState.session, t]);
+
+  const isConnected = conn.connectionState.transport === 'CONNECTED';
+  const sessionActive = conn.connectionState.session === 'ACTIVE';
+  const isRejoining = conn.connectionState.session === 'REJOINING';
 
   return (
     <Container size="sm" py="xl">
@@ -218,12 +273,20 @@ function JoinPage() {
         {sendError ? t('join.sendError', 'Error sending') : isConnected ? t('join.connected', 'Connected') : t('join.disconnected', 'Disconnected')}
       </Text>
 
+      {isRejoining && (
+        <Badge variant="light" color="yellow" mb="md" style={{ animation: 'pulse 1.5s infinite' }}>
+          {t('join.reconnecting', 'Reconnecting...')}
+        </Badge>
+      )}
+
+      {hostDisconnected && (
+        <Badge variant="filled" color="orange" w="100%" mb="md">
+          {t('join.hostDisconnected', 'Waiting for host...')}
+        </Badge>
+      )}
+
       {appState.phase === 'enter-code' && (
         <JoinMatch
-          sendEvent={sendEvent}
-          isConnected={isConnected}
-          isConnecting={isConnecting}
-          disconnect={disconnect}
           onJoined={handleJoined}
           joinTimeoutRef={joinTimeoutRef}
           joinError={joinError}
@@ -254,6 +317,7 @@ function JoinPage() {
             {appState.matchState.players.map((name, idx) => {
               const isOwnCard = idx === appState.claimedIndex;
               const round = appState.matchState.rounds[appState.matchState.currentRound] as RoundData | undefined;
+              const frozen = !sessionActive || hostDisconnected;
               return (
                 <GridCol span={6} key={idx}>
                   <PlayerCard
@@ -266,8 +330,8 @@ function JoinPage() {
                     currentRound={appState.matchState.currentRound}
                     playingRound={appState.matchState.currentRound}
                     playerCount={appState.matchState.players.length}
-                    onPredictionChange={isOwnCard ? handlePredictionChange : undefined}
-                    onActualChange={isOwnCard ? handleActualChange : undefined}
+                    onPredictionChange={isOwnCard && !frozen ? handlePredictionChange : undefined}
+                    onActualChange={isOwnCard && !frozen ? handleActualChange : undefined}
                   />
                 </GridCol>
               );
@@ -285,10 +349,26 @@ function JoinPage() {
           onDismiss={handleDismissSummary}
         />
       )}
+
+      <Modal opened={sessionExpired} onClose={() => setSessionExpired(false)} title={t('join.sessionExpiredTitle', 'Session Expired')}>
+        <Text mb="md">{t('join.sessionExpiredMessage', 'Your session has expired. Would you like to rejoin the game?')}</Text>
+        <Stack>
+          <Button onClick={handleRejoin}>{t('join.rejoinGame', 'Rejoin Game')}</Button>
+          <Button variant="default" onClick={() => setSessionExpired(false)}>{t('common.close', 'Close')}</Button>
+        </Stack>
+      </Modal>
     </Container>
   );
 }
 
+function JoinPageWrapper() {
+  return (
+    <ConnectionProvider>
+      <JoinPage />
+    </ConnectionProvider>
+  );
+}
+
 export const Route = createFileRoute('/join')({
-  component: JoinPage,
+  component: JoinPageWrapper,
 });

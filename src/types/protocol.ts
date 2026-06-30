@@ -3,6 +3,7 @@ export type SlotStatus = 'unclaimed' | 'claimed' | 'disconnected';
 export enum ErrorCode {
   INVALID_CODE = 'INVALID_CODE',
   SESSION_EXPIRED = 'SESSION_EXPIRED',
+  HOST_SESSION_EXPIRED = 'HOST_SESSION_EXPIRED',
   SLOT_ALREADY_CLAIMED = 'SLOT_ALREADY_CLAIMED',
   INVALID_SLOT = 'INVALID_SLOT',
   INCOMPLETE_PREDICTIONS = 'INCOMPLETE_PREDICTIONS',
@@ -30,6 +31,7 @@ export interface SubmitScorePayload {
 
 export interface CreateRoomPayload {
   matchState: unknown;
+  hostToken?: string;
 }
 
 export interface CloseRoomPayload {}
@@ -62,6 +64,7 @@ export type ClientToRelayPayload =
 
 export interface RoomCreatedPayload {
   joinCode: string; // XXX-XXX format (e.g. "123-456")
+  hostToken: string;
 }
 
 export interface RoomJoinedPayload {
@@ -107,6 +110,12 @@ export interface ContestantLeftPayload {
   playerIndex: number;
 }
 
+export interface HostDisconnectedPayload {}
+
+export interface HostReconnectedPayload {
+  slotStatuses: Array<SlotStatus>;
+}
+
 export type RelayToClientPayload =
   | RoomCreatedPayload
   | RoomJoinedPayload
@@ -119,7 +128,9 @@ export type RelayToClientPayload =
   | ContestantJoinedPayload
   | ContestantLeftPayload
   | StateSyncPayload
-  | RoundCompletedPayload;
+  | RoundCompletedPayload
+  | HostDisconnectedPayload
+  | HostReconnectedPayload;
 
 // === Envelope types ===
 
@@ -140,4 +151,6 @@ export type RelayToClientEnvelope =
   | { event: 'contestant-joined'; data: ContestantJoinedPayload }
   | { event: 'contestant-left'; data: ContestantLeftPayload }
   | { event: 'state-sync'; data: StateSyncPayload }
-  | { event: 'round-completed'; data: RoundCompletedPayload };
+  | { event: 'round-completed'; data: RoundCompletedPayload }
+  | { event: 'host-disconnected'; data: HostDisconnectedPayload }
+  | { event: 'host-reconnected'; data: HostReconnectedPayload };

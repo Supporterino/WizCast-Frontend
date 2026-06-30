@@ -22,6 +22,7 @@ import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { FlexCol } from '@/components/Layout/FlexCol.tsx';
 import { computeSingleScoreChange, validateRoundSubmission } from '@/utils/scoring.ts';
 import { HostLobby  } from '@/components/HostLobby/HostLobby.tsx';
+import { useConnection } from '@/contexts/ConnectionProvider.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -46,18 +47,39 @@ export const GameScreen: FunctionComponent = () => {
   const navigate = useNavigate();
   const { setCompletedGames } = useStore();
   const { t } = useTranslation();
+  const conn = useConnection();
 
   const hostLobbyRef = useRef<HostLobbyHandle>(null);
 
   const broadcastTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
+  const playersRef = useRef(players);
+  const roundsRef = useRef(rounds);
+  const scoresRef = useRef(scores);
+  const currentRoundRef = useRef(currentRound);
+  playersRef.current = players;
+  roundsRef.current = rounds;
+  scoresRef.current = scores;
+  currentRoundRef.current = currentRound;
+
+  const sessionActive = conn.connectionState.session === 'ACTIVE';
+  const hostReconnecting = conn.connectionState.transport === 'CONNECTING' && conn.connectionState.session !== 'ACTIVE';
+
   const debouncedBroadcast = useCallback(() => {
-    if (!hostLobbyRef.current) return;
+    if (!sessionActive) return;
     if (broadcastTimerRef.current) clearTimeout(broadcastTimerRef.current);
     broadcastTimerRef.current = setTimeout(() => {
-      hostLobbyRef.current?.broadcastState();
+      conn.sendEvent('state-sync', {
+        matchState: {
+          players: playersRef.current,
+          rounds: roundsRef.current,
+          scores: scoresRef.current,
+          rules,
+          currentRound: currentRoundRef.current,
+        },
+      });
     }, 300);
-  }, []);
+  }, [conn, rules, sessionActive]);
 
   useEffect(() => {
     return () => {
@@ -65,7 +87,7 @@ export const GameScreen: FunctionComponent = () => {
     };
   }, []);
 
-  /* ---------- Notification helpers (unchanged) ----------------------- */
+  /* ---------- Notification helpers ----------------------- */
   const notifyRoundIncomplete = (
     msgKey: 'notifications.roundIncomplete.predictionMissing' | 'notifications.roundIncomplete.actualMissing',
   ) =>
@@ -108,6 +130,7 @@ export const GameScreen: FunctionComponent = () => {
   };
 
   const handleNextRound = () => {
+    if (!sessionActive) return;
     const result = validateRoundSubmission(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules);
     if (!result.valid) {
       if (result.errorCode === 'INCOMPLETE_PREDICTIONS') {
@@ -124,7 +147,7 @@ export const GameScreen: FunctionComponent = () => {
       return;
     }
     if (playingRound == currentRound) setPlayingRound((prev) => prev + 1);
-    hostLobbyRef.current?.sendEvent('round-completed', {
+    conn.sendEvent('round-completed', {
       roundIndex: currentRound,
       scoreChanges: rounds[currentRound].scoreChanges.map((sc) => sc ?? 0),
       players,
@@ -135,6 +158,7 @@ export const GameScreen: FunctionComponent = () => {
   };
 
   const handleFinishGame = () => {
+    if (!sessionActive) return;
     const result = validateRoundSubmission(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules);
     if (!result.valid) {
       if (result.errorCode === 'INCOMPLETE_PREDICTIONS') {
@@ -163,7 +187,7 @@ export const GameScreen: FunctionComponent = () => {
     };
 
     setCompletedGames((prev) => [...prev, finishedGame]);
-    hostLobbyRef.current?.sendEvent('round-completed', {
+    conn.sendEvent('round-completed', {
       roundIndex: currentRound,
       scoreChanges: rounds[currentRound].scoreChanges.map((sc) => sc ?? 0),
       players,
@@ -175,8 +199,13 @@ export const GameScreen: FunctionComponent = () => {
 
   return (
     <FlexCol fullWidth h={'100%'} justify={'flex-start'} mb={'md'}>
+      {hostReconnecting && (
+        <Text size="sm" c="yellow" ta="center" mb="xs">
+          {t('gameScreen.reconnecting', 'Reconnecting...')}
+        </Text>
+      )}
       <FlexRow fullWidth gap="md">
-        <ActionIcon size="lg" mr="auto" variant="light" onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound === 0}>
+        <ActionIcon size="lg" mr="auto" variant="light" onClick={() => setCurrentRound(currentRound - 1)} disabled={currentRound === 0 || !sessionActive}>
           <IconArrowNarrowLeft stroke={1.5} />
         </ActionIcon>
 
@@ -187,14 +216,14 @@ export const GameScreen: FunctionComponent = () => {
           })}
         </Text>
 
-        <ActionIcon size="lg" ml="auto" variant="light" onClick={handleNextRound} disabled={currentRound + 1 === roundCount}>
+        <ActionIcon size="lg" ml="auto" variant="light" onClick={handleNextRound} disabled={currentRound + 1 === roundCount || !sessionActive}>
           <IconArrowNarrowRight stroke={1.5} />
         </ActionIcon>
 
         <HostLobby ref={hostLobbyRef} />
 
         {currentRound + 1 === roundCount && (
-          <ActionIcon onClick={handleFinishGame}>
+          <ActionIcon onClick={handleFinishGame} disabled={!sessionActive}>
             <IconReportAnalytics stroke={1.5} />
           </ActionIcon>
         )}
@@ -250,7 +279,6 @@ export const GameScreen: FunctionComponent = () => {
       <Grid mt={'md'}>
         {players.map((name, idx) => {
           const isRemote = playerSlots[idx]?.slotStatus === 'claimed' || playerSlots[idx]?.slotStatus === 'disconnected';
-          const roomActive = hostLobbyRef.current?.isRoomActive() ?? false;
           return (
             <GridCol span={6} key={idx}>
               <PlayerCard
@@ -259,7 +287,7 @@ export const GameScreen: FunctionComponent = () => {
                 slotStatus={playerSlots[idx]?.slotStatus}
                 isRemoteConnected={isRemote}
                 onPredictionChange={
-                  roomActive
+                  sessionActive
                     ? (value) => {
                         setPrediction(currentRound, idx, value);
                         const currentActual = rounds[currentRound].actuals[idx];
@@ -271,7 +299,7 @@ export const GameScreen: FunctionComponent = () => {
                     : undefined
                 }
                 onActualChange={
-                  roomActive
+                  sessionActive
                     ? (value) => {
                         setActual(currentRound, idx, value);
                         const currentPrediction = rounds[currentRound].predictions[idx];
