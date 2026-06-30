@@ -51,11 +51,13 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
   const scoreChange = overrideScoreChange ?? rounds[currentRound]?.scoreChanges[idx];
   const { t } = useTranslation();
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const predictionDebounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const actualDebounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (predictionDebounceRef.current) clearTimeout(predictionDebounceRef.current);
+      if (actualDebounceRef.current) clearTimeout(actualDebounceRef.current);
     };
   }, []);
 
@@ -63,8 +65,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
     const newPrediction = typeof value === 'string' ? parseInt(value, 10) : value;
 
     if (onPredictionChange) {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
+      if (predictionDebounceRef.current) clearTimeout(predictionDebounceRef.current);
+      predictionDebounceRef.current = setTimeout(() => {
         onPredictionChange(newPrediction);
       }, 300);
     } else {
@@ -81,8 +83,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
     const newActual = typeof value === 'string' ? parseInt(value, 10) : value;
 
     if (onActualChange) {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
+      if (actualDebounceRef.current) clearTimeout(actualDebounceRef.current);
+      actualDebounceRef.current = setTimeout(() => {
         onActualChange(newActual);
       }, 300);
     } else {

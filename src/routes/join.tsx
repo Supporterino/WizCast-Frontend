@@ -10,8 +10,6 @@ import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { RoundSummary } from '@/components/RoundSummary/RoundSummary.tsx';
 import { useMatchSocket } from '@/hooks/useMatchSocket.ts';
 
-const DEFAULT_RELAY_URL = 'ws://localhost:3000';
-
 type AppState =
   | { phase: 'enter-code' }
   | { phase: 'claim-slot'; joinCode: string; players: Array<string>; slotStatuses: Array<SlotStatus>; sessionToken: string }
@@ -37,6 +35,7 @@ function JoinPage() {
   const [appState, setAppState] = useState<AppState>({ phase: 'enter-code' });
   const [claimError, setClaimError] = useState<string | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
+  const [sendError, setSendError] = useState(false);
   const [localPrediction, setLocalPrediction] = useState<number | undefined>(undefined);
   const [localActual, setLocalActual] = useState<number | undefined>(undefined);
   const joinCodeRef = useRef<string | null>(null);
@@ -134,7 +133,7 @@ function JoinPage() {
   };
 
   const { sendEvent, isConnected, isConnecting, disconnect } = useMatchSocket({
-    url: DEFAULT_RELAY_URL,
+    url: localStorage.getItem('relayUrl') ?? 'ws://localhost:3000',
     onMessage: handleMessage,
   });
 
@@ -152,12 +151,16 @@ function JoinPage() {
     contestantDebounceRef.current = setTimeout(() => {
       const state = appStateRef.current;
       if (state.phase !== 'playing') return;
-      sendEvent('submit-score', {
+      const sent = sendEvent('submit-score', {
         playerIndex: state.claimedIndex,
         roundIndex: state.matchState.currentRound,
         predictions: latestPredRef.current !== undefined ? [latestPredRef.current] : [],
         actuals: latestActualRef.current !== undefined ? [latestActualRef.current] : [],
       });
+      if (!sent) {
+        setSendError(true);
+        setTimeout(() => setSendError(false), 3000);
+      }
     }, 300);
   }, [sendEvent]);
 
@@ -209,8 +212,8 @@ function JoinPage() {
         {t('join.title', 'Join Match')}
       </Title>
 
-      <Text size="sm" c={isConnected ? 'green' : 'red'} mb="md">
-        {isConnected ? t('join.connected', 'Connected') : t('join.disconnected', 'Disconnected')}
+      <Text size="sm" c={sendError ? 'red' : isConnected ? 'green' : 'red'} mb="md">
+        {sendError ? t('join.sendError', 'Error sending') : isConnected ? t('join.connected', 'Connected') : t('join.disconnected', 'Disconnected')}
       </Text>
 
       {appState.phase === 'enter-code' && (
