@@ -112,7 +112,9 @@
     "connecting": "Verbinde...",
     "notConnected": "Nicht mit Relay verbunden",
     "notReady": "Verbindung nicht bereit. Bitte warten...",
-    "timeout": "Verbindung abgelaufen"
+    "timeout": "Verbindung abgelaufen",
+    "slotReleasedTitle": "Platz freigegeben",
+    "slotReleasedMessage": "Dein Platz wurde vom Spielleiter freigegeben"
   },
   "multiplayer": {
     "shareJoinCode": "Beitrittscode teilen",
@@ -127,6 +129,11 @@
     "playerSlots": "Spielerplätze",
     "closeRoom": "Raum schließen",
     "enableRemotePlayers": "Remote-Spieler aktivieren",
-    "createRoom": "Raum erstellen"
+    "createRoom": "Raum erstellen",
+    "releaseSlot": "Freigeben",
+    "releaseConfirmTitle": "Platz freigeben",
+    "releaseConfirmBody": "Bist du sicher, dass du {{name}} vom Platz entfernen möchtest?",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen"
   }
 }

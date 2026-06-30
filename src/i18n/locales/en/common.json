@@ -112,7 +112,9 @@
     "connecting": "Connecting...",
     "notConnected": "Not connected to relay",
     "notReady": "Connection not ready. Please wait...",
-    "timeout": "Connection timed out"
+    "timeout": "Connection timed out",
+    "slotReleasedTitle": "Slot Released",
+    "slotReleasedMessage": "Your slot was released by the host"
   },
   "multiplayer": {
     "shareJoinCode": "Share join code",
@@ -127,6 +129,11 @@
     "playerSlots": "Player Slots",
     "closeRoom": "Close Room",
     "enableRemotePlayers": "Enable Remote Players",
-    "createRoom": "Create Room"
+    "createRoom": "Create Room",
+    "releaseSlot": "Release",
+    "releaseConfirmTitle": "Release Slot",
+    "releaseConfirmBody": "Are you sure you want to release {{name}} from their slot?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

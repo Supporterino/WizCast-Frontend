@@ -2,6 +2,7 @@ import { ActionIcon, Badge, Button, Card, CopyButton, Group, Modal, Stack, Text,
 import { IconShare } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import type { PlayerSlot } from '@/types/game.ts';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { useGame } from '@/hooks/useGame.tsx';
 import { FlexRow } from '@/components/Layout/FlexRow.tsx';
@@ -39,6 +40,7 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   const [joinCode, setJoinCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [releaseConfirm, setReleaseConfirm] = useState<PlayerSlot | null>(null);
 
   const playersRef = useRef(players);
   const roundsRef = useRef(rounds);
@@ -184,6 +186,12 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
     setOpened(false);
   }, [conn]);
 
+  const handleReleaseSlot = () => {
+    if (!releaseConfirm) return;
+    conn.sendEvent('release-slot', { playerIndex: releaseConfirm.playerIndex });
+    setReleaseConfirm(null);
+  };
+
   const handleClick = () => {
     if (isCreating) return;
     if (joinCode) {
@@ -266,6 +274,16 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
             <Card key={slot.playerIndex} shadow="xs" padding="xs" radius="sm" withBorder>
               <FlexRow fullWidth>
                 <Text size="sm">{slot.playerName}</Text>
+                {(slot.slotStatus === 'claimed' || slot.slotStatus === 'disconnected') && (
+                  <Button
+                    variant="subtle"
+                    color="red"
+                    size="compact-xs"
+                    onClick={() => setReleaseConfirm(slot)}
+                  >
+                    {t('multiplayer.releaseSlot', 'Release')}
+                  </Button>
+                )}
                 <Badge color={colorMap[slot.slotStatus]} variant="light" size="sm">
                   {slot.slotStatus}
                 </Badge>
@@ -277,6 +295,20 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
             {t('multiplayer.closeRoom', 'Close Room')}
           </Button>
         </Stack>
+      </Modal>
+
+      <Modal opened={!!releaseConfirm} onClose={() => setReleaseConfirm(null)} title={t('multiplayer.releaseConfirmTitle', 'Release Slot')}>
+        <Text mb="md">
+          {t('multiplayer.releaseConfirmBody', { name: releaseConfirm?.playerName ?? '' })}
+        </Text>
+        <Group justify="flex-end">
+          <Button variant="default" onClick={() => setReleaseConfirm(null)}>
+            {t('multiplayer.cancel', 'Cancel')}
+          </Button>
+          <Button color="red" onClick={handleReleaseSlot}>
+            {t('multiplayer.releaseSlot', 'Release')}
+          </Button>
+        </Group>
       </Modal>
 
       <Modal opened={sessionExpired} onClose={() => setSessionExpired(false)} title={t('multiplayer.sessionExpiredTitle', 'Session Expired')}>

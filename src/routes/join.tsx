@@ -131,6 +131,31 @@ function JoinPage() {
           setHostDisconnected(false);
           return current;
         }
+        case 'slot-released': {
+          if (current.phase === 'playing') {
+            notifications.show({
+              title: t('join.slotReleasedTitle', 'Slot Released'),
+              message: t('join.slotReleasedMessage', 'Your slot was released by the host'),
+              color: 'orange',
+              autoClose: 5000,
+            });
+            latestPredRef.current = undefined;
+            latestActualRef.current = undefined;
+            setLocalPrediction(undefined);
+            setLocalActual(undefined);
+            const slotStatuses: Array<SlotStatus> = current.matchState.players.map((_, idx) =>
+              idx === message.data.playerIndex ? 'unclaimed' : 'claimed'
+            );
+            return {
+              phase: 'claim-slot',
+              joinCode: current.joinCode,
+              players: current.matchState.players,
+              slotStatuses,
+              sessionToken: current.sessionToken,
+            };
+          }
+          return current;
+        }
         case 'room-closed':
           conn.setSessionDisconnected();
           setHostDisconnected(false);
