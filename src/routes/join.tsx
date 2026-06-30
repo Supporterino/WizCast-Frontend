@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Container, Grid, GridCol, Stack, Text, Title } from '@mantine/core';
+import { Badge, Container, Grid, GridCol, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
@@ -187,12 +187,14 @@ function JoinPage() {
       if (current.phase === 'round-summary') {
         latestPredRef.current = undefined;
         latestActualRef.current = undefined;
+        const nextRound = current.roundIndex + 1;
+        const maxRound = Math.max(0, current.matchState.rounds.length - 1);
         return {
           phase: 'playing',
           joinCode: current.joinCode,
           sessionToken: current.sessionToken,
           claimedIndex: current.claimedIndex,
-          matchState: current.matchState,
+          matchState: { ...current.matchState, currentRound: Math.min(nextRound, maxRound) },
         };
       }
       return current;
@@ -238,8 +240,16 @@ function JoinPage() {
         />
       )}
 
-      {appState.phase === 'playing' && (
+      {appState.phase === 'playing' && (() => {
+        const roundCount = appState.matchState.rounds.length;
+        const currentDisplay = appState.matchState.currentRound + 1;
+        return (
         <Stack>
+          {roundCount > 0 && (
+            <Badge variant="light" size="lg">
+              {t('join.roundBadge', { current: currentDisplay, total: roundCount })}
+            </Badge>
+          )}
           <Grid>
             {appState.matchState.players.map((name, idx) => {
               const isOwnCard = idx === appState.claimedIndex;
@@ -264,7 +274,8 @@ function JoinPage() {
             })}
           </Grid>
         </Stack>
-      )}
+          );
+        })()}
 
       {appState.phase === 'round-summary' && (
         <RoundSummary

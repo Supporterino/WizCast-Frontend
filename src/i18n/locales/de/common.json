@@ -106,6 +106,7 @@
     "points": "Punkte"
   },
   "join": {
+    "roundBadge": "Runde {{current}} / {{total}}",
     "enterCode": "Beitrittscode eingeben",
     "connect": "Verbinden",
     "connecting": "Verbinde...",
