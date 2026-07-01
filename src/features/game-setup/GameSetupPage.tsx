@@ -7,7 +7,7 @@ import { PlayerCountSelector } from './components/PlayerCountSelector.tsx';
 import { PlayerNameInputs } from './components/PlayerNameInputs.tsx';
 import { GameRulesToggle } from './components/GameRulesToggle.tsx';
 import type { FunctionComponent } from 'react';
-import { RuleModal } from '@/components/RuleModal/RuleModal.tsx';
+import { RuleModal } from '@/features/game-setup/components/RuleModal/RuleModal.tsx';
 
 export const GameSetupPage: FunctionComponent = () => {
   const { t } = useTranslation();

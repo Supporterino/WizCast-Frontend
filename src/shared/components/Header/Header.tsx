@@ -1,6 +1,6 @@
 import { Burger, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 
 type HeaderProps = {
   opened: boolean;

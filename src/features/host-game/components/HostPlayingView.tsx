@@ -6,7 +6,7 @@ import type { PlayerSlot, RoundData, StoredGame  } from '@/types/game.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { AccuracyBadgeGrid } from '@/shared/components/AccuracyBadgeGrid/AccuracyBadgeGrid.tsx';
 import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 interface HostPlayingViewProps {
   players: Array<string>;

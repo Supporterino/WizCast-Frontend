@@ -3,7 +3,7 @@ import { IconCardsFilled } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import type { RoundData, SlotStatus  } from '@/types/game.ts';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { getScoreTillRound } from '@/utils/scoring.ts';
 
 interface PlayerCardProps {

@@ -1,6 +1,6 @@
 import { Badge, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 
 interface PredictionsTotalsBarProps {
   predictionsLabel: string;

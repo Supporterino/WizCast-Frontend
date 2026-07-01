@@ -3,7 +3,7 @@ import { useViewportSize } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import type { RoundData } from '@/types/game.ts';
 import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { getScoreTillRound } from '@/utils/scoring.ts';
 
 interface ScoreboardTableProps {

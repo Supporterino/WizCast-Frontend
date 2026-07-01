@@ -3,7 +3,7 @@ import { readDir, readTextFile } from '@tauri-apps/plugin-fs';
 import { useCallback, useState } from 'react';
 import { Button, Code } from '@mantine/core';
 import type { FunctionComponent } from 'react';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 export const DebugFileExplorer: FunctionComponent = () => {
   const [debugText, setDebugText] = useState<string>('');

@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import { RoundSummary } from '@/components/RoundSummary/RoundSummary.tsx';
+import { RoundSummary } from '@/features/contestant-game/components/RoundSummary/RoundSummary.tsx';
 
 interface RoundSummaryOverlayProps {
   players: Array<string>;

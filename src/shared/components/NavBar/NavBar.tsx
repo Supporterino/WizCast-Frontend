@@ -9,7 +9,7 @@ import { Route as GameRoute } from '@/routes/game/playing';
 import { Route as ResultRoute } from '@/routes/results/overview';
 import { Route as SettingsRoute } from '@/routes/settings';
 import { Route as JoinRoute } from '@/routes/join';
-import { useGame } from '@/hooks/useGame.tsx';
+import { useGame } from '@/shared/hooks/useGame.tsx';
 
 type SimpleNavbarProps = {
   closeNav: () => void;

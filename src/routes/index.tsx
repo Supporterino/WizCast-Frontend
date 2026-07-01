@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Container, Group, Image, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 import { Route as NewRoute } from '@/routes/game/new';
 import { Route as JoinRoute } from '@/routes/join';
 

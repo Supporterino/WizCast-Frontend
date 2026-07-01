@@ -2,7 +2,7 @@ import { Button, Card, Group, Modal, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import type { PlayerSlot } from '@/types/game.ts';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { SlotStatusBadge } from '@/shared/components/SlotStatusBadge/SlotStatusBadge.tsx';
 
 interface SlotManagerProps {

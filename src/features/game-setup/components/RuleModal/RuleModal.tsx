@@ -1,9 +1,9 @@
 import { Modal } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import { RuleItem } from './RuleItem.tsx';
 import type { FunctionComponent } from 'react';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
-import { RuleItem } from '@/components/RuleModal/RuleItem.tsx';
-import { useGame } from '@/hooks/useGame.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { useGame } from '@/shared/hooks/useGame.tsx';
 
 type RuleModalProps = {
   opened: boolean;

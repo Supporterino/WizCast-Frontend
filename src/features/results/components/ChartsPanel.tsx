@@ -6,7 +6,7 @@ import type { CumulativeScoreEntry, RoundDiff } from '@/utils/gameDiff.ts';
 import type { SeriesItem } from '@/utils/seriesGen.ts';
 import type { PlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { getLargestDiff } from '@/utils/gameDiff.ts';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 interface ChartsPanelProps {
   roundDiff: Array<RoundDiff>;

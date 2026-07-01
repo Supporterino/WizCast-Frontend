@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import packageJson from '../../../../package.json';
 import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { useGame } from '@/shared/hooks/useGame.tsx';
 
 export const ClearDataButton: FunctionComponent = () => {

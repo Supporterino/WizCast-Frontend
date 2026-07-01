@@ -5,8 +5,8 @@ import { LanguageSelector } from './components/LanguageSelector.tsx';
 import { RelayUrlInput } from './components/RelayUrlInput.tsx';
 import { ClearDataButton } from './components/ClearDataButton.tsx';
 import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/components/Layout/FlexRow.tsx';
-import { FlexCol } from '@/components/Layout/FlexCol.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 export const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();
