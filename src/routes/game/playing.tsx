@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { GameScreen } from '@/components/GameScreen/GameScreen.tsx';
 import { ConnectionProvider } from '@/contexts/ConnectionProvider.tsx';
+import { GameScreen } from '@/features/host-game/GameScreen.tsx';
 
 const RouteComponent = () => {
   return (

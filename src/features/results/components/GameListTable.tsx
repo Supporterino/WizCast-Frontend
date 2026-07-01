@@ -1,0 +1,55 @@
+import { ActionIcon, Table } from '@mantine/core';
+import { useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import { IconEye, IconTrash } from '@tabler/icons-react';
+import type { FunctionComponent } from 'react';
+import type { GameOverview } from '@/types/game.ts';
+import { Route as ResultRoute } from '@/routes/results/$resultID';
+
+interface GameListTableProps {
+  games: Array<GameOverview>;
+  onDelete: (id: string) => void;
+}
+
+export const GameListTable: FunctionComponent<GameListTableProps> = ({ games, onDelete }) => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  return (
+    <Table striped highlightOnHover>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>{t('table.date')}</Table.Th>
+          <Table.Th>{t('table.time')}</Table.Th>
+          <Table.Th>{t('table.location')}</Table.Th>
+          <Table.Th>{t('table.playersCount')}</Table.Th>
+          <Table.Th>{t('table.action')}</Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
+        {games.map((g) => {
+          const start = new Date(g.startDate);
+          const end = g.endDate ? new Date(g.endDate) : null;
+          return (
+            <Table.Tr key={g.id}>
+              <Table.Td>{start.toLocaleDateString()}</Table.Td>
+              <Table.Td>
+                {start.toLocaleTimeString()} – {end ? end.toLocaleTimeString() : t('ellipsis')}
+              </Table.Td>
+              <Table.Td>{g.location}</Table.Td>
+              <Table.Td>{g.playerCount}</Table.Td>
+              <Table.Td>
+                <ActionIcon size="sm" ml="auto" mr="lg" onClick={() => navigate({ to: ResultRoute.to, params: { resultID: g.id } })}>
+                  <IconEye stroke={1.5} />
+                </ActionIcon>
+                <ActionIcon size="sm" mr="auto" onClick={() => onDelete(g.id)}>
+                  <IconTrash stroke={1.5} />
+                </ActionIcon>
+              </Table.Td>
+            </Table.Tr>
+          );
+        })}
+      </Table.Tbody>
+    </Table>
+  );
+};

@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { HomeScreen } from '@/components/HomeScreen/HomeScreen.tsx';
+import { GameSetupPage } from '@/features/game-setup/GameSetupPage.tsx';
 
 const RouteComponent = () => {
-  return <HomeScreen />;
+  return <GameSetupPage />;
 };
 
 export const Route = createFileRoute('/game/new')({

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 import type { PlayerSlot, RoundData, Rule } from '@/types/game.ts';
@@ -40,18 +40,120 @@ export interface GameContextProps {
   startGame: () => void;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Context                                                            */
-/* ------------------------------------------------------------------ */
 export const GameContext = createContext<GameContextProps | undefined>(undefined);
 
-/* ------------------------------------------------------------------ */
-/*  Provider                                                            */
-/* ------------------------------------------------------------------ */
+interface GameState {
+  gameId: string;
+  active: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  location: string;
+  players: Array<string>;
+  rules: Array<Rule>;
+  currentRound: number;
+  playingRound: number;
+  rounds: Array<RoundData>;
+  playerSlots: Array<PlayerSlot>;
+}
+
+type GameAction =
+  | { type: 'SET_LOCATION'; location: string }
+  | { type: 'SET_PLAYERS'; players: Array<string> }
+  | { type: 'SET_RULES'; rules: Array<Rule> }
+  | { type: 'TOGGLE_RULE'; index: number }
+  | { type: 'SET_CURRENT_ROUND'; currentRound: number }
+  | { type: 'SET_PLAYING_ROUND'; playingRound: number }
+  | { type: 'SET_ROUNDS'; rounds: Array<RoundData> }
+  | { type: 'SET_PREDICTION'; roundIdx: number; playerIdx: number; value: number }
+  | { type: 'SET_ACTUAL'; roundIdx: number; playerIdx: number; value: number }
+  | { type: 'SET_SCORE_CHANGE'; roundIdx: number; playerIdx: number; value: number }
+  | { type: 'SET_PLAYER_SLOTS'; playerSlots: Array<PlayerSlot> }
+  | { type: 'UPDATE_PLAYER_SLOT'; playerIndex: number; updates: Partial<PlayerSlot> }
+  | { type: 'UPDATE_SLOT_STATUS'; playerIndex: number; status: PlayerSlot['slotStatus'] }
+  | { type: 'START_GAME' }
+  | { type: 'END_GAME'; gameId: string; defaultPlayers: Array<string>; defaultRules: Array<Rule> };
+
+function gameReducer(state: GameState, action: GameAction): GameState {
+  switch (action.type) {
+    case 'SET_LOCATION':
+      return { ...state, location: action.location };
+    case 'SET_PLAYERS':
+      return { ...state, players: action.players };
+    case 'SET_RULES':
+      return { ...state, rules: action.rules };
+    case 'TOGGLE_RULE':
+      return { ...state, rules: state.rules.map((r, i) => (i === action.index ? { ...r, active: !r.active } : r)) };
+    case 'SET_CURRENT_ROUND':
+      return { ...state, currentRound: action.currentRound };
+    case 'SET_PLAYING_ROUND':
+      return { ...state, playingRound: action.playingRound };
+    case 'SET_ROUNDS':
+      return { ...state, rounds: action.rounds };
+    case 'SET_PREDICTION':
+      return {
+        ...state,
+        rounds: state.rounds.map((r) =>
+          r.id === action.roundIdx
+            ? { ...r, predictions: r.predictions.map((p, i) => (i === action.playerIdx ? action.value : p)) }
+            : r,
+        ),
+      };
+    case 'SET_ACTUAL':
+      return {
+        ...state,
+        rounds: state.rounds.map((r) =>
+          r.id === action.roundIdx
+            ? { ...r, actuals: r.actuals.map((a, i) => (i === action.playerIdx ? action.value : a)) }
+            : r,
+        ),
+      };
+    case 'SET_SCORE_CHANGE':
+      return {
+        ...state,
+        rounds: state.rounds.map((r) =>
+          r.id === action.roundIdx
+            ? { ...r, scoreChanges: r.scoreChanges.map((s, i) => (i === action.playerIdx ? action.value : s)) }
+            : r,
+        ),
+      };
+    case 'SET_PLAYER_SLOTS':
+      return { ...state, playerSlots: action.playerSlots };
+    case 'UPDATE_PLAYER_SLOT':
+      return {
+        ...state,
+        playerSlots: state.playerSlots.map((slot) =>
+          slot.playerIndex === action.playerIndex ? { ...slot, ...action.updates } : slot,
+        ),
+      };
+    case 'UPDATE_SLOT_STATUS':
+      return {
+        ...state,
+        playerSlots: state.playerSlots.map((slot) =>
+          slot.playerIndex === action.playerIndex ? { ...slot, slotStatus: action.status } : slot,
+        ),
+      };
+    case 'START_GAME':
+      return { ...state, active: true, startDate: new Date() };
+    case 'END_GAME':
+      return {
+        ...state,
+        gameId: action.gameId,
+        active: false,
+        startDate: undefined,
+        endDate: undefined,
+        players: action.defaultPlayers,
+        rules: action.defaultRules,
+        currentRound: 0,
+        playingRound: 0,
+      };
+    default:
+      return state;
+  }
+}
+
 export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
 
-  /* ---------- Default rules (memoised) --------------------------- */
   const getDefaultRules = useCallback(
     (): Array<Rule> => [
       {
@@ -63,23 +165,24 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     [t],
   );
 
-  /* ---------- State ------------------------------------------------ */
-  const [gameId, setGameId] = useState<string>(() =>
-    typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-  );
-  const [active, setActive] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date | undefined>();
-  const [endDate, setEndDate] = useState<Date | undefined>();
-  const [location, setLocation] = useState<string>('');
-  const [players, setPlayers] = useState<Array<string>>(Array(3).fill(''));
-  const [rules, setRules] = useState<Array<Rule>>(getDefaultRules());
-  const [currentRound, setCurrentRound] = useState(0);
-  const [playingRound, setPlayingRound] = useState(0);
+  const initialState: GameState = {
+    gameId: typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    active: false,
+    startDate: undefined,
+    endDate: undefined,
+    location: '',
+    players: Array(3).fill(''),
+    rules: getDefaultRules(),
+    currentRound: 0,
+    playingRound: 0,
+    rounds: [],
+    playerSlots: [],
+  };
 
-  /* ---------- Derived state --------------------------------------- */
-  const roundCount = useMemo(() => Math.ceil(60 / players.length), [players.length]);
+  const [state, dispatch] = useReducer(gameReducer, initialState);
 
-  /* ---------- Helper for an empty round -------------------------- */
+  const roundCount = useMemo(() => Math.ceil(60 / state.players.length), [state.players.length]);
+
   const makeEmptyRound = useCallback(
     (id: number, length: number): RoundData => ({
       id,
@@ -90,176 +193,132 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
     [],
   );
 
-  /* ---------- Rounds state ---------------------------------------- */
-  const [rounds, setRounds] = useState<Array<RoundData>>(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
-
-  /* ---------- Player slots state ---------------------------------- */
-  const [playerSlots, setPlayerSlots] = useState<Array<PlayerSlot>>([]);
-
-  const setPlayerSlot = useCallback((playerIndex: number, updates: Partial<PlayerSlot>) => {
-    setPlayerSlots((prev) => prev.map((slot) => (slot.playerIndex === playerIndex ? { ...slot, ...updates } : slot)));
-  }, []);
-
-  const updateSlotStatus = useCallback((playerIndex: number, status: PlayerSlot['slotStatus']) => {
-    setPlayerSlots((prev) => prev.map((slot) => (slot.playerIndex === playerIndex ? { ...slot, slotStatus: status } : slot)));
-  }, []);
-
-  /* ---------- Keep rounds in sync with player count ---------------- */
   useEffect(() => {
-    setRounds(Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, players.length)));
-  }, [roundCount, players.length, makeEmptyRound]);
-
-  /* ---------- Keep player slots in sync with players --------------- */
-  useEffect(() => {
-    setPlayerSlots((prev) => {
-      if (prev.length === players.length) return prev;
-      return players.map((name, i) => {
-        const existing = prev.find((s) => s.playerIndex === i);
-        return existing ?? { playerIndex: i, playerName: name, inputSource: 'host', slotStatus: 'unclaimed' };
-      });
+    dispatch({
+      type: 'SET_ROUNDS',
+      rounds: Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, state.players.length)),
     });
-  }, [players]);
+  }, [roundCount, state.players.length, makeEmptyRound]);
 
-  /* ---------- Scores (derived) ------------------------------------ */
+  useEffect(() => {
+    if (state.playerSlots.length === state.players.length) return;
+    dispatch({
+      type: 'SET_PLAYER_SLOTS',
+      playerSlots: state.players.map((name, i) => {
+        const existing = state.playerSlots.find((s) => s.playerIndex === i);
+        return existing ?? { playerIndex: i, playerName: name, inputSource: 'host', slotStatus: 'unclaimed' };
+      }),
+    });
+  }, [state.players]);
+
   const scores = useMemo(() => {
-    return rounds.reduce((acc, r) => {
+    return state.rounds.reduce((acc, r) => {
       r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
       return acc;
-    }, Array(players.length).fill(0));
-  }, [rounds, players.length]);
+    }, Array(state.players.length).fill(0));
+  }, [state.rounds, state.players.length]);
 
-  /* ---------- Mutator helpers ------------------------------------- */
-  const setPrediction = useCallback((roundIdx: number, playerIdx: number, value: number) => {
-    setRounds((prev) =>
-      prev.map((r) =>
-        r.id === roundIdx
-          ? {
-              ...r,
-              predictions: r.predictions.map((p, i) => (i === playerIdx ? value : p)),
-            }
-          : r,
-      ),
-    );
+  const setLocation = useCallback((loc: string) => dispatch({ type: 'SET_LOCATION', location: loc }), []);
+
+  const setPlayers = useCallback((players: Array<string> | ((prev: Array<string>) => Array<string>)) => {
+    if (typeof players === 'function') {
+      // We need to handle functional updates; for simplicity, we accept direct arrays
+      dispatch({ type: 'SET_PLAYERS', players: players([]) });
+    } else {
+      dispatch({ type: 'SET_PLAYERS', players });
+    }
   }, []);
 
-  const setActual = useCallback((roundIdx: number, playerIdx: number, value: number) => {
-    setRounds((prev) =>
-      prev.map((r) =>
-        r.id === roundIdx
-          ? {
-              ...r,
-              actuals: r.actuals.map((a, i) => (i === playerIdx ? value : a)),
-            }
-          : r,
-      ),
-    );
+  const setRules = useCallback((rules: Array<Rule> | ((prev: Array<Rule>) => Array<Rule>)) => {
+    if (typeof rules === 'function') {
+      dispatch({ type: 'SET_RULES', rules: rules([]) });
+    } else {
+      dispatch({ type: 'SET_RULES', rules });
+    }
   }, []);
 
-  const setScoreChange = useCallback((roundIdx: number, playerIdx: number, value: number) => {
-    setRounds((prev) =>
-      prev.map((r) =>
-        r.id === roundIdx
-          ? {
-              ...r,
-              scoreChanges: r.scoreChanges.map((s, i) => (i === playerIdx ? value : s)),
-            }
-          : r,
-      ),
-    );
+  const toggleRule = useCallback((index: number) => dispatch({ type: 'TOGGLE_RULE', index }), []);
+
+  const setCurrentRound = useCallback((round: number | ((prev: number) => number)) => {
+    const value = typeof round === 'function' ? round(0) : round;
+    dispatch({ type: 'SET_CURRENT_ROUND', currentRound: value });
   }, []);
 
-  const toggleRule = useCallback(
-    (index: number) => setRules((prev) => prev.map((r, i) => (i === index ? { ...r, active: !r.active } : r))),
+  const setPlayingRound = useCallback((round: number | ((prev: number) => number)) => {
+    const value = typeof round === 'function' ? round(0) : round;
+    dispatch({ type: 'SET_PLAYING_ROUND', playingRound: value });
+  }, []);
+
+  const setPrediction = useCallback(
+    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_PREDICTION', roundIdx, playerIdx, value }),
+    [],
+  );
+
+  const setActual = useCallback(
+    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_ACTUAL', roundIdx, playerIdx, value }),
+    [],
+  );
+
+  const setScoreChange = useCallback(
+    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_SCORE_CHANGE', roundIdx, playerIdx, value }),
+    [],
+  );
+
+  const setPlayerSlot = useCallback(
+    (playerIndex: number, updates: Partial<PlayerSlot>) => dispatch({ type: 'UPDATE_PLAYER_SLOT', playerIndex, updates }),
+    [],
+  );
+
+  const updateSlotStatus = useCallback(
+    (playerIndex: number, status: PlayerSlot['slotStatus']) => dispatch({ type: 'UPDATE_SLOT_STATUS', playerIndex, status }),
     [],
   );
 
   const endGame = useCallback(() => {
-    setActive(false);
-    setGameId(typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    setStartDate(undefined);
-    setEndDate(undefined);
-
-    // Reset to defaults
-    const defaultPlayers = Array(3).fill('');
-    setPlayers(defaultPlayers);
-    setRules(getDefaultRules());
-
-    setCurrentRound(0);
-    setPlayingRound(0);
+    const newId = typeof crypto !== 'undefined' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    dispatch({
+      type: 'END_GAME',
+      gameId: newId,
+      defaultPlayers: Array(3).fill(''),
+      defaultRules: getDefaultRules(),
+    });
   }, [getDefaultRules]);
 
-  const startGame = useCallback(() => {
-    setStartDate(new Date());
-    setActive(true);
-  }, []);
+  const startGame = useCallback(() => dispatch({ type: 'START_GAME' }), []);
 
-  /* ---------- Memoised context value ----------------------------- */
   const ctx: GameContextProps = useMemo(
     () => ({
-      id: gameId,
-      active,
-      startDate,
-      endDate,
-      location,
+      id: state.gameId,
+      active: state.active,
+      startDate: state.startDate,
+      endDate: state.endDate,
+      location: state.location,
       setLocation,
-
-      players,
+      players: state.players,
       setPlayers,
-
-      rules,
+      rules: state.rules,
       setRules,
-      rounds,
+      rounds: state.rounds,
       scores,
       roundCount,
-      currentRound,
+      currentRound: state.currentRound,
       setCurrentRound,
-      playingRound,
+      playingRound: state.playingRound,
       setPlayingRound,
-
       setPrediction,
       setActual,
       setScoreChange,
-
-      playerSlots,
+      playerSlots: state.playerSlots,
       setPlayerSlot,
       updateSlotStatus,
-
       endGame,
       startGame,
       toggleRule,
     }),
     [
-      gameId,
-      active,
-      startDate,
-      endDate,
-      location,
-      setLocation,
-
-      players,
-      setPlayers,
-
-      rules,
-      setRules,
-      rounds,
-      scores,
-      roundCount,
-      currentRound,
-      setCurrentRound,
-      playingRound,
-      setPlayingRound,
-
-      setPrediction,
-      setActual,
-      setScoreChange,
-
-      playerSlots,
-      setPlayerSlot,
-      updateSlotStatus,
-
-      endGame,
-      startGame,
-      toggleRule,
+      state, setLocation, setPlayers, setRules, scores, roundCount,
+      setCurrentRound, setPlayingRound, setPrediction, setActual, setScoreChange,
+      setPlayerSlot, updateSlotStatus, endGame, startGame, toggleRule,
     ],
   );
 

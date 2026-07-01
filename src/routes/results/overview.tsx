@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { GameOverview } from '@/components/GameOverview/GameOverview.tsx';
+import { GameOverviewPage } from '@/features/results/GameOverviewPage.tsx';
 
 const RouteComponent = () => {
-  return <GameOverview />;
+  return <GameOverviewPage />;
 };
 
 export const Route = createFileRoute('/results/overview')({
