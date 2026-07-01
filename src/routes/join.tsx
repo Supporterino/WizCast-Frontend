@@ -4,13 +4,15 @@ import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
-import type { RoundData, Rule, SlotStatus } from '@/types/game.ts';
+import type { RoundData, Rule, SlotStatus, StoredGame } from '@/types/game.ts';
 import { ErrorCode } from '@/types/protocol.ts';
 import { JoinMatch } from '@/components/JoinMatch/JoinMatch.tsx';
 import { ClaimSlot } from '@/components/ClaimSlot/ClaimSlot.tsx';
+import { FlexRow } from '@/components/Layout/FlexRow.tsx';
 import { PlayerCard } from '@/components/PlayerCard/PlayerCard.tsx';
 import { RoundSummary } from '@/components/RoundSummary/RoundSummary.tsx';
 import { ConnectionProvider, useConnection } from '@/contexts/ConnectionProvider.tsx';
+import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 
 type AppState =
   | { phase: 'enter-code' }
@@ -331,6 +333,10 @@ function JoinPage() {
       {appState.phase === 'playing' && (() => {
         const roundCount = appState.matchState.rounds.length;
         const currentDisplay = appState.matchState.currentRound + 1;
+        const round = appState.matchState.rounds[appState.matchState.currentRound] as RoundData | undefined;
+        const totalPredictions = round ? round.predictions.reduce((acc, val) => acc! + (val !== undefined ? val : 0), 0) : 0;
+        const totalActuals = round ? round.actuals.reduce((acc, val) => acc! + (val !== undefined ? val : 0), 0) : 0;
+        const accuracyData = calculatePlayerAccuracy(appState.matchState as unknown as StoredGame);
         return (
         <Stack>
           {roundCount > 0 && (
@@ -338,10 +344,21 @@ function JoinPage() {
               {t('join.roundBadge', { current: currentDisplay, total: roundCount })}
             </Badge>
           )}
+          {roundCount > 0 && (
+            <FlexRow fullWidth>
+              <Text>{t('gameScreen.predictions')}</Text>
+              <Badge variant="light" mr="md">
+                {totalPredictions} / {currentDisplay}
+              </Badge>
+              <Text ml="md">{t('gameScreen.actuals')}</Text>
+              <Badge variant="light">
+                {totalActuals} / {currentDisplay}
+              </Badge>
+            </FlexRow>
+          )}
           <Grid>
             {appState.matchState.players.map((name, idx) => {
               const isOwnCard = idx === appState.claimedIndex;
-              const round = appState.matchState.rounds[appState.matchState.currentRound] as RoundData | undefined;
               const frozen = !sessionActive || hostDisconnected;
               return (
                 <GridCol span={6} key={idx}>
@@ -362,6 +379,24 @@ function JoinPage() {
               );
             })}
           </Grid>
+          {roundCount > 0 && (
+            <Grid mt="auto" w="100%">
+              {appState.matchState.players.map((name, idx) => {
+                const val = accuracyData[name];
+                const pct = typeof val === 'number' ? val : 0;
+                return (
+                  <GridCol span={4} key={idx}>
+                    <FlexRow align="center">
+                      <Text>{name}</Text>
+                      <Badge variant="light" ml={8}>
+                        {pct.toFixed(2)}%
+                      </Badge>
+                    </FlexRow>
+                  </GridCol>
+                );
+              })}
+            </Grid>
+          )}
         </Stack>
           );
         })()}
