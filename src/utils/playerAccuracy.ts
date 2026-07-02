@@ -22,7 +22,7 @@ export function calculatePlayerAccuracy(game: StoredGame): PlayerAccuracy {
       const actual = round.actuals[idx];
 
       // Skip if either value is missing
-      if (pred === undefined || actual === undefined) return;
+      if (pred == null || actual == null) return;
 
       totals[idx] += 1;
       if (pred === actual) hits[idx] += 1;
