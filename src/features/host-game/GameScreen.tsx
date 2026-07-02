@@ -55,6 +55,7 @@ export const GameScreen: FunctionComponent = () => {
   const { validateRound } = useRoundValidation();
 
   const { handleNextRound, handleFinishGame } = useGameLifecycle({
+    conn,
     gameId: id,
     startDate,
     location,

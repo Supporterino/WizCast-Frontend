@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { RoundData, Rule, StoredGame } from '@/types/game.ts';
+import type { ConnectionContextValue } from '@/contexts/ConnectionProvider.tsx';
 import { Route as ResultRoute } from '@/routes/results/overview';
 
 interface GameLifecycleParams {
+  conn: ConnectionContextValue;
   gameId: string;
   startDate: Date | undefined;
   location: string;
@@ -24,6 +26,7 @@ interface GameLifecycleParams {
 }
 
 export function useGameLifecycle({
+  conn,
   gameId,
   startDate,
   location,
@@ -56,19 +59,22 @@ export function useGameLifecycle({
   const handleNextRound = useCallback(() => {
     if (!sessionActive) return;
     if (!validateRoundFn(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules)) return;
+    conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
     setPlayingRound((prev) => prev + 1);
     setCurrentRound(currentRound + 1);
-  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, setPlayingRound, setCurrentRound]);
+  }, [conn, sessionActive, validateRoundFn, currentRound, rounds, rules, setPlayingRound, setCurrentRound, players]);
 
   const handleFinishGame = useCallback(() => {
     if (!sessionActive) return;
     if (!validateRoundFn(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules)) return;
 
+    conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
+
     const finishedGame = buildGameSnapshot();
     setCompletedGames((prev) => [...prev, finishedGame]);
     setCurrentRound(currentRound + 1);
     navigate({ to: ResultRoute.to });
-  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, buildGameSnapshot, setCompletedGames, setCurrentRound, navigate]);
+  }, [conn, sessionActive, validateRoundFn, currentRound, rounds, rules, buildGameSnapshot, setCompletedGames, setCurrentRound, navigate, players]);
 
   return { buildGameSnapshot, handleNextRound, handleFinishGame };
 }
