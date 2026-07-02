@@ -8,7 +8,7 @@ import { IncomingScoreAlert } from './components/IncomingScoreAlert.tsx';
 import type { PlayerSlot } from '@/types/game.ts';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { useGame } from '@/shared/hooks/useGame.tsx';
-import { accumulateScores, computeScoreChanges } from '@/utils/scoring.ts';
+import { accumulateScores, computeSingleScoreChange } from '@/utils/scoring.ts';
 import { useConnection } from '@/shared/hooks/useConnection.ts';
 import { useStableRef } from '@/shared/hooks/useStableRef.ts';
 import { SessionExpiredModal } from '@/shared/components/SessionExpiredModal/SessionExpiredModal.tsx';
@@ -85,22 +85,33 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
           conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid player index' });
           break;
         }
-        if (!Array.isArray(predictions) || predictions.length === 0) break;
-        if (!Array.isArray(actuals) || actuals.length === 0) break;
+
+        const hasPredictions = Array.isArray(predictions) && predictions.length > 0;
+        const hasActuals = Array.isArray(actuals) && actuals.length > 0;
+
+        if (!hasPredictions && !hasActuals) break;
 
         const round = roundsRef.current[roundIndex];
         const mergedPredictions = [...round.predictions];
-        mergedPredictions[playerIndex] = predictions[0];
         const mergedActuals = [...round.actuals];
-        mergedActuals[playerIndex] = actuals[0];
 
-        setPrediction(roundIndex, playerIndex, predictions[0]);
-        setActual(roundIndex, playerIndex, actuals[0]);
+        if (hasPredictions) {
+          mergedPredictions[playerIndex] = predictions[0];
+          setPrediction(roundIndex, playerIndex, predictions[0]);
+        }
+        if (hasActuals) {
+          mergedActuals[playerIndex] = actuals[0];
+          setActual(roundIndex, playerIndex, actuals[0]);
+        }
 
-        const changes = computeScoreChanges(mergedPredictions, mergedActuals);
-        changes.forEach((change, i) => {
-          setScoreChange(roundIndex, i, change);
-        });
+        const changes = [...round.scoreChanges];
+        const playerPrediction = mergedPredictions[playerIndex];
+        const playerActual = mergedActuals[playerIndex];
+        if (playerPrediction !== undefined && playerActual !== undefined) {
+          const singleChange = computeSingleScoreChange(playerPrediction, playerActual);
+          changes[playerIndex] = singleChange;
+          setScoreChange(roundIndex, playerIndex, singleChange);
+        }
 
         const updatedRounds = roundsRef.current.map((r) => {
           if (r.id === roundIndex) {
