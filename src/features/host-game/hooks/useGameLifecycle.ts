@@ -19,7 +19,6 @@ interface GameLifecycleParams {
   setScoreChange: (roundIdx: number, playerIdx: number, value: number) => void;
   endGame: () => void;
   setCompletedGames: (updater: (prev: Array<StoredGame>) => Array<StoredGame>) => void;
-  broadcastState: () => void;
   sessionActive: boolean;
   validateRoundFn: (currentRound: number, predictions: Array<number | undefined>, actuals: Array<number | undefined>, rules: Array<Rule>) => boolean;
 }
@@ -35,7 +34,6 @@ export function useGameLifecycle({
   setCurrentRound,
   setPlayingRound,
   setCompletedGames,
-  broadcastState,
   sessionActive,
   validateRoundFn,
 }: GameLifecycleParams) {
@@ -59,9 +57,8 @@ export function useGameLifecycle({
     if (!sessionActive) return;
     if (!validateRoundFn(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules)) return;
     setPlayingRound((prev) => prev + 1);
-    broadcastState();
     setCurrentRound(currentRound + 1);
-  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, setPlayingRound, broadcastState, setCurrentRound]);
+  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, setPlayingRound, setCurrentRound]);
 
   const handleFinishGame = useCallback(() => {
     if (!sessionActive) return;
@@ -69,10 +66,9 @@ export function useGameLifecycle({
 
     const finishedGame = buildGameSnapshot();
     setCompletedGames((prev) => [...prev, finishedGame]);
-    broadcastState();
     setCurrentRound(currentRound + 1);
     navigate({ to: ResultRoute.to });
-  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, buildGameSnapshot, setCompletedGames, broadcastState, setCurrentRound, navigate]);
+  }, [sessionActive, validateRoundFn, currentRound, rounds, rules, buildGameSnapshot, setCompletedGames, setCurrentRound, navigate]);
 
   return { buildGameSnapshot, handleNextRound, handleFinishGame };
 }

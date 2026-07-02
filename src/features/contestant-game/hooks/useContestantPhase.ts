@@ -41,11 +41,15 @@ export function useContestantPhase() {
   const latestPredRef = useRef<number | undefined>(undefined);
   const latestActualRef = useRef<number | undefined>(undefined);
 
-  const resetScoreRefs = useCallback(() => {
-    latestPredRef.current = undefined;
-    latestActualRef.current = undefined;
-    setLocalPrediction(undefined);
-    setLocalActual(undefined);
+  const resetScoreRefs = useCallback(({ prediction = true, actual = true }: { prediction?: boolean; actual?: boolean } = {}) => {
+    if (prediction) {
+      latestPredRef.current = undefined;
+      setLocalPrediction(undefined);
+    }
+    if (actual) {
+      latestActualRef.current = undefined;
+      setLocalActual(undefined);
+    }
   }, []);
 
   const setAppStateSafe: Dispatch<SetStateAction<AppState>> = setAppState;

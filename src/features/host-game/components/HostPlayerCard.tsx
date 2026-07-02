@@ -10,7 +10,6 @@ interface HostPlayerCardProps {
   slotStatus?: SlotStatus;
   isRemoteConnected?: boolean;
   sessionActive: boolean;
-  onBroadcast: () => void;
 }
 
 export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({
@@ -19,7 +18,6 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({
   slotStatus,
   isRemoteConnected,
   sessionActive,
-  onBroadcast,
 }) => {
   const { currentRound, playingRound, players, rounds, scores, setPrediction, setActual, setScoreChange } = useGame();
 
@@ -48,7 +46,6 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({
               if (currentActual !== undefined) {
                 setScoreChange(currentRound, idx, computeSingleScoreChange(value, currentActual));
               }
-              onBroadcast();
             }
           : undefined
       }
@@ -60,7 +57,6 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({
               if (currentPrediction !== undefined) {
                 setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, value));
               }
-              onBroadcast();
             }
           : undefined
       }

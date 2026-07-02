@@ -85,6 +85,8 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
           conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid player index' });
           break;
         }
+        if (!Array.isArray(predictions) || predictions.length === 0) break;
+        if (!Array.isArray(actuals) || actuals.length === 0) break;
 
         const round = roundsRef.current[roundIndex];
         const mergedPredictions = [...round.predictions];

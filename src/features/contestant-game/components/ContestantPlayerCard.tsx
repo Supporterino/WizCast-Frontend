@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import type { RoundData } from '@/types/game.ts';
 import { PlayerCard } from '@/shared/components/PlayerCard/PlayerCard.tsx';
-import { useDebounce } from '@/shared/hooks/useDebounce.ts';
 
 interface ContestantPlayerCardProps {
   name: string;
@@ -45,9 +44,6 @@ export const ContestantPlayerCard: FunctionComponent<ContestantPlayerCardProps> 
     setLocalActual(undefined);
   }, [prediction, actual]);
 
-  const debouncedPredictionChange = useDebounce(onPredictionChange, 300);
-  const debouncedActualChange = useDebounce(onActualChange, 300);
-
   const enableCallbacks = isOwnCard && !isFrozen;
   const displayPrediction = isOwnCard ? (localPrediction ?? prediction) : prediction;
   const displayActual = isOwnCard ? (localActual ?? actual) : actual;
@@ -69,7 +65,7 @@ export const ContestantPlayerCard: FunctionComponent<ContestantPlayerCardProps> 
         enableCallbacks
           ? (value) => {
               setLocalPrediction(value);
-              debouncedPredictionChange(value);
+              onPredictionChange(value);
             }
           : undefined
       }
@@ -77,7 +73,7 @@ export const ContestantPlayerCard: FunctionComponent<ContestantPlayerCardProps> 
         enableCallbacks
           ? (value) => {
               setLocalActual(value);
-              debouncedActualChange(value);
+              onActualChange(value);
             }
           : undefined
       }

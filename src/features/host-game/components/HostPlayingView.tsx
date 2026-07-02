@@ -15,7 +15,6 @@ interface HostPlayingViewProps {
   currentRound: number;
   sessionActive: boolean;
   playerSlots: Array<PlayerSlot>;
-  onBroadcast: () => void;
 }
 
 export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
@@ -25,7 +24,6 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
   currentRound,
   sessionActive,
   playerSlots,
-  onBroadcast,
 }) => {
   const { t } = useTranslation();
 
@@ -55,7 +53,6 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
                 slotStatus={playerSlots[idx]?.slotStatus}
                 isRemoteConnected={isRemote}
                 sessionActive={sessionActive}
-                onBroadcast={onBroadcast}
               />
             </GridCol>
           );

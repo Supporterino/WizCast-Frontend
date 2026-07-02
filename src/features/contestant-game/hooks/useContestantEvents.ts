@@ -14,7 +14,7 @@ interface UseContestantEventsParams {
   setAppState: Dispatch<SetStateAction<AppState>>;
   latestPredRef: MutableRefObject<number | undefined>;
   latestActualRef: MutableRefObject<number | undefined>;
-  resetScoreRefs: () => void;
+  resetScoreRefs: (flags?: { prediction?: boolean; actual?: boolean }) => void;
   setHostDisconnected: Dispatch<SetStateAction<boolean>>;
   setClaimError: Dispatch<SetStateAction<string | null>>;
   setJoinError: Dispatch<SetStateAction<string | null>>;
@@ -82,8 +82,27 @@ export function useContestantEvents({
         }
         case 'state-sync': {
           if (current.phase === 'playing' || current.phase === 'round-summary') {
-            resetScoreRefs();
-            return { ...current, matchState: message.data.matchState as typeof current.matchState };
+            const matchState = message.data.matchState as typeof current.matchState;
+            const roundChanged = matchState.currentRound !== current.matchState.currentRound;
+
+            if (roundChanged) {
+              resetScoreRefs();
+            } else {
+              const claimedIdx = current.claimedIndex;
+              const syncedRound = matchState.rounds[matchState.currentRound];
+
+              const predAcknowledged = latestPredRef.current !== undefined
+                && syncedRound.predictions[claimedIdx] === latestPredRef.current;
+
+              const actualAcknowledged = latestActualRef.current !== undefined
+                && syncedRound.actuals[claimedIdx] === latestActualRef.current;
+
+              if (predAcknowledged || actualAcknowledged) {
+                resetScoreRefs({ prediction: predAcknowledged, actual: actualAcknowledged });
+              }
+            }
+
+            return { ...current, matchState };
           }
           return current;
         }

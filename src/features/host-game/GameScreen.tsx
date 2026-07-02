@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGameBroadcast } from './hooks/useGameBroadcast.ts';
 import { useRoundValidation } from './hooks/useRoundValidation.tsx';
 import { useGameLifecycle } from './hooks/useGameLifecycle.ts';
@@ -15,6 +15,7 @@ import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 import { useConnection } from '@/shared/hooks/useConnection.ts';
 import { useStore } from '@/shared/hooks/useStore.tsx';
 import { useGame } from '@/shared/hooks/useGame.tsx';
+import { useDebounce } from '@/shared/hooks/useDebounce.ts';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -39,6 +40,8 @@ export const GameScreen: FunctionComponent = () => {
   const conn = useConnection();
 
   const hostLobbyRef = useRef<HostLobbyHandle>(null);
+
+  const shouldBroadcastRef = useRef(false);
 
   const { broadcastState, sessionActive } = useGameBroadcast(
     conn,
@@ -67,10 +70,23 @@ export const GameScreen: FunctionComponent = () => {
     setScoreChange,
     endGame,
     setCompletedGames,
-    broadcastState,
     sessionActive,
     validateRoundFn: validateRound,
   });
+
+  const debouncedBroadcast = useDebounce(() => {
+    if (!sessionActive) return;
+    broadcastState();
+  }, 300);
+
+  useEffect(() => {
+    if (!sessionActive) return;
+    if (!shouldBroadcastRef.current) {
+      shouldBroadcastRef.current = true;
+      return;
+    }
+    debouncedBroadcast();
+  }, [rounds, currentRound, debouncedBroadcast, sessionActive]);
 
   const hostReconnecting = conn.connectionState.transport === 'CONNECTING' && conn.connectionState.session !== 'ACTIVE';
 
@@ -101,7 +117,6 @@ export const GameScreen: FunctionComponent = () => {
         currentRound={currentRound}
         sessionActive={sessionActive}
         playerSlots={playerSlots}
-        onBroadcast={broadcastState}
       />
     </FlexCol>
   );
