@@ -1,5 +1,5 @@
 import { Badge, Card, Grid, GridCol, NumberInput, Text } from '@mantine/core';
-import { IconCardsFilled } from '@tabler/icons-react';
+import { IconCardsFilled, IconEye, IconPencil } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
 import type { RoundData, SlotStatus  } from '@/types/game.ts';
@@ -51,13 +51,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
   const badgeColor = slotStatus === 'disconnected' ? 'orange' : 'green';
 
   return (
-    <Card
-      shadow="sm"
-      padding="sm"
-      radius="md"
-      withBorder
-      bg={isRemoteConnected ? 'var(--mantine-color-green-light-hover)' : undefined}
-    >
+    <Card shadow="sm" padding="sm" radius="md" withBorder>
       <Card.Section withBorder inheritPadding>
         <FlexRow fullWidth p={'xs'}>
           <Text mr={'auto'} fw={500}>
@@ -69,6 +63,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
             </Badge>
           )}
           {idx == currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
+          {inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} /> }
         </FlexRow>
       </Card.Section>
 

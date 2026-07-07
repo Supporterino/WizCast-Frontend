@@ -1,4 +1,4 @@
-import { Badge, Container, Text, Title } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useContestantPhase } from './hooks/useContestantPhase.ts';
 import { useContestantEvents } from './hooks/useContestantEvents.ts';
@@ -9,6 +9,7 @@ import { RoundSummaryOverlay } from './components/RoundSummaryOverlay.tsx';
 import { SessionExpiredOverlay } from './components/SessionExpiredOverlay.tsx';
 import type { FunctionComponent } from 'react';
 import { useConnection } from '@/shared/hooks/useConnection.ts';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 export const ContestantGamePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -62,14 +63,12 @@ export const ContestantGamePage: FunctionComponent = () => {
   const isRejoining = conn.connectionState.session === 'REJOINING';
 
   return (
-    <Container size="sm" py="xl">
-      <Title order={2} mb="lg">
-        {t('join.title', 'Join Match')}
-      </Title>
-
+      <FlexCol fullWidth h="100%" justify="flex-start" mb="md">
+      <Group justify="flex-end">
       <Text size="sm" c={sendError ? 'red' : isConnected ? 'green' : 'red'} mb="md">
         {sendError ? t('join.sendError', 'Error sending') : isConnected ? t('join.connected', 'Connected') : t('join.disconnected', 'Disconnected')}
       </Text>
+      </Group>
 
       {isRejoining && (
         <Badge variant="light" color="yellow" mb="md" style={{ animation: 'pulse 1.5s infinite' }}>
@@ -130,6 +129,6 @@ export const ContestantGamePage: FunctionComponent = () => {
         onClose={() => setSessionExpired(false)}
         onRejoin={handleRejoin}
       />
-    </Container>
+      </FlexCol>
   );
 };

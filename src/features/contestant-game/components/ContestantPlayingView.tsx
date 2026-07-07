@@ -1,4 +1,4 @@
-import { Badge, Grid, GridCol, Stack } from '@mantine/core';
+import { Grid, GridCol, Group, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { ContestantPlayerCard } from './ContestantPlayerCard.tsx';
 import type { FunctionComponent } from 'react';
@@ -6,6 +6,7 @@ import type { RoundData, StoredGame } from '@/types/game.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
 import { AccuracyBadgeGrid } from '@/shared/components/AccuracyBadgeGrid/AccuracyBadgeGrid.tsx';
 import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 interface ContestantPlayingViewProps {
   players: Array<string>;
@@ -42,11 +43,16 @@ export const ContestantPlayingView: FunctionComponent<ContestantPlayingViewProps
   const accuracyData = calculatePlayerAccuracy({ players, rounds, scores } as StoredGame);
 
   return (
-    <Stack>
+    <FlexCol fullWidth h="100%" justify="flex-start" mb="md">
       {roundCount > 0 && (
-        <Badge variant="light" size="lg">
-          {t('join.roundBadge', { current: currentDisplay, total: roundCount })}
-        </Badge>
+        <Group justify={'center'}>
+          <Text>
+            {t('labels.currentRound', {
+              current: currentDisplay,
+              total: roundCount,
+            })}
+          </Text>
+        </Group>
       )}
       {roundCount > 0 && (
         <PredictionsTotalsBar
@@ -82,9 +88,7 @@ export const ContestantPlayingView: FunctionComponent<ContestantPlayingViewProps
           );
         })}
       </Grid>
-      {roundCount > 0 && (
-        <AccuracyBadgeGrid players={players} accuracyData={accuracyData} />
-      )}
-    </Stack>
+      {roundCount > 0 && <AccuracyBadgeGrid players={players} accuracyData={accuracyData} />}
+    </FlexCol>
   );
 };

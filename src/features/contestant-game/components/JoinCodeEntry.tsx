@@ -1,12 +1,13 @@
-import { Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Container, Group, Text, TextInput, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ChangeEvent, FunctionComponent, MutableRefObject } from 'react';
+import type { ChangeEvent, FunctionComponent, RefObject } from 'react';
 import { useConnection } from '@/shared/hooks/useConnection.ts';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 interface JoinCodeEntryProps {
   onJoined: (code: string) => void;
-  joinTimeoutRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+  joinTimeoutRef: RefObject<ReturnType<typeof setTimeout> | null>;
   joinError: string | null;
 }
 
@@ -92,8 +93,9 @@ export const JoinCodeEntry: FunctionComponent<JoinCodeEntryProps> = ({
   const isFormValid = firstPart.length === 3 && secondPart.length === 3;
 
   return (
-    <Stack>
-      <Stack gap={4}>
+    <Container size={'lg'}>
+      <FlexCol fullWidth>
+        <Title order={2}>{t('join.title', 'Join Match')}</Title>
         <Text size="sm" fw={500}>
           {t('join.enterCode', 'Enter Join Code')}
         </Text>
@@ -123,15 +125,15 @@ export const JoinCodeEntry: FunctionComponent<JoinCodeEntryProps> = ({
             styles={{ input: { textAlign: 'center', width: 80 } }}
           />
         </Group>
-      </Stack>
-      {error && (
-        <Text c="red" size="sm">
-          {error}
-        </Text>
-      )}
-      <Button onClick={handleJoin} loading={isJoining || isConnecting} disabled={(!isFormValid || !isConnected) && !isConnecting}>
-        {isConnecting ? t('join.connecting', 'Connecting...') : t('join.connect', 'Connect')}
-      </Button>
-    </Stack>
+        {error && (
+          <Text c="red" size="sm">
+            {error}
+          </Text>
+        )}
+        <Button ml={"auto"} mt={'lg'} onClick={handleJoin} loading={isJoining || isConnecting} disabled={(!isFormValid || !isConnected) && !isConnecting}>
+          {isConnecting ? t('join.connecting', 'Connecting...') : t('join.connect', 'Connect')}
+        </Button>
+      </FlexCol>
+    </Container>
   );
 };
