@@ -223,7 +223,7 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   return (
     <>
       <Tooltip label={t('multiplayer.shareJoinCode', 'Share join code')}>
-        <ActionIcon variant="light" onClick={handleClick} loading={isCreating}>
+        <ActionIcon size={'lg'} variant="light" onClick={handleClick} loading={isCreating}>
           <IconShare stroke={1.5} />
         </ActionIcon>
       </Tooltip>

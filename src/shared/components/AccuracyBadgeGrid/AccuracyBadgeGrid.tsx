@@ -8,16 +8,16 @@ interface AccuracyBadgeGridProps {
 }
 
 export const AccuracyBadgeGrid: FunctionComponent<AccuracyBadgeGridProps> = ({ players, accuracyData }) => (
-  <Grid mt="auto" w="100%">
+  <Grid mt="auto" w="100%" grow>
     {players.map((name, idx) => {
       const val = accuracyData[name];
       const pct = typeof val === 'number' ? val : 0;
       return (
-        <GridCol span={4} key={idx}>
+        <GridCol span={3} key={idx}>
           <FlexRow align="center">
             <Text>{name}</Text>
             <Badge variant="light" ml={8}>
-              {pct.toFixed(2)}%
+              {pct.toFixed(0)}%
             </Badge>
           </FlexRow>
         </GridCol>

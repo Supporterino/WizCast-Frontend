@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Title } from '@mantine/core';
+import { Alert, Button, Group, Title } from '@mantine/core';
 import { IconExclamationCircle, IconInfoCircle } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,6 @@ export const GameSetupPage: FunctionComponent = () => {
   const { form, isValid, handlersRef, handleSubmit } = useGameSetup();
 
   return (
-    <Box style={{ position: 'relative', minHeight: '100%' }}>
       <form onSubmit={handleSubmit}>
         <Title c="red" mb="lg">
           {t('titles.new')}
@@ -41,13 +40,13 @@ export const GameSetupPage: FunctionComponent = () => {
           </Alert>
         )}
 
-        <GameRulesToggle onOpenRules={open} />
-        <Button ml="auto" variant="filled" type="submit" disabled={!isValid}>
-          {t('buttons.play')}
-        </Button>
+        <Group grow mt={'xl'}>
+          <GameRulesToggle onOpenRules={open} />
+          <Button variant="filled" type="submit" disabled={!isValid}>
+            {t('buttons.play')}
+          </Button>
+        </Group>
+        <RuleModal opened={opened} onClose={close} />
       </form>
-
-      <RuleModal opened={opened} onClose={close} />
-    </Box>
   );
 };
