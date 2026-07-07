@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import type { RoundData, Rule } from '@/types/game.ts';
 import type { ConnectionContextValue } from '@/contexts/ConnectionProvider.tsx';
 import { useStableRef } from '@/shared/hooks/useStableRef.ts';
+import type { RoundData, Rule } from '@/types/game.ts';
 
 interface MatchState {
   players: Array<string>;
@@ -24,13 +24,16 @@ export function useGameBroadcast(
   const scoresRef = useStableRef(scores);
   const currentRoundRef = useStableRef(currentRound);
 
-  const buildPayload = useCallback((): MatchState => ({
-    players: playersRef.current,
-    rounds: roundsRef.current,
-    scores: scoresRef.current,
-    rules,
-    currentRound: currentRoundRef.current,
-  }), [rules, playersRef, roundsRef, scoresRef, currentRoundRef]);
+  const buildPayload = useCallback(
+    (): MatchState => ({
+      players: playersRef.current,
+      rounds: roundsRef.current,
+      scores: scoresRef.current,
+      rules,
+      currentRound: currentRoundRef.current,
+    }),
+    [rules, playersRef, roundsRef, scoresRef, currentRoundRef],
+  );
 
   const broadcastState = useCallback(() => {
     conn.sendEvent('state-sync', { matchState: buildPayload() });

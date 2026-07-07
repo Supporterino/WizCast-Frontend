@@ -1,7 +1,7 @@
 import { ActionIcon, Text } from '@mantine/core';
 import { IconArrowNarrowLeft, IconArrowNarrowRight, IconReportAnalytics } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 
 interface RoundNavigatorProps {

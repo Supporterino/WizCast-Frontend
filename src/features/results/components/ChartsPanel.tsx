@@ -1,12 +1,12 @@
 import { BarChart, LineChart } from '@mantine/charts';
 import { Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
-import type { CumulativeScoreEntry, RoundDiff } from '@/utils/gameDiff.ts';
-import type { SeriesItem } from '@/utils/seriesGen.ts';
-import type { PlayerAccuracy } from '@/utils/playerAccuracy.ts';
-import { getLargestDiff } from '@/utils/gameDiff.ts';
+import { useTranslation } from 'react-i18next';
 import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import type { CumulativeScoreEntry, RoundDiff } from '@/utils/gameDiff.ts';
+import { getLargestDiff } from '@/utils/gameDiff.ts';
+import type { PlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import type { SeriesItem } from '@/utils/seriesGen.ts';
 
 interface ChartsPanelProps {
   roundDiff: Array<RoundDiff>;

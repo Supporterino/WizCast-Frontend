@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useStore } from '@/shared/hooks/useStore.tsx';
 import { GameResultPage } from '@/features/results/GameResultPage.tsx';
+import { useStore } from '@/shared/hooks/useStore.tsx';
 
 function RouteComponent() {
   const { resultID } = Route.useParams();

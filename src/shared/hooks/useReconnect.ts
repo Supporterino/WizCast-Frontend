@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
 import type { MutableRefObject } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const RECONNECT_BACKOFF = [1000, 2000, 4000, 5000];
 
-export function useReconnect(
-  onReconnect: () => void,
-  wsRef: MutableRefObject<WebSocket | null>,
-) {
+export function useReconnect(onReconnect: () => void, wsRef: MutableRefObject<WebSocket | null>) {
   const reconnectAttemptRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intentionalCloseRef = useRef(false);

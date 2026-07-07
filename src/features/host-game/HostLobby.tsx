@@ -1,17 +1,17 @@
 import { ActionIcon, Button, Modal, Stack, Text, Tooltip } from '@mantine/core';
 import { IconShare } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { JoinCodeShare } from './components/JoinCodeShare.tsx';
-import { SlotManager } from './components/SlotManager.tsx';
-import { IncomingScoreAlert } from './components/IncomingScoreAlert.tsx';
+import { useTranslation } from 'react-i18next';
+import { SessionExpiredModal } from '@/shared/components/SessionExpiredModal/SessionExpiredModal.tsx';
+import { useConnection } from '@/shared/hooks/useConnection.ts';
+import { useGame } from '@/shared/hooks/useGame.tsx';
+import { useStableRef } from '@/shared/hooks/useStableRef.ts';
 import type { PlayerSlot } from '@/types/game.ts';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
-import { useGame } from '@/shared/hooks/useGame.tsx';
 import { accumulateScores, computeSingleScoreChange } from '@/utils/scoring.ts';
-import { useConnection } from '@/shared/hooks/useConnection.ts';
-import { useStableRef } from '@/shared/hooks/useStableRef.ts';
-import { SessionExpiredModal } from '@/shared/components/SessionExpiredModal/SessionExpiredModal.tsx';
+import { IncomingScoreAlert } from './components/IncomingScoreAlert.tsx';
+import { JoinCodeShare } from './components/JoinCodeShare.tsx';
+import { SlotManager } from './components/SlotManager.tsx';
 
 export interface HostLobbyHandle {
   broadcastState: () => void;
@@ -21,18 +21,8 @@ export interface HostLobbyHandle {
 
 export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   const { t } = useTranslation();
-  const {
-    players,
-    rounds,
-    scores,
-    rules,
-    currentRound,
-    playerSlots,
-    updateSlotStatus,
-    setPrediction,
-    setActual,
-    setScoreChange,
-  } = useGame();
+  const { players, rounds, scores, rules, currentRound, playerSlots, updateSlotStatus, setPrediction, setActual, setScoreChange } =
+    useGame();
   const conn = useConnection();
   const [opened, setOpened] = useState(false);
   const [joinCode, setJoinCode] = useState<string | null>(null);
@@ -53,98 +43,101 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
   const isActive = conn.connectionState.session === 'ACTIVE';
   const isReconnecting = isConnecting && !!conn.hostToken;
 
-  const handleMessage = useCallback((msg: RelayToClientEnvelope) => {
-    switch (msg.event) {
-      case 'room-created':
-        setJoinCode(msg.data.joinCode);
-        setError(null);
-        conn.setSessionActive();
-        setOpened(true);
-        conn.sendEvent('state-sync', {
-          matchState: {
-            players: playersRef.current,
-            rounds: roundsRef.current,
-            scores: scoresRef.current,
-            rules,
-            currentRound: currentRoundRef.current,
-          },
-        });
-        break;
-      case 'contestant-joined':
-        break;
-      case 'contestant-left':
-        updateSlotStatus(msg.data.playerIndex, 'unclaimed');
-        break;
-      case 'score-submitted': {
-        const { playerIndex, roundIndex, predictions, actuals } = msg.data;
-        if (roundIndex < 0 || roundIndex >= roundsRef.current.length) {
-          conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid round index' });
+  const handleMessage = useCallback(
+    (msg: RelayToClientEnvelope) => {
+      switch (msg.event) {
+        case 'room-created':
+          setJoinCode(msg.data.joinCode);
+          setError(null);
+          conn.setSessionActive();
+          setOpened(true);
+          conn.sendEvent('state-sync', {
+            matchState: {
+              players: playersRef.current,
+              rounds: roundsRef.current,
+              scores: scoresRef.current,
+              rules,
+              currentRound: currentRoundRef.current,
+            },
+          });
           break;
-        }
-        if (playerIndex < 0 || playerIndex >= playersRef.current.length) {
-          conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid player index' });
+        case 'contestant-joined':
           break;
-        }
-
-        const hasPredictions = Array.isArray(predictions) && predictions.length > 0;
-        const hasActuals = Array.isArray(actuals) && actuals.length > 0;
-
-        if (!hasPredictions && !hasActuals) break;
-
-        const round = roundsRef.current[roundIndex];
-        const mergedPredictions = [...round.predictions];
-        const mergedActuals = [...round.actuals];
-
-        if (hasPredictions) {
-          mergedPredictions[playerIndex] = predictions[0];
-          setPrediction(roundIndex, playerIndex, predictions[0]);
-        }
-        if (hasActuals) {
-          mergedActuals[playerIndex] = actuals[0];
-          setActual(roundIndex, playerIndex, actuals[0]);
-        }
-
-        const changes = [...round.scoreChanges];
-        const playerPrediction = mergedPredictions[playerIndex];
-        const playerActual = mergedActuals[playerIndex];
-        if (playerPrediction !== undefined && playerActual !== undefined) {
-          const singleChange = computeSingleScoreChange(playerPrediction, playerActual);
-          changes[playerIndex] = singleChange;
-          setScoreChange(roundIndex, playerIndex, singleChange);
-        }
-
-        const updatedRounds = roundsRef.current.map((r) => {
-          if (r.id === roundIndex) {
-            return { ...r, predictions: mergedPredictions, actuals: mergedActuals, scoreChanges: changes };
+        case 'contestant-left':
+          updateSlotStatus(msg.data.playerIndex, 'unclaimed');
+          break;
+        case 'score-submitted': {
+          const { playerIndex, roundIndex, predictions, actuals } = msg.data;
+          if (roundIndex < 0 || roundIndex >= roundsRef.current.length) {
+            conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid round index' });
+            break;
           }
-          return r;
-        });
-        const updatedScores = accumulateScores(updatedRounds, playersRef.current.length);
-        conn.sendEvent('state-sync', {
-          matchState: {
-            players: playersRef.current,
-            rounds: updatedRounds,
-            scores: updatedScores,
-            rules,
-            currentRound: currentRoundRef.current,
-          },
-        });
-        break;
-      }
-      case 'slot-status-changed':
-        updateSlotStatus(msg.data.playerIndex, msg.data.status);
-        break;
-      case 'error':
-        if (msg.data.code === 'HOST_SESSION_EXPIRED') {
-          setSessionExpired(true);
-          setJoinCode(null);
-          conn.setSessionDisconnected();
-        } else {
-          setError(msg.data.message);
+          if (playerIndex < 0 || playerIndex >= playersRef.current.length) {
+            conn.sendEvent('error', { code: 'INVALID_SLOT', message: 'Invalid player index' });
+            break;
+          }
+
+          const hasPredictions = Array.isArray(predictions) && predictions.length > 0;
+          const hasActuals = Array.isArray(actuals) && actuals.length > 0;
+
+          if (!hasPredictions && !hasActuals) break;
+
+          const round = roundsRef.current[roundIndex];
+          const mergedPredictions = [...round.predictions];
+          const mergedActuals = [...round.actuals];
+
+          if (hasPredictions) {
+            mergedPredictions[playerIndex] = predictions[0];
+            setPrediction(roundIndex, playerIndex, predictions[0]);
+          }
+          if (hasActuals) {
+            mergedActuals[playerIndex] = actuals[0];
+            setActual(roundIndex, playerIndex, actuals[0]);
+          }
+
+          const changes = [...round.scoreChanges];
+          const playerPrediction = mergedPredictions[playerIndex];
+          const playerActual = mergedActuals[playerIndex];
+          if (playerPrediction !== undefined && playerActual !== undefined) {
+            const singleChange = computeSingleScoreChange(playerPrediction, playerActual);
+            changes[playerIndex] = singleChange;
+            setScoreChange(roundIndex, playerIndex, singleChange);
+          }
+
+          const updatedRounds = roundsRef.current.map((r) => {
+            if (r.id === roundIndex) {
+              return { ...r, predictions: mergedPredictions, actuals: mergedActuals, scoreChanges: changes };
+            }
+            return r;
+          });
+          const updatedScores = accumulateScores(updatedRounds, playersRef.current.length);
+          conn.sendEvent('state-sync', {
+            matchState: {
+              players: playersRef.current,
+              rounds: updatedRounds,
+              scores: updatedScores,
+              rules,
+              currentRound: currentRoundRef.current,
+            },
+          });
+          break;
         }
-        break;
-    }
-  }, [conn, updateSlotStatus, setPrediction, setActual, setScoreChange, rules, playersRef, roundsRef, scoresRef, currentRoundRef]);
+        case 'slot-status-changed':
+          updateSlotStatus(msg.data.playerIndex, msg.data.status);
+          break;
+        case 'error':
+          if (msg.data.code === 'HOST_SESSION_EXPIRED') {
+            setSessionExpired(true);
+            setJoinCode(null);
+            conn.setSessionDisconnected();
+          } else {
+            setError(msg.data.message);
+          }
+          break;
+      }
+    },
+    [conn, updateSlotStatus, setPrediction, setActual, setScoreChange, rules, playersRef, roundsRef, scoresRef, currentRoundRef],
+  );
 
   useEffect(() => {
     conn.setMessageHandler(handleMessage);
@@ -159,9 +152,12 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
     }
   }, [conn.connectionState.transport, conn, playersRef]);
 
-  const send = useCallback((event: string, data: Record<string, unknown>) => {
-    conn.sendEvent(event, data);
-  }, [conn]);
+  const send = useCallback(
+    (event: string, data: Record<string, unknown>) => {
+      conn.sendEvent(event, data);
+    },
+    [conn],
+  );
 
   useImperativeHandle(
     ref,

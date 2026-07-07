@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SessionExpiredModal } from '@/shared/components/SessionExpiredModal/SessionExpiredModal.tsx';
 
 interface SessionExpiredOverlayProps {
@@ -8,11 +8,7 @@ interface SessionExpiredOverlayProps {
   onRejoin: () => void;
 }
 
-export const SessionExpiredOverlay: FunctionComponent<SessionExpiredOverlayProps> = ({
-  opened,
-  onClose,
-  onRejoin,
-}) => {
+export const SessionExpiredOverlay: FunctionComponent<SessionExpiredOverlayProps> = ({ opened, onClose, onRejoin }) => {
   const { t } = useTranslation();
 
   return (

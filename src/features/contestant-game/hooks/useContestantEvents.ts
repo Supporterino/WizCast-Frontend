@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react';
 import { notifications } from '@mantine/notifications';
-import { useTranslation } from 'react-i18next';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
-import type { RelayToClientEnvelope } from '@/types/protocol.ts';
+import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ConnectionContextValue } from '@/contexts/ConnectionProvider.tsx';
-import type { AppState } from './useContestantPhase.ts';
 import { useDebounce } from '@/shared/hooks/useDebounce.ts';
+import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { ErrorCode } from '@/types/protocol.ts';
+import type { AppState } from './useContestantPhase.ts';
 
 interface UseContestantEventsParams {
   conn: ConnectionContextValue;
@@ -41,141 +41,148 @@ export function useContestantEvents({
   const joinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const summaryDismissRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const handleMessage = useCallback((message: RelayToClientEnvelope) => {
-    setAppState((current) => {
-      switch (message.event) {
-        case 'room-joined': {
-          if (joinTimeoutRef.current) {
-            clearTimeout(joinTimeoutRef.current);
-            joinTimeoutRef.current = null;
-          }
-          conn.setSessionJoined();
-          return {
-            phase: 'claim-slot',
-            joinCode: joinCodeRef.current ?? '',
-            players: message.data.players,
-            slotStatuses: message.data.slotStatuses,
-            sessionToken: message.data.sessionToken,
-          };
-        }
-        case 'slot-claimed': {
-          if (current.phase === 'claim-slot') {
-            resetScoreRefs();
-            conn.setSessionActive();
-            return {
-              phase: 'playing',
-              joinCode: current.joinCode,
-              sessionToken: current.sessionToken,
-              claimedIndex: message.data.playerIndex,
-              matchState: { players: current.players, rounds: [], scores: new Array(current.players.length).fill(0), rules: [], currentRound: 0 },
-            };
-          }
-          return current;
-        }
-        case 'slot-status-changed': {
-          if (current.phase === 'claim-slot') {
-            const newSlotStatuses = [...current.slotStatuses];
-            newSlotStatuses[message.data.playerIndex] = message.data.status;
-            return { ...current, slotStatuses: newSlotStatuses };
-          }
-          return current;
-        }
-        case 'state-sync': {
-          if (current.phase === 'playing' || current.phase === 'round-summary') {
-            const matchState = message.data.matchState as typeof current.matchState;
-            const roundChanged = matchState.currentRound !== current.matchState.currentRound;
-
-            if (roundChanged) {
-              resetScoreRefs();
-            } else {
-              const claimedIdx = current.claimedIndex;
-              const syncedRound = matchState.rounds[matchState.currentRound];
-
-              const predAcknowledged = latestPredRef.current !== undefined
-                && syncedRound.predictions[claimedIdx] === latestPredRef.current;
-
-              const actualAcknowledged = latestActualRef.current !== undefined
-                && syncedRound.actuals[claimedIdx] === latestActualRef.current;
-
-              if (predAcknowledged || actualAcknowledged) {
-                resetScoreRefs({ prediction: predAcknowledged, actual: actualAcknowledged });
-              }
+  const handleMessage = useCallback(
+    (message: RelayToClientEnvelope) => {
+      setAppState((current) => {
+        switch (message.event) {
+          case 'room-joined': {
+            if (joinTimeoutRef.current) {
+              clearTimeout(joinTimeoutRef.current);
+              joinTimeoutRef.current = null;
             }
-
-            return { ...current, matchState };
-          }
-          return current;
-        }
-        case 'round-completed': {
-          if (current.phase === 'playing') {
-            resetScoreRefs();
-            if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
-            return {
-              phase: 'round-summary',
-              joinCode: current.joinCode,
-              sessionToken: current.sessionToken,
-              claimedIndex: current.claimedIndex,
-              matchState: current.matchState,
-              roundIndex: message.data.roundIndex,
-              scoreChanges: message.data.scoreChanges,
-            };
-          }
-          return current;
-        }
-        case 'host-disconnected': {
-          setHostDisconnected(true);
-          return current;
-        }
-        case 'host-reconnected': {
-          setHostDisconnected(false);
-          return current;
-        }
-        case 'slot-released': {
-          if (current.phase === 'playing') {
-            notifications.show({
-              title: t('join.slotReleasedTitle', 'Slot Released'),
-              message: t('join.slotReleasedMessage', 'Your slot was released by the host'),
-              color: 'orange',
-              autoClose: 5000,
-            });
-            resetScoreRefs();
-            const slotStatuses = current.matchState.players.map((_, idx) =>
-              idx === message.data.playerIndex ? 'unclaimed' : 'claimed'
-            );
+            conn.setSessionJoined();
             return {
               phase: 'claim-slot',
-              joinCode: current.joinCode,
-              players: current.matchState.players,
-              slotStatuses,
-              sessionToken: current.sessionToken,
+              joinCode: joinCodeRef.current ?? '',
+              players: message.data.players,
+              slotStatuses: message.data.slotStatuses,
+              sessionToken: message.data.sessionToken,
             };
           }
-          return current;
+          case 'slot-claimed': {
+            if (current.phase === 'claim-slot') {
+              resetScoreRefs();
+              conn.setSessionActive();
+              return {
+                phase: 'playing',
+                joinCode: current.joinCode,
+                sessionToken: current.sessionToken,
+                claimedIndex: message.data.playerIndex,
+                matchState: {
+                  players: current.players,
+                  rounds: [],
+                  scores: new Array(current.players.length).fill(0),
+                  rules: [],
+                  currentRound: 0,
+                },
+              };
+            }
+            return current;
+          }
+          case 'slot-status-changed': {
+            if (current.phase === 'claim-slot') {
+              const newSlotStatuses = [...current.slotStatuses];
+              newSlotStatuses[message.data.playerIndex] = message.data.status;
+              return { ...current, slotStatuses: newSlotStatuses };
+            }
+            return current;
+          }
+          case 'state-sync': {
+            if (current.phase === 'playing' || current.phase === 'round-summary') {
+              const matchState = message.data.matchState as typeof current.matchState;
+              const roundChanged = matchState.currentRound !== current.matchState.currentRound;
+
+              if (roundChanged) {
+                resetScoreRefs();
+              } else {
+                const claimedIdx = current.claimedIndex;
+                const syncedRound = matchState.rounds[matchState.currentRound];
+
+                const predAcknowledged =
+                  latestPredRef.current !== undefined && syncedRound.predictions[claimedIdx] === latestPredRef.current;
+
+                const actualAcknowledged =
+                  latestActualRef.current !== undefined && syncedRound.actuals[claimedIdx] === latestActualRef.current;
+
+                if (predAcknowledged || actualAcknowledged) {
+                  resetScoreRefs({ prediction: predAcknowledged, actual: actualAcknowledged });
+                }
+              }
+
+              return { ...current, matchState };
+            }
+            return current;
+          }
+          case 'round-completed': {
+            if (current.phase === 'playing') {
+              resetScoreRefs();
+              if (summaryDismissRef.current) clearTimeout(summaryDismissRef.current);
+              return {
+                phase: 'round-summary',
+                joinCode: current.joinCode,
+                sessionToken: current.sessionToken,
+                claimedIndex: current.claimedIndex,
+                matchState: current.matchState,
+                roundIndex: message.data.roundIndex,
+                scoreChanges: message.data.scoreChanges,
+              };
+            }
+            return current;
+          }
+          case 'host-disconnected': {
+            setHostDisconnected(true);
+            return current;
+          }
+          case 'host-reconnected': {
+            setHostDisconnected(false);
+            return current;
+          }
+          case 'slot-released': {
+            if (current.phase === 'playing') {
+              notifications.show({
+                title: t('join.slotReleasedTitle', 'Slot Released'),
+                message: t('join.slotReleasedMessage', 'Your slot was released by the host'),
+                color: 'orange',
+                autoClose: 5000,
+              });
+              resetScoreRefs();
+              const slotStatuses = current.matchState.players.map((_, idx) => (idx === message.data.playerIndex ? 'unclaimed' : 'claimed'));
+              return {
+                phase: 'claim-slot',
+                joinCode: current.joinCode,
+                players: current.matchState.players,
+                slotStatuses,
+                sessionToken: current.sessionToken,
+              };
+            }
+            return current;
+          }
+          case 'room-closed':
+            conn.setSessionDisconnected();
+            setHostDisconnected(false);
+            return { phase: 'enter-code' };
+          case 'error': {
+            if (joinTimeoutRef.current) {
+              clearTimeout(joinTimeoutRef.current);
+              joinTimeoutRef.current = null;
+            }
+            if (message.data.code === ErrorCode.SESSION_EXPIRED || message.data.code === ErrorCode.HOST_SESSION_EXPIRED) {
+              setSessionExpired(true);
+            }
+            if (current.phase === 'enter-code') {
+              setJoinError(message.data.message);
+            } else {
+              setClaimError(message.data.message);
+            }
+            return current;
+          }
+          default:
+            return current;
         }
-        case 'room-closed':
-          conn.setSessionDisconnected();
-          setHostDisconnected(false);
-          return { phase: 'enter-code' };
-        case 'error': {
-          if (joinTimeoutRef.current) {
-            clearTimeout(joinTimeoutRef.current);
-            joinTimeoutRef.current = null;
-          }
-          if (message.data.code === ErrorCode.SESSION_EXPIRED || message.data.code === ErrorCode.HOST_SESSION_EXPIRED) {
-            setSessionExpired(true);
-          }
-          if (current.phase === 'enter-code') {
-            setJoinError(message.data.message);
-          } else {
-            setClaimError(message.data.message);
-          }
-          return current;
-        }
-        default:
-          return current;
-      }
-    });
-  }, [conn, t, resetScoreRefs, setHostDisconnected, setJoinError, setClaimError, setSessionExpired]);
+      });
+    },
+    [conn, t, resetScoreRefs, setHostDisconnected, setJoinError, setClaimError, setSessionExpired],
+  );
 
   useEffect(() => {
     conn.connect('contestant');
@@ -201,16 +208,22 @@ export function useContestantEvents({
     }
   }, 300);
 
-  const handleJoined = useCallback((code: string) => {
-    joinCodeRef.current = code;
-    conn.setJoinCode(code);
-    conn.setSessionJoining();
-    setJoinError(null);
-  }, [conn, setJoinError]);
+  const handleJoined = useCallback(
+    (code: string) => {
+      joinCodeRef.current = code;
+      conn.setJoinCode(code);
+      conn.setSessionJoining();
+      setJoinError(null);
+    },
+    [conn, setJoinError],
+  );
 
-  const handleClaim = useCallback((playerIndex: number) => {
-    conn.sendEvent('claim-slot', { playerIndex });
-  }, [conn]);
+  const handleClaim = useCallback(
+    (playerIndex: number) => {
+      conn.sendEvent('claim-slot', { playerIndex });
+    },
+    [conn],
+  );
 
   const handlePredictionChange = useCallback(
     (value: number) => {

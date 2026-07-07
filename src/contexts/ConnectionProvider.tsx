@@ -1,6 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { FunctionComponent, ReactNode } from 'react';
-import type { RelayToClientEnvelope, SlotStatus  } from '@/types/protocol.ts';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { RelayToClientEnvelope, SlotStatus } from '@/types/protocol.ts';
 
 export type TransportState = 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';
 
@@ -163,13 +163,16 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     };
   }, [relayUrl, scheduleReconnect]);
 
-  const connect = useCallback((newRole: Role) => {
-    intentionalCloseRef.current = false;
-    reconnectAttemptRef.current = 0;
-    setRole(newRole);
-    roleRef.current = newRole;
-    doConnect();
-  }, [doConnect]);
+  const connect = useCallback(
+    (newRole: Role) => {
+      intentionalCloseRef.current = false;
+      reconnectAttemptRef.current = 0;
+      setRole(newRole);
+      roleRef.current = newRole;
+      doConnect();
+    },
+    [doConnect],
+  );
 
   const disconnect = useCallback(() => {
     intentionalCloseRef.current = true;
@@ -224,33 +227,50 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
 
   const connectionState = useMemo<ConnectionStateValue>(() => ({ transport, session, role }), [transport, session, role]);
 
-  const ctx = useMemo<ConnectionContextValue>(() => ({
-    connectionState,
-    sendEvent,
-    sessionToken: sessionTokenState,
-    hostToken: hostTokenState,
-    joinCode: joinCodeState,
-    slotStatuses: slotStatusesState,
-    disconnect,
-    connect,
-    setMessageHandler,
-    setSessionActive,
-    setSessionJoining,
-    setSessionJoined,
-    setSessionCreating,
-    setSessionDisconnected,
-    setSessionRejoining,
-    setJoinCode,
-    setSlotStatuses,
-    setSessionToken,
-    setHostToken,
-  }), [
-    connectionState, sendEvent, sessionTokenState, hostTokenState, joinCodeState,
-    slotStatusesState, disconnect, connect, setMessageHandler,
-    setSessionActive, setSessionJoining, setSessionJoined, setSessionCreating,
-    setSessionDisconnected, setSessionRejoining, setJoinCode, setSlotStatuses,
-    setSessionToken, setHostToken,
-  ]);
+  const ctx = useMemo<ConnectionContextValue>(
+    () => ({
+      connectionState,
+      sendEvent,
+      sessionToken: sessionTokenState,
+      hostToken: hostTokenState,
+      joinCode: joinCodeState,
+      slotStatuses: slotStatusesState,
+      disconnect,
+      connect,
+      setMessageHandler,
+      setSessionActive,
+      setSessionJoining,
+      setSessionJoined,
+      setSessionCreating,
+      setSessionDisconnected,
+      setSessionRejoining,
+      setJoinCode,
+      setSlotStatuses,
+      setSessionToken,
+      setHostToken,
+    }),
+    [
+      connectionState,
+      sendEvent,
+      sessionTokenState,
+      hostTokenState,
+      joinCodeState,
+      slotStatusesState,
+      disconnect,
+      connect,
+      setMessageHandler,
+      setSessionActive,
+      setSessionJoining,
+      setSessionJoined,
+      setSessionCreating,
+      setSessionDisconnected,
+      setSessionRejoining,
+      setJoinCode,
+      setSlotStatuses,
+      setSessionToken,
+      setHostToken,
+    ],
+  );
 
   return <ConnectionContext.Provider value={ctx}>{children}</ConnectionContext.Provider>;
 };

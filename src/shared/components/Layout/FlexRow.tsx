@@ -1,5 +1,5 @@
-import { Flex } from '@mantine/core';
 import type { MantineSize, MantineSpacing, StyleProp } from '@mantine/core';
+import { Flex } from '@mantine/core';
 import type { CSSProperties, FunctionComponent, ReactNode } from 'react';
 
 type FlexRowProps = {

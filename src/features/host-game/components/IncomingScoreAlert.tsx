@@ -1,6 +1,6 @@
 import { Badge, Group } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IncomingScoreAlertProps {
   isConnected: boolean;

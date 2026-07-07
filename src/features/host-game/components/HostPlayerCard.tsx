@@ -1,8 +1,8 @@
 import type { FunctionComponent } from 'react';
-import type { RoundData, SlotStatus } from '@/types/game.ts';
-import { useGame } from '@/shared/hooks/useGame.tsx';
-import { computeSingleScoreChange } from '@/utils/scoring.ts';
 import { PlayerCard } from '@/shared/components/PlayerCard/PlayerCard.tsx';
+import { useGame } from '@/shared/hooks/useGame.tsx';
+import type { RoundData, SlotStatus } from '@/types/game.ts';
+import { computeSingleScoreChange } from '@/utils/scoring.ts';
 
 interface HostPlayerCardProps {
   name: string;
@@ -12,13 +12,7 @@ interface HostPlayerCardProps {
   sessionActive: boolean;
 }
 
-export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({
-  name,
-  idx,
-  slotStatus,
-  isRemoteConnected,
-  sessionActive,
-}) => {
+export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, idx, slotStatus, isRemoteConnected, sessionActive }) => {
   const { currentRound, playingRound, players, rounds, scores, setPrediction, setActual, setScoreChange } = useGame();
 
   const round = rounds[currentRound] as RoundData | undefined;

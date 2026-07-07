@@ -1,10 +1,9 @@
 import { Box, TextInput, useMantineTheme } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import type { FunctionComponent } from 'react';
 import type { UseFormReturnType } from '@mantine/form';
+import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PlayerNameInputsProps {
-   
   form: UseFormReturnType<any>;
 }
 
@@ -16,7 +15,7 @@ export const PlayerNameInputs: FunctionComponent<PlayerNameInputsProps> = ({ for
     <Box style={{ marginTop: theme.spacing.lg }}>
       {form.getValues().players.map((_: string, index: number) => (
         <Box
-          key={index}
+          key={form.key(`players.${index}`)}
           style={{
             display: 'flex',
             alignItems: 'center',

@@ -1,9 +1,9 @@
 import { Button, Card, Group, Modal, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
-import type { PlayerSlot } from '@/types/game.ts';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { SlotStatusBadge } from '@/shared/components/SlotStatusBadge/SlotStatusBadge.tsx';
+import type { PlayerSlot } from '@/types/game.ts';
 
 interface SlotManagerProps {
   playerSlots: Array<PlayerSlot>;
@@ -33,12 +33,7 @@ export const SlotManager: FunctionComponent<SlotManagerProps> = ({
           <FlexRow fullWidth>
             <Text size="sm">{slot.playerName}</Text>
             {(slot.slotStatus === 'claimed' || slot.slotStatus === 'disconnected') && (
-              <Button
-                variant="subtle"
-                color="red"
-                size="compact-xs"
-                onClick={() => onReleaseSlot(slot)}
-              >
+              <Button variant="subtle" color="red" size="compact-xs" onClick={() => onReleaseSlot(slot)}>
                 {t('multiplayer.releaseSlot', 'Release')}
               </Button>
             )}
@@ -48,9 +43,7 @@ export const SlotManager: FunctionComponent<SlotManagerProps> = ({
       ))}
 
       <Modal opened={!!releaseConfirm} onClose={() => setReleaseConfirm(null)} title={t('multiplayer.releaseConfirmTitle', 'Release Slot')}>
-        <Text mb="md">
-          {t('multiplayer.releaseConfirmBody', { name: releaseConfirm?.playerName ?? '' })}
-        </Text>
+        <Text mb="md">{t('multiplayer.releaseConfirmBody', { name: releaseConfirm?.playerName ?? '' })}</Text>
         <Group justify="flex-end">
           <Button variant="default" onClick={() => setReleaseConfirm(null)}>
             {t('multiplayer.cancel', 'Cancel')}

@@ -1,9 +1,9 @@
 import { Badge, Table, Text } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { useTranslation } from 'react-i18next';
-import type { RoundData } from '@/types/game.ts';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import type { RoundData } from '@/types/game.ts';
 import { getScoreTillRound } from '@/utils/scoring.ts';
 
 interface ScoreboardTableProps {
@@ -17,14 +17,14 @@ export const ScoreboardTable: FunctionComponent<ScoreboardTableProps> = ({ playe
   const { t } = useTranslation();
 
   const roundElements = rounds.map((round, idx) => (
-    <Table.Tr key={idx}>
+    <Table.Tr key={round.id}>
       <Table.Td>
         <FlexRow>{idx + 1}</FlexRow>
       </Table.Td>
       {players.map((_, index) => {
         const roundScores = getScoreTillRound(rounds, idx + 1, players.length);
         return (
-          <Table.Td key={index}>
+          <Table.Td key={`${round.id}-${_}`}>
             <FlexRow fullWidth>
               <Text>{roundScores[index]}</Text>
               <Text size="sm" c="dimmed">
@@ -46,8 +46,8 @@ export const ScoreboardTable: FunctionComponent<ScoreboardTableProps> = ({ playe
         <Table.Thead>
           <Table.Tr>
             <Table.Th></Table.Th>
-            {players.map((player, i) => (
-              <Table.Th key={i}>
+            {players.map((player) => (
+              <Table.Th key={player}>
                 <FlexRow>{player}</FlexRow>
               </Table.Th>
             ))}
@@ -58,8 +58,8 @@ export const ScoreboardTable: FunctionComponent<ScoreboardTableProps> = ({ playe
             <Table.Td>
               <FlexRow>{t('finalRow')}</FlexRow>
             </Table.Td>
-            {players.map((_, index) => (
-              <Table.Td key={index}>
+            {players.map((player, index) => (
+              <Table.Td key={player}>
                 <FlexRow>
                   <Text>{scores[index]}</Text>
                 </FlexRow>

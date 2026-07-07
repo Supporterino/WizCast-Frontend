@@ -1,12 +1,12 @@
 import { Divider, Text } from '@mantine/core';
+import type { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ThemeToggle } from './components/ThemeToggle.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import { ClearDataButton } from './components/ClearDataButton.tsx';
 import { LanguageSelector } from './components/LanguageSelector.tsx';
 import { RelayUrlInput } from './components/RelayUrlInput.tsx';
-import { ClearDataButton } from './components/ClearDataButton.tsx';
-import type { FunctionComponent } from 'react';
-import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
-import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { ThemeToggle } from './components/ThemeToggle.tsx';
 
 export const SettingsPage: FunctionComponent = () => {
   const { t } = useTranslation();

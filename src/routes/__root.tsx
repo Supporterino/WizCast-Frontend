@@ -1,9 +1,9 @@
-import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { AppShell, Container } from '@mantine/core';
 import { useDisclosure, useViewportSize } from '@mantine/hooks';
-import { useCallback, useRef } from 'react';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import type { TouchEvent } from 'react';
+import { useCallback, useRef } from 'react';
 import { Header } from '@/shared/components/Header/Header.tsx';
 import { NavBar } from '@/shared/components/NavBar/NavBar.tsx';
 

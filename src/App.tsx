@@ -3,12 +3,12 @@ import '@mantine/notifications/styles.css';
 import '@mantine/charts/styles.css';
 import './i18n/i18n';
 
-import { Button, MantineProvider, Stack, Text, createTheme, localStorageColorSchemeManager } from '@mantine/core';
-import { Link, RouterProvider, createRouter } from '@tanstack/react-router';
+import { Button, createTheme, localStorageColorSchemeManager, MantineProvider, Stack, Text } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { routeTree } from './routeTree.gen';
+import { createRouter, Link, RouterProvider } from '@tanstack/react-router';
 import { GameProvider } from '@/contexts/GameProvider.tsx';
 import { StoreProvider } from '@/contexts/StoreProvider.tsx';
+import { routeTree } from './routeTree.gen';
 
 const InnerApp = () => {
   const router = createRouter({

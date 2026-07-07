@@ -1,12 +1,12 @@
 import { Grid, GridCol, Group, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { ContestantPlayerCard } from './ContestantPlayerCard.tsx';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccuracyBadgeGrid } from '@/shared/components/AccuracyBadgeGrid/AccuracyBadgeGrid.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
 import type { RoundData, StoredGame } from '@/types/game.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
-import { AccuracyBadgeGrid } from '@/shared/components/AccuracyBadgeGrid/AccuracyBadgeGrid.tsx';
-import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
-import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { ContestantPlayerCard } from './ContestantPlayerCard.tsx';
 
 interface ContestantPlayingViewProps {
   players: Array<string>;
@@ -67,7 +67,7 @@ export const ContestantPlayingView: FunctionComponent<ContestantPlayingViewProps
         {players.map((name, idx) => {
           const isOwnCard = idx === claimedIndex;
           return (
-            <GridCol span={6} key={idx}>
+            <GridCol span={6} key={name}>
               <ContestantPlayerCard
                 name={name}
                 idx={idx}

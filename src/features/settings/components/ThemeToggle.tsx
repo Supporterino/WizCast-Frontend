@@ -1,7 +1,7 @@
 import { ActionIcon, useMantineColorScheme } from '@mantine/core';
 import { IconBrightnessAuto, IconMoon, IconSun } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const ThemeToggle: FunctionComponent = () => {
   const { setColorScheme, colorScheme } = useMantineColorScheme();

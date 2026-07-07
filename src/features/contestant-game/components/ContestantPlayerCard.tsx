@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
-import type { RoundData } from '@/types/game.ts';
+import { useEffect, useState } from 'react';
 import { PlayerCard } from '@/shared/components/PlayerCard/PlayerCard.tsx';
+import type { RoundData } from '@/types/game.ts';
 
 interface ContestantPlayerCardProps {
   name: string;

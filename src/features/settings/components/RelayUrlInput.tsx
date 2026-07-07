@@ -1,7 +1,7 @@
 import { Text, TextInput } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 
 export const RelayUrlInput: FunctionComponent = () => {

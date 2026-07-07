@@ -1,13 +1,13 @@
-import { IconChartLine, IconList } from '@tabler/icons-react';
 import { Tabs } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { ScoreboardTable } from './components/ScoreboardTable.tsx';
-import { ChartsPanel } from './components/ChartsPanel.tsx';
+import { IconChartLine, IconList } from '@tabler/icons-react';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { StoredGame } from '@/types/game.ts';
 import { buildCumulativeScores, calculateRoundDiffs } from '@/utils/gameDiff.ts';
-import { buildMantineSeries } from '@/utils/seriesGen.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { buildMantineSeries } from '@/utils/seriesGen.ts';
+import { ChartsPanel } from './components/ChartsPanel.tsx';
+import { ScoreboardTable } from './components/ScoreboardTable.tsx';
 
 interface GameResultPageProps {
   game: StoredGame;

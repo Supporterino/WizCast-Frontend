@@ -1,7 +1,7 @@
 import { Box, Modal, Stack, Text, Title } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import type { FunctionComponent } from 'react';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RoundSummaryProps {
   players: Array<string>;
@@ -35,7 +35,7 @@ export const RoundSummary: FunctionComponent<RoundSummaryProps> = ({ players, sc
           const change = scoreChanges[idx] ?? 0;
           const color = change > 0 ? 'green' : change < 0 ? 'red' : undefined;
           return (
-            <Box key={idx}>
+            <Box key={name}>
               <Text fw={500}>{name}</Text>
               <Text c={color} size="lg" fw={700}>
                 {change > 0 ? '+' : ''}

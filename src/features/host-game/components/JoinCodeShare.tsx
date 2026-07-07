@@ -1,6 +1,6 @@
 import { Button, CopyButton, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface JoinCodeShareProps {
   joinCode: string | null;

@@ -1,6 +1,6 @@
+import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 import { createContext, useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
 import type { PlayerSlot, RoundData, Rule } from '@/types/game.ts';
 
 export type { RoundData, Rule } from '@/types/game.ts';
@@ -93,27 +93,21 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         rounds: state.rounds.map((r) =>
-          r.id === action.roundIdx
-            ? { ...r, predictions: r.predictions.map((p, i) => (i === action.playerIdx ? action.value : p)) }
-            : r,
+          r.id === action.roundIdx ? { ...r, predictions: r.predictions.map((p, i) => (i === action.playerIdx ? action.value : p)) } : r,
         ),
       };
     case 'SET_ACTUAL':
       return {
         ...state,
         rounds: state.rounds.map((r) =>
-          r.id === action.roundIdx
-            ? { ...r, actuals: r.actuals.map((a, i) => (i === action.playerIdx ? action.value : a)) }
-            : r,
+          r.id === action.roundIdx ? { ...r, actuals: r.actuals.map((a, i) => (i === action.playerIdx ? action.value : a)) } : r,
         ),
       };
     case 'SET_SCORE_CHANGE':
       return {
         ...state,
         rounds: state.rounds.map((r) =>
-          r.id === action.roundIdx
-            ? { ...r, scoreChanges: r.scoreChanges.map((s, i) => (i === action.playerIdx ? action.value : s)) }
-            : r,
+          r.id === action.roundIdx ? { ...r, scoreChanges: r.scoreChanges.map((s, i) => (i === action.playerIdx ? action.value : s)) } : r,
         ),
       };
     case 'SET_PLAYER_SLOTS':
@@ -121,9 +115,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'UPDATE_PLAYER_SLOT':
       return {
         ...state,
-        playerSlots: state.playerSlots.map((slot) =>
-          slot.playerIndex === action.playerIndex ? { ...slot, ...action.updates } : slot,
-        ),
+        playerSlots: state.playerSlots.map((slot) => (slot.playerIndex === action.playerIndex ? { ...slot, ...action.updates } : slot)),
       };
     case 'UPDATE_SLOT_STATUS':
       return {
@@ -213,7 +205,9 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const scores = useMemo(() => {
     return state.rounds.reduce((acc, r) => {
-      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
+      r.scoreChanges.forEach((sc, i) => {
+        if (sc) acc[i] += sc;
+      });
       return acc;
     }, Array(state.players.length).fill(0));
   }, [state.rounds, state.players.length]);
@@ -316,9 +310,22 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
       toggleRule,
     }),
     [
-      state, setLocation, setPlayers, setRules, scores, roundCount,
-      setCurrentRound, setPlayingRound, setPrediction, setActual, setScoreChange,
-      setPlayerSlot, updateSlotStatus, endGame, startGame, toggleRule,
+      state,
+      setLocation,
+      setPlayers,
+      setRules,
+      scores,
+      roundCount,
+      setCurrentRound,
+      setPlayingRound,
+      setPrediction,
+      setActual,
+      setScoreChange,
+      setPlayerSlot,
+      updateSlotStatus,
+      endGame,
+      startGame,
+      toggleRule,
     ],
   );
 

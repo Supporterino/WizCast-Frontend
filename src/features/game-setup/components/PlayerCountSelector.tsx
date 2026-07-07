@@ -1,7 +1,7 @@
-import { Button, Group, NumberInput, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import type { FunctionComponent, RefObject } from 'react';
 import type { NumberInputHandlers } from '@mantine/core';
+import { Button, Group, NumberInput, Text } from '@mantine/core';
+import type { FunctionComponent, RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PlayerCountSelectorProps {
   playerCount: number;

@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { RoundData, Rule, SlotStatus } from '@/types/game.ts';
 
 export type AppState =

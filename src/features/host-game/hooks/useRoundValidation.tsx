@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ERROR_CODES } from '@/shared/constants.ts';
 import type { Rule } from '@/types/game.ts';
 import { validateRoundSubmission } from '@/utils/scoring.ts';
-import { ERROR_CODES } from '@/shared/constants.ts';
 
 export function useRoundValidation() {
   const { t } = useTranslation();

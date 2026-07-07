@@ -1,7 +1,7 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
-import type { GameOverview, StoredGame } from '@/types/game.ts';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { loadGames, saveGames } from '@/shared/services/tauri/store.ts';
+import type { GameOverview, StoredGame } from '@/types/game.ts';
 
 export type { GameOverview, StoredGame } from '@/types/game.ts';
 

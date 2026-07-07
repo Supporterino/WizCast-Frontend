@@ -1,12 +1,12 @@
 import { Grid, GridCol } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { HostPlayerCard } from './HostPlayerCard.tsx';
 import type { FunctionComponent } from 'react';
-import type { PlayerSlot, RoundData, StoredGame  } from '@/types/game.ts';
-import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { useTranslation } from 'react-i18next';
 import { AccuracyBadgeGrid } from '@/shared/components/AccuracyBadgeGrid/AccuracyBadgeGrid.tsx';
-import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
 import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
+import type { PlayerSlot, RoundData, StoredGame } from '@/types/game.ts';
+import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { HostPlayerCard } from './HostPlayerCard.tsx';
 
 interface HostPlayingViewProps {
   players: Array<string>;
@@ -28,8 +28,8 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
   const { t } = useTranslation();
 
   const round = rounds[currentRound] as RoundData | undefined;
-  const totalPredictions = round ? round.predictions.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)! : 0;
-  const totalActuals = round ? round.actuals.reduce((acc, val) => acc! + (!isNaN(val!) ? val! : 0), 0)! : 0;
+  const totalPredictions = round ? round.predictions.reduce((acc, val) => acc! + (!Number.isNaN(val!) ? val! : 0), 0)! : 0;
+  const totalActuals = round ? round.actuals.reduce((acc, val) => acc! + (!Number.isNaN(val!) ? val! : 0), 0)! : 0;
   const accuracyData = calculatePlayerAccuracy({ players, rounds, scores } as StoredGame);
 
   return (
@@ -46,7 +46,7 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
         {players.map((name, idx) => {
           const isRemote = playerSlots[idx]?.slotStatus === 'claimed' || playerSlots[idx]?.slotStatus === 'disconnected';
           return (
-            <GridCol span={6} key={idx}>
+            <GridCol span={6} key={name}>
               <HostPlayerCard
                 name={name}
                 idx={idx}

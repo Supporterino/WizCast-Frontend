@@ -1,11 +1,11 @@
 import { Button, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import packageJson from '../../../../package.json';
 import type { FunctionComponent } from 'react';
+import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 import { useGame } from '@/shared/hooks/useGame.tsx';
+import packageJson from '../../../../package.json';
 
 export const ClearDataButton: FunctionComponent = () => {
   const { t } = useTranslation();

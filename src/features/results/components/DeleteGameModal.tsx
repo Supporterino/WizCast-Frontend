@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ConfirmationModal } from '@/shared/components/ConfirmationModal/ConfirmationModal.tsx';
 
 interface DeleteGameModalProps {

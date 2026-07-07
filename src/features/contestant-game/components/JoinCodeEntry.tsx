@@ -1,9 +1,9 @@
 import { Button, Container, Group, Text, TextInput, Title } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, FunctionComponent, RefObject } from 'react';
-import { useConnection } from '@/shared/hooks/useConnection.ts';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { useConnection } from '@/shared/hooks/useConnection.ts';
 
 interface JoinCodeEntryProps {
   onJoined: (code: string) => void;
@@ -11,11 +11,7 @@ interface JoinCodeEntryProps {
   joinError: string | null;
 }
 
-export const JoinCodeEntry: FunctionComponent<JoinCodeEntryProps> = ({
-  onJoined,
-  joinTimeoutRef,
-  joinError,
-}) => {
+export const JoinCodeEntry: FunctionComponent<JoinCodeEntryProps> = ({ onJoined, joinTimeoutRef, joinError }) => {
   const { t } = useTranslation();
   const { sendEvent, disconnect, connectionState } = useConnection();
   const [firstPart, setFirstPart] = useState('');
@@ -130,7 +126,13 @@ export const JoinCodeEntry: FunctionComponent<JoinCodeEntryProps> = ({
             {error}
           </Text>
         )}
-        <Button ml={"auto"} mt={'lg'} onClick={handleJoin} loading={isJoining || isConnecting} disabled={(!isFormValid || !isConnected) && !isConnecting}>
+        <Button
+          ml={'auto'}
+          mt={'lg'}
+          onClick={handleJoin}
+          loading={isJoining || isConnecting}
+          disabled={(!isFormValid || !isConnected) && !isConnecting}
+        >
           {isConnecting ? t('join.connecting', 'Connecting...') : t('join.connect', 'Connect')}
         </Button>
       </FlexCol>

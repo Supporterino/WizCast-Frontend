@@ -1,8 +1,8 @@
-import { BaseDirectory, appDataDir } from '@tauri-apps/api/path';
-import { readDir, readTextFile } from '@tauri-apps/plugin-fs';
-import { useCallback, useState } from 'react';
 import { Button, Code } from '@mantine/core';
+import { appDataDir, BaseDirectory } from '@tauri-apps/api/path';
+import { readDir, readTextFile } from '@tauri-apps/plugin-fs';
 import type { FunctionComponent } from 'react';
+import { useCallback, useState } from 'react';
 import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 
 export const DebugFileExplorer: FunctionComponent = () => {

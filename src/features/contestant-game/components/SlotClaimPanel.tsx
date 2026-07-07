@@ -1,8 +1,8 @@
 import { Button, Card, Stack, Text } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
-import type { SlotStatus } from '@/types/game.ts';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import type { SlotStatus } from '@/types/game.ts';
 
 interface SlotClaimPanelProps {
   players: Array<string>;
@@ -28,7 +28,7 @@ export const SlotClaimPanel: FunctionComponent<SlotClaimPanelProps> = ({ players
         const isMine = claimedIndex === idx;
         const isAvailable = status === 'unclaimed' || status === 'disconnected';
         return (
-          <Card key={idx} shadow="sm" padding="sm" radius="md" withBorder>
+          <Card key={name} shadow="sm" padding="sm" radius="md" withBorder>
             <FlexRow fullWidth>
               <Text>
                 {name} {isMine ? t('claim.yourSlot', '(your slot)') : ''}

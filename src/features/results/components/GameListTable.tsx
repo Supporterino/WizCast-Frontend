@@ -1,10 +1,10 @@
 import { ActionIcon, Table } from '@mantine/core';
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import { IconEye, IconTrash } from '@tabler/icons-react';
+import { useNavigate } from '@tanstack/react-router';
 import type { FunctionComponent } from 'react';
-import type { GameOverview } from '@/types/game.ts';
+import { useTranslation } from 'react-i18next';
 import { Route as ResultRoute } from '@/routes/results/$resultID';
+import type { GameOverview } from '@/types/game.ts';
 
 interface GameListTableProps {
   games: Array<GameOverview>;

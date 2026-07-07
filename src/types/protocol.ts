@@ -34,7 +34,7 @@ export interface CreateRoomPayload {
   hostToken?: string;
 }
 
-export interface CloseRoomPayload {}
+export type CloseRoomPayload = {};
 
 export interface ReleaseSlotPayload {
   playerIndex: number;
@@ -87,7 +87,7 @@ export interface SlotStatusChangedPayload {
   status: SlotStatus;
 }
 
-export interface RoomClosedPayload {}
+export type RoomClosedPayload = {};
 
 export interface ErrorPayload {
   code: ErrorCode;
@@ -110,7 +110,7 @@ export interface ContestantLeftPayload {
   playerIndex: number;
 }
 
-export interface HostDisconnectedPayload {}
+export type HostDisconnectedPayload = {};
 
 export interface HostReconnectedPayload {
   slotStatuses: Array<SlotStatus>;

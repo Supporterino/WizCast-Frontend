@@ -8,9 +8,6 @@ interface RoundSummaryOverlayProps {
   onDismiss: () => void;
 }
 
-export const RoundSummaryOverlay: FunctionComponent<RoundSummaryOverlayProps> = ({
-  players,
-  scoreChanges,
-  roundIndex,
-  onDismiss,
-}) => <RoundSummary players={players} scoreChanges={scoreChanges} roundIndex={roundIndex} onDismiss={onDismiss} />;
+export const RoundSummaryOverlay: FunctionComponent<RoundSummaryOverlayProps> = ({ players, scoreChanges, roundIndex, onDismiss }) => (
+  <RoundSummary players={players} scoreChanges={scoreChanges} roundIndex={roundIndex} onDismiss={onDismiss} />
+);

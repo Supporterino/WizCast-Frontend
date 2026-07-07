@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import type { RoundData, Rule, StoredGame } from '@/types/game.ts';
+import { useCallback } from 'react';
 import type { ConnectionContextValue } from '@/contexts/ConnectionProvider.tsx';
 import { Route as ResultRoute } from '@/routes/results/overview';
+import type { RoundData, Rule, StoredGame } from '@/types/game.ts';
 
 interface GameLifecycleParams {
   conn: ConnectionContextValue;
@@ -22,7 +22,12 @@ interface GameLifecycleParams {
   endGame: () => void;
   setCompletedGames: (updater: (prev: Array<StoredGame>) => Array<StoredGame>) => void;
   sessionActive: boolean;
-  validateRoundFn: (currentRound: number, predictions: Array<number | undefined>, actuals: Array<number | undefined>, rules: Array<Rule>) => boolean;
+  validateRoundFn: (
+    currentRound: number,
+    predictions: Array<number | undefined>,
+    actuals: Array<number | undefined>,
+    rules: Array<Rule>,
+  ) => boolean;
 }
 
 export function useGameLifecycle({
@@ -42,19 +47,24 @@ export function useGameLifecycle({
 }: GameLifecycleParams) {
   const navigate = useNavigate();
 
-  const buildGameSnapshot = useCallback((): StoredGame => ({
-    id: gameId,
-    startDate: startDate!,
-    endDate: new Date(),
-    location,
-    players,
-    rules,
-    rounds,
-    scores: rounds.reduce((acc, r) => {
-      r.scoreChanges.forEach((sc, i) => (sc ? (acc[i] += sc) : undefined));
-      return acc;
-    }, Array(players.length).fill(0)),
-  }), [gameId, startDate, location, players, rules, rounds]);
+  const buildGameSnapshot = useCallback(
+    (): StoredGame => ({
+      id: gameId,
+      startDate: startDate!,
+      endDate: new Date(),
+      location,
+      players,
+      rules,
+      rounds,
+      scores: rounds.reduce((acc, r) => {
+        r.scoreChanges.forEach((sc, i) => {
+          if (sc) acc[i] += sc;
+        });
+        return acc;
+      }, Array(players.length).fill(0)),
+    }),
+    [gameId, startDate, location, players, rules, rounds],
+  );
 
   const handleNextRound = useCallback(() => {
     if (!sessionActive) return;
@@ -74,7 +84,19 @@ export function useGameLifecycle({
     setCompletedGames((prev) => [...prev, finishedGame]);
     setCurrentRound(currentRound + 1);
     navigate({ to: ResultRoute.to });
-  }, [conn, sessionActive, validateRoundFn, currentRound, rounds, rules, buildGameSnapshot, setCompletedGames, setCurrentRound, navigate, players]);
+  }, [
+    conn,
+    sessionActive,
+    validateRoundFn,
+    currentRound,
+    rounds,
+    rules,
+    buildGameSnapshot,
+    setCompletedGames,
+    setCurrentRound,
+    navigate,
+    players,
+  ]);
 
   return { buildGameSnapshot, handleNextRound, handleFinishGame };
 }

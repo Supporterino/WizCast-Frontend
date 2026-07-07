@@ -1,21 +1,21 @@
+import type { FunctionComponent } from 'react';
 import { useEffect, useRef } from 'react';
-import { useGameBroadcast } from './hooks/useGameBroadcast.ts';
-import { useRoundValidation } from './hooks/useRoundValidation.tsx';
-import { useGameLifecycle } from './hooks/useGameLifecycle.ts';
-import { HostLobby } from './HostLobby.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import { useConnection } from '@/shared/hooks/useConnection.ts';
+import { useDebounce } from '@/shared/hooks/useDebounce.ts';
+import { useGame } from '@/shared/hooks/useGame.tsx';
+import { useStore } from '@/shared/hooks/useStore.tsx';
+import type { RoundData } from '@/types/game.ts';
+import { HostPlayingView } from './components/HostPlayingView.tsx';
 import { ReconnectingBanner } from './components/ReconnectingBanner.tsx';
 import { RoundNavigator } from './components/RoundNavigator.tsx';
 import { ValidationBanner } from './components/ValidationBanner.tsx';
-import { HostPlayingView } from './components/HostPlayingView.tsx';
 import type { HostLobbyHandle } from './HostLobby.tsx';
-import type { FunctionComponent } from 'react';
-import type { RoundData } from '@/types/game.ts';
-import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
-import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
-import { useConnection } from '@/shared/hooks/useConnection.ts';
-import { useStore } from '@/shared/hooks/useStore.tsx';
-import { useGame } from '@/shared/hooks/useGame.tsx';
-import { useDebounce } from '@/shared/hooks/useDebounce.ts';
+import { HostLobby } from './HostLobby.tsx';
+import { useGameBroadcast } from './hooks/useGameBroadcast.ts';
+import { useGameLifecycle } from './hooks/useGameLifecycle.ts';
+import { useRoundValidation } from './hooks/useRoundValidation.tsx';
 
 export const GameScreen: FunctionComponent = () => {
   const {
@@ -43,14 +43,7 @@ export const GameScreen: FunctionComponent = () => {
 
   const shouldBroadcastRef = useRef(false);
 
-  const { broadcastState, sessionActive } = useGameBroadcast(
-    conn,
-    players,
-    rounds,
-    scores,
-    rules,
-    currentRound,
-  );
+  const { broadcastState, sessionActive } = useGameBroadcast(conn, players, rounds, scores, rules, currentRound);
 
   const { validateRound } = useRoundValidation();
 

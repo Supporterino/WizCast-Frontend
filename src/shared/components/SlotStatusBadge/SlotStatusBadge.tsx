@@ -1,7 +1,7 @@
 import { Badge, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
-import type { SlotStatus } from '@/types/game.ts';
 import { SLOT_STATUS_COLORS } from '@/shared/constants.ts';
+import type { SlotStatus } from '@/types/game.ts';
 
 interface SlotStatusBadgeProps {
   status: SlotStatus;

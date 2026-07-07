@@ -1,7 +1,7 @@
 import { Alert } from '@mantine/core';
 import { IconExclamationCircleFilled, IconInfoCircle } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { RoundData, Rule } from '@/types/game.ts';
 
 interface ValidationBannerProps {
@@ -16,9 +16,11 @@ export const ValidationBanner: FunctionComponent<ValidationBannerProps> = ({ rul
   const predictions = round.predictions;
   const actuals = round.actuals;
 
-  if (rules[0]?.active &&
+  if (
+    rules[0]?.active &&
     predictions.every((val) => val !== undefined) &&
-    predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1) {
+    predictions.reduce((acc, val) => acc + val, 0) === currentRound + 1
+  ) {
     return (
       <Alert
         my="md"
@@ -33,7 +35,7 @@ export const ValidationBanner: FunctionComponent<ValidationBannerProps> = ({ rul
     );
   }
 
-  if (!predictions.every((v) => (isNaN(v!) ? true : (v ?? 0) <= currentRound + 1))) {
+  if (!predictions.every((v) => (Number.isNaN(v!) ? true : (v ?? 0) <= currentRound + 1))) {
     return (
       <Alert
         my="xs"
@@ -47,8 +49,7 @@ export const ValidationBanner: FunctionComponent<ValidationBannerProps> = ({ rul
     );
   }
 
-  if (actuals.every((v) => v !== undefined) &&
-    actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
+  if (actuals.every((v) => v !== undefined) && actuals.reduce((acc, val) => acc + val, 0) !== currentRound + 1) {
     return (
       <Alert
         my="xs"

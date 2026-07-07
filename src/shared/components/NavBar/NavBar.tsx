@@ -1,15 +1,15 @@
 import { IconGoGame, IconHome, IconList, IconPlus, IconSettings, IconUserPlus } from '@tabler/icons-react';
 import { Link, useLocation } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import classes from './NavBar.module.css';
 import type { FunctionComponent } from 'react';
-import { Route as HomeRoute } from '@/routes/index';
+import { useTranslation } from 'react-i18next';
 import { Route as NewRoute } from '@/routes/game/new';
 import { Route as GameRoute } from '@/routes/game/playing';
+import { Route as HomeRoute } from '@/routes/index';
+import { Route as JoinRoute } from '@/routes/join';
 import { Route as ResultRoute } from '@/routes/results/overview';
 import { Route as SettingsRoute } from '@/routes/settings';
-import { Route as JoinRoute } from '@/routes/join';
 import { useGame } from '@/shared/hooks/useGame.tsx';
+import classes from './NavBar.module.css';
 
 type SimpleNavbarProps = {
   closeNav: () => void;

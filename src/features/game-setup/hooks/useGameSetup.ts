@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { useForm } from '@mantine/form';
-import { useTranslation } from 'react-i18next';
 import type { NumberInputHandlers } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useNavigate } from '@tanstack/react-router';
 import type { FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Route as GameRoute } from '@/routes/game/playing.tsx';
 import { useGame } from '@/shared/hooks/useGame.tsx';
 import { getGeoLocation } from '@/shared/services/geolocation.ts';
-import { Route as GameRoute } from '@/routes/game/playing.tsx';
 
 export function useGameSetup() {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export function useGameSetup() {
     trimmed.forEach((name) => {
       if (name !== '') counts[name] = (counts[name] ?? 0) + 1;
     });
-    trimmed.every((name) => name === '' || counts[name] == 1) ? setIsValid(true) : setIsValid(false);
+    trimmed.every((name) => name === '' || counts[name] === 1) ? setIsValid(true) : setIsValid(false);
   });
 
   const getLocation = useCallback(async () => {
@@ -59,16 +59,19 @@ export function useGameSetup() {
     }
   }, [form.getValues().playerCount]);
 
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    form.validate();
-    if (form.isValid()) {
-      setPlayers(form.getValues().players);
-      setLocation(await getLocation());
-      startGame();
-      navigate({ to: GameRoute.to });
-    }
-  }, [form, setPlayers, setLocation, startGame, navigate, getLocation]);
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      form.validate();
+      if (form.isValid()) {
+        setPlayers(form.getValues().players);
+        setLocation(await getLocation());
+        startGame();
+        navigate({ to: GameRoute.to });
+      }
+    },
+    [form, setPlayers, setLocation, startGame, navigate, getLocation],
+  );
 
   return { form, isValid, handlersRef, handleSubmit };
 }

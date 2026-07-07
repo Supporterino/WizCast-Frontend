@@ -1,9 +1,9 @@
 import { Badge, Card, Grid, GridCol, NumberInput, Text } from '@mantine/core';
 import { IconCardsFilled, IconEye, IconPencil } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import type { FunctionComponent } from 'react';
-import type { RoundData, SlotStatus  } from '@/types/game.ts';
+import { useTranslation } from 'react-i18next';
 import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
+import type { RoundData, SlotStatus } from '@/types/game.ts';
 import { getScoreTillRound } from '@/utils/scoring.ts';
 
 interface PlayerCardProps {
@@ -46,8 +46,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
   const isPredictionEmpty = prediction === undefined;
   const isActualEmpty = actual === undefined;
 
-  const badgeLabel =
-    slotStatus === 'disconnected' ? t('playerCard.disconnected', 'Disconnected') : t('playerCard.remote', 'Remote');
+  const badgeLabel = slotStatus === 'disconnected' ? t('playerCard.disconnected', 'Disconnected') : t('playerCard.remote', 'Remote');
   const badgeColor = slotStatus === 'disconnected' ? 'orange' : 'green';
 
   return (
@@ -62,8 +61,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
               {badgeLabel}
             </Badge>
           )}
-          {idx == currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
-          {inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} /> }
+          {idx === currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
+          {inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} />}
         </FlexRow>
       </Card.Section>
 

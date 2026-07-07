@@ -1,15 +1,15 @@
 import { Badge, Group, Text } from '@mantine/core';
+import type { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useContestantPhase } from './hooks/useContestantPhase.ts';
-import { useContestantEvents } from './hooks/useContestantEvents.ts';
-import { JoinCodeEntry } from './components/JoinCodeEntry.tsx';
-import { SlotClaimPanel } from './components/SlotClaimPanel.tsx';
+import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { useConnection } from '@/shared/hooks/useConnection.ts';
 import { ContestantPlayingView } from './components/ContestantPlayingView.tsx';
+import { JoinCodeEntry } from './components/JoinCodeEntry.tsx';
 import { RoundSummaryOverlay } from './components/RoundSummaryOverlay.tsx';
 import { SessionExpiredOverlay } from './components/SessionExpiredOverlay.tsx';
-import type { FunctionComponent } from 'react';
-import { useConnection } from '@/shared/hooks/useConnection.ts';
-import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
+import { SlotClaimPanel } from './components/SlotClaimPanel.tsx';
+import { useContestantEvents } from './hooks/useContestantEvents.ts';
+import { useContestantPhase } from './hooks/useContestantPhase.ts';
 
 export const ContestantGamePage: FunctionComponent = () => {
   const { t } = useTranslation();
@@ -36,38 +36,35 @@ export const ContestantGamePage: FunctionComponent = () => {
     resetScoreRefs,
   } = useContestantPhase();
 
-  const {
-    handleJoined,
-    handleClaim,
-    handlePredictionChange,
-    handleActualChange,
-    handleDismissSummary,
-    handleRejoin,
-    joinTimeoutRef,
-  } = useContestantEvents({
-    conn,
-    appStateRef,
-    setAppState,
-    latestPredRef,
-    latestActualRef,
-    resetScoreRefs,
-    setHostDisconnected,
-    setClaimError,
-    setJoinError,
-    setSendError,
-    setSessionExpired,
-  });
+  const { handleJoined, handleClaim, handlePredictionChange, handleActualChange, handleDismissSummary, handleRejoin, joinTimeoutRef } =
+    useContestantEvents({
+      conn,
+      appStateRef,
+      setAppState,
+      latestPredRef,
+      latestActualRef,
+      resetScoreRefs,
+      setHostDisconnected,
+      setClaimError,
+      setJoinError,
+      setSendError,
+      setSessionExpired,
+    });
 
   const isConnected = conn.connectionState.transport === 'CONNECTED';
   const sessionActive = conn.connectionState.session === 'ACTIVE';
   const isRejoining = conn.connectionState.session === 'REJOINING';
 
   return (
-      <FlexCol fullWidth h="100%" justify="flex-start" mb="md">
+    <FlexCol fullWidth h="100%" justify="flex-start" mb="md">
       <Group justify="flex-end">
-      <Text size="sm" c={sendError ? 'red' : isConnected ? 'green' : 'red'} mb="md">
-        {sendError ? t('join.sendError', 'Error sending') : isConnected ? t('join.connected', 'Connected') : t('join.disconnected', 'Disconnected')}
-      </Text>
+        <Text size="sm" c={sendError ? 'red' : isConnected ? 'green' : 'red'} mb="md">
+          {sendError
+            ? t('join.sendError', 'Error sending')
+            : isConnected
+              ? t('join.connected', 'Connected')
+              : t('join.disconnected', 'Disconnected')}
+        </Text>
       </Group>
 
       {isRejoining && (
@@ -82,13 +79,7 @@ export const ContestantGamePage: FunctionComponent = () => {
         </Badge>
       )}
 
-      {appState.phase === 'enter-code' && (
-        <JoinCodeEntry
-          onJoined={handleJoined}
-          joinTimeoutRef={joinTimeoutRef}
-          joinError={joinError}
-        />
-      )}
+      {appState.phase === 'enter-code' && <JoinCodeEntry onJoined={handleJoined} joinTimeoutRef={joinTimeoutRef} joinError={joinError} />}
 
       {appState.phase === 'claim-slot' && (
         <SlotClaimPanel
@@ -124,11 +115,7 @@ export const ContestantGamePage: FunctionComponent = () => {
         />
       )}
 
-      <SessionExpiredOverlay
-        opened={sessionExpired}
-        onClose={() => setSessionExpired(false)}
-        onRejoin={handleRejoin}
-      />
-      </FlexCol>
+      <SessionExpiredOverlay opened={sessionExpired} onClose={() => setSessionExpired(false)} onRejoin={handleRejoin} />
+    </FlexCol>
   );
 };
