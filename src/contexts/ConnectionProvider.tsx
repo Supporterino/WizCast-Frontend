@@ -1,5 +1,6 @@
 import type { FunctionComponent, ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { DEFAULT_RELAY_URL } from '@/shared/constants.ts';
 import type { RelayToClientEnvelope, SlotStatus } from '@/types/protocol.ts';
 
 export type TransportState = 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';
@@ -19,6 +20,8 @@ export interface ConnectionStateValue {
 export interface ConnectionContextValue {
   connectionState: ConnectionStateValue;
   sendEvent: (event: string, data: Record<string, unknown>) => boolean;
+  relayUrl: string;
+  setRelayUrl: (url: string) => void;
   sessionToken: string | null;
   hostToken: string | null;
   joinCode: string | null;
@@ -43,7 +46,8 @@ export const ConnectionContext = createContext<ConnectionContextValue | undefine
 const RECONNECT_BACKOFF = [1000, 2000, 4000, 5000];
 
 export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = ({ children }) => {
-  const relayUrl = localStorage.getItem('relayUrl') ?? 'ws://localhost:3000';
+  const relayUrlRef = useRef(localStorage.getItem('relayUrl') ?? DEFAULT_RELAY_URL);
+  const [relayUrlState, setRelayUrlState] = useState(relayUrlRef.current);
 
   const [transport, setTransport] = useState<TransportState>('DISCONNECTED');
   const [session, setSession] = useState<SessionState>('DISCONNECTED');
@@ -115,7 +119,7 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     }
 
     setTransport('CONNECTING');
-    const ws = new WebSocket(relayUrl);
+    const ws = new WebSocket(relayUrlRef.current);
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -151,17 +155,21 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     };
 
     ws.onclose = () => {
-      setTransport('DISCONNECTED');
-      if (!intentionalCloseRef.current) {
-        scheduleReconnect();
+      if (wsRef.current === ws) {
+        setTransport('DISCONNECTED');
+        if (!intentionalCloseRef.current) {
+          scheduleReconnect();
+        }
       }
     };
 
     ws.onerror = () => {
-      setTransport('DISCONNECTED');
-      ws.close();
+      if (wsRef.current === ws) {
+        setTransport('DISCONNECTED');
+        ws.close();
+      }
     };
-  }, [relayUrl, scheduleReconnect]);
+  }, [scheduleReconnect]);
 
   const connect = useCallback(
     (newRole: Role) => {
@@ -203,6 +211,21 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     return false;
   }, []);
 
+  const setRelayUrl = useCallback(
+    (newUrl: string) => {
+      localStorage.setItem('relayUrl', newUrl);
+      relayUrlRef.current = newUrl;
+      setRelayUrlState(newUrl);
+      if (transportRef.current === 'CONNECTED' || transportRef.current === 'CONNECTING') {
+        disconnect();
+        intentionalCloseRef.current = false;
+        reconnectAttemptRef.current = 0;
+        doConnect();
+      }
+    },
+    [disconnect, doConnect],
+  );
+
   useEffect(() => {
     return () => {
       intentionalCloseRef.current = true;
@@ -231,6 +254,8 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     () => ({
       connectionState,
       sendEvent,
+      relayUrl: relayUrlState,
+      setRelayUrl,
       sessionToken: sessionTokenState,
       hostToken: hostTokenState,
       joinCode: joinCodeState,
@@ -252,6 +277,8 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     [
       connectionState,
       sendEvent,
+      relayUrlState,
+      setRelayUrl,
       sessionTokenState,
       hostTokenState,
       joinCodeState,

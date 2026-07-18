@@ -82,6 +82,12 @@ export const GameScreen: FunctionComponent = () => {
     debouncedBroadcast();
   }, [rounds, currentRound, debouncedBroadcast, sessionActive]);
 
+  useEffect(() => {
+    return () => {
+      conn.disconnect();
+    };
+  }, [conn.disconnect]);
+
   const hostReconnecting = conn.connectionState.transport === 'CONNECTING' && conn.connectionState.session !== 'ACTIVE';
 
   const round = rounds[currentRound] as RoundData | undefined;
@@ -103,13 +109,7 @@ export const GameScreen: FunctionComponent = () => {
 
       {round && <ValidationBanner rules={rules} currentRound={currentRound} round={round} />}
 
-      <HostPlayingView
-        players={players}
-        rounds={rounds}
-        scores={scores}
-        currentRound={currentRound}
-        playerSlots={playerSlots}
-      />
+      <HostPlayingView players={players} rounds={rounds} scores={scores} currentRound={currentRound} playerSlots={playerSlots} />
     </FlexCol>
   );
 };

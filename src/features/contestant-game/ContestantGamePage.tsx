@@ -1,5 +1,6 @@
 import { Badge, Group, Text } from '@mantine/core';
 import type { FunctionComponent } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 import { useConnection } from '@/shared/hooks/useConnection.ts';
@@ -14,6 +15,12 @@ import { useContestantPhase } from './hooks/useContestantPhase.ts';
 export const ContestantGamePage: FunctionComponent = () => {
   const { t } = useTranslation();
   const conn = useConnection();
+
+  useEffect(() => {
+    return () => {
+      conn.disconnect();
+    };
+  }, [conn.disconnect]);
 
   const {
     appState,

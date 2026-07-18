@@ -6,6 +6,7 @@ import './i18n/i18n';
 import { Button, createTheme, localStorageColorSchemeManager, MantineProvider, Stack, Text } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createRouter, Link, RouterProvider } from '@tanstack/react-router';
+import { ConnectionProvider } from '@/contexts/ConnectionProvider.tsx';
 import { GameProvider } from '@/contexts/GameProvider.tsx';
 import { StoreProvider } from '@/contexts/StoreProvider.tsx';
 import { routeTree } from './routeTree.gen';
@@ -39,7 +40,11 @@ const InnerApp = () => {
     },
   });
 
-  return <RouterProvider router={router} />;
+  return (
+    <ConnectionProvider>
+      <RouterProvider router={router} />
+    </ConnectionProvider>
+  );
 };
 
 function App() {

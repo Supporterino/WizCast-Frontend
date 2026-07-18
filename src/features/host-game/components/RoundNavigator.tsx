@@ -12,13 +12,7 @@ interface RoundNavigatorProps {
   onFinish: () => void;
 }
 
-export const RoundNavigator: FunctionComponent<RoundNavigatorProps> = ({
-  currentRound,
-  roundCount,
-  onPrevious,
-  onNext,
-  onFinish,
-}) => {
+export const RoundNavigator: FunctionComponent<RoundNavigatorProps> = ({ currentRound, roundCount, onPrevious, onNext, onFinish }) => {
   const { t } = useTranslation();
 
   return (

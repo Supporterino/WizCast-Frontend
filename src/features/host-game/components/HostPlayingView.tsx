@@ -16,13 +16,7 @@ interface HostPlayingViewProps {
   playerSlots: Array<PlayerSlot>;
 }
 
-export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
-  players,
-  rounds,
-  scores,
-  currentRound,
-  playerSlots,
-}) => {
+export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({ players, rounds, scores, currentRound, playerSlots }) => {
   const { t } = useTranslation();
 
   const round = rounds[currentRound] as RoundData | undefined;
@@ -45,12 +39,7 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({
           const isRemote = playerSlots[idx]?.slotStatus === 'claimed' || playerSlots[idx]?.slotStatus === 'disconnected';
           return (
             <GridCol span={6} key={name}>
-              <HostPlayerCard
-                name={name}
-                idx={idx}
-                slotStatus={playerSlots[idx]?.slotStatus}
-                isRemoteConnected={isRemote}
-              />
+              <HostPlayerCard name={name} idx={idx} slotStatus={playerSlots[idx]?.slotStatus} isRemoteConnected={isRemote} />
             </GridCol>
           );
         })}
