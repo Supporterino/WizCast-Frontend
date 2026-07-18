@@ -64,7 +64,8 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
             </Badge>
           )}
           {idx === currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
-          {showEditabilityIndicator !== false && (inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} />)}
+          {showEditabilityIndicator !== false &&
+            (inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} />)}
         </FlexRow>
       </Card.Section>
 
