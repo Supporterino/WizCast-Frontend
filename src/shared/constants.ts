@@ -18,7 +18,7 @@ export const SLOT_STATUS_COLORS: Record<SlotStatus, string> = {
   disconnected: 'orange',
 };
 
-export const DEFAULT_RELAY_URL = 'ws://localhost:3000';
+export const DEFAULT_RELAY_URL = 'wss://wizcast.supporterino.de';
 
 export const GAME_DEFAULTS = {
   MIN_PLAYERS: 2,
