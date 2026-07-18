@@ -9,10 +9,9 @@ interface HostPlayerCardProps {
   idx: number;
   slotStatus?: SlotStatus;
   isRemoteConnected?: boolean;
-  sessionActive: boolean;
 }
 
-export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, idx, slotStatus, isRemoteConnected, sessionActive }) => {
+export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, idx, slotStatus, isRemoteConnected }) => {
   const { currentRound, playingRound, players, rounds, scores, setPrediction, setActual, setScoreChange } = useGame();
 
   const round = rounds[currentRound] as RoundData | undefined;
@@ -31,29 +30,21 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, i
       rounds={rounds}
       slotStatus={slotStatus}
       isRemoteConnected={isRemoteConnected}
-      inputsDisabled={!sessionActive || currentRound !== playingRound}
-      onPredictionChange={
-        sessionActive
-          ? (value) => {
-              setPrediction(currentRound, idx, value);
-              const currentActual = rounds[currentRound]?.actuals[idx];
-              if (currentActual !== undefined) {
-                setScoreChange(currentRound, idx, computeSingleScoreChange(value, currentActual));
-              }
-            }
-          : undefined
-      }
-      onActualChange={
-        sessionActive
-          ? (value) => {
-              setActual(currentRound, idx, value);
-              const currentPrediction = rounds[currentRound]?.predictions[idx];
-              if (currentPrediction !== undefined) {
-                setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, value));
-              }
-            }
-          : undefined
-      }
+      inputsDisabled={currentRound !== playingRound}
+      onPredictionChange={(value) => {
+        setPrediction(currentRound, idx, value);
+        const currentActual = rounds[currentRound]?.actuals[idx];
+        if (currentActual !== undefined) {
+          setScoreChange(currentRound, idx, computeSingleScoreChange(value, currentActual));
+        }
+      }}
+      onActualChange={(value) => {
+        setActual(currentRound, idx, value);
+        const currentPrediction = rounds[currentRound]?.predictions[idx];
+        if (currentPrediction !== undefined) {
+          setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, value));
+        }
+      }}
     />
   );
 };

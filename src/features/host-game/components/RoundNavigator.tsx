@@ -7,7 +7,6 @@ import { FlexRow } from '@/shared/components/Layout/FlexRow.tsx';
 interface RoundNavigatorProps {
   currentRound: number;
   roundCount: number;
-  sessionActive: boolean;
   onPrevious: () => void;
   onNext: () => void;
   onFinish: () => void;
@@ -16,7 +15,6 @@ interface RoundNavigatorProps {
 export const RoundNavigator: FunctionComponent<RoundNavigatorProps> = ({
   currentRound,
   roundCount,
-  sessionActive,
   onPrevious,
   onNext,
   onFinish,
@@ -25,7 +23,7 @@ export const RoundNavigator: FunctionComponent<RoundNavigatorProps> = ({
 
   return (
     <FlexRow fullWidth gap="md">
-      <ActionIcon size="lg" mr="auto" variant="light" onClick={onPrevious} disabled={currentRound === 0 || !sessionActive}>
+      <ActionIcon size="lg" mr="auto" variant="light" onClick={onPrevious} disabled={currentRound === 0}>
         <IconArrowNarrowLeft stroke={1.5} />
       </ActionIcon>
 
@@ -36,12 +34,12 @@ export const RoundNavigator: FunctionComponent<RoundNavigatorProps> = ({
         })}
       </Text>
 
-      <ActionIcon size="lg" ml="auto" variant="light" onClick={onNext} disabled={currentRound + 1 === roundCount || !sessionActive}>
+      <ActionIcon size="lg" ml="auto" variant="light" onClick={onNext} disabled={currentRound + 1 === roundCount}>
         <IconArrowNarrowRight stroke={1.5} />
       </ActionIcon>
 
       {currentRound + 1 === roundCount && (
-        <ActionIcon onClick={onFinish} disabled={!sessionActive}>
+        <ActionIcon onClick={onFinish}>
           <IconReportAnalytics stroke={1.5} />
         </ActionIcon>
       )}

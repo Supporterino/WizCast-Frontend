@@ -67,18 +67,16 @@ export function useGameLifecycle({
   );
 
   const handleNextRound = useCallback(() => {
-    if (!sessionActive) return;
     if (!validateRoundFn(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules)) return;
-    conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
+    if (sessionActive) conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
     setPlayingRound((prev) => prev + 1);
     setCurrentRound(currentRound + 1);
   }, [conn, sessionActive, validateRoundFn, currentRound, rounds, rules, setPlayingRound, setCurrentRound, players]);
 
   const handleFinishGame = useCallback(() => {
-    if (!sessionActive) return;
     if (!validateRoundFn(currentRound, rounds[currentRound].predictions, rounds[currentRound].actuals, rules)) return;
 
-    conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
+    if (sessionActive) conn.sendEvent('round-completed', { roundIndex: currentRound, scoreChanges: rounds[currentRound].scoreChanges, players });
 
     const finishedGame = buildGameSnapshot();
     setCompletedGames((prev) => [...prev, finishedGame]);

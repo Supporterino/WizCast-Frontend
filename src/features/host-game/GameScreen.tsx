@@ -94,7 +94,6 @@ export const GameScreen: FunctionComponent = () => {
         <RoundNavigator
           currentRound={currentRound}
           roundCount={roundCount}
-          sessionActive={sessionActive}
           onPrevious={() => setCurrentRound(currentRound - 1)}
           onNext={handleNextRound}
           onFinish={handleFinishGame}
@@ -109,7 +108,6 @@ export const GameScreen: FunctionComponent = () => {
         rounds={rounds}
         scores={scores}
         currentRound={currentRound}
-        sessionActive={sessionActive}
         playerSlots={playerSlots}
       />
     </FlexCol>
