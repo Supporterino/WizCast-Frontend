@@ -9,23 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as JoinRouteImport } from './routes/join'
-import { Route as DebugRouteImport } from './routes/debug'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ResultsOverviewRouteImport } from './routes/results/overview'
-import { Route as ResultsResultIDRouteImport } from './routes/results/$resultID'
-import { Route as GamePlayingRouteImport } from './routes/game/playing'
+import { Route as DebugRouteImport } from './routes/debug'
+import { Route as JoinRouteImport } from './routes/join'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as GameNewRouteImport } from './routes/game/new'
+import { Route as GamePlayingRouteImport } from './routes/game/playing'
+import { Route as ResultsResultIDRouteImport } from './routes/results/$resultID'
+import { Route as ResultsOverviewRouteImport } from './routes/results/overview'
 
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JoinRoute = JoinRouteImport.update({
-  id: '/join',
-  path: '/join',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugRoute = DebugRouteImport.update({
@@ -33,19 +28,19 @@ const DebugRoute = DebugRouteImport.update({
   path: '/debug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResultsOverviewRoute = ResultsOverviewRouteImport.update({
-  id: '/results/overview',
-  path: '/results/overview',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResultsResultIDRoute = ResultsResultIDRouteImport.update({
-  id: '/results/$resultID',
-  path: '/results/$resultID',
+const GameNewRoute = GameNewRouteImport.update({
+  id: '/game/new',
+  path: '/game/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GamePlayingRoute = GamePlayingRouteImport.update({
@@ -53,9 +48,14 @@ const GamePlayingRoute = GamePlayingRouteImport.update({
   path: '/game/playing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GameNewRoute = GameNewRouteImport.update({
-  id: '/game/new',
-  path: '/game/new',
+const ResultsResultIDRoute = ResultsResultIDRouteImport.update({
+  id: '/results/$resultID',
+  path: '/results/$resultID',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultsOverviewRoute = ResultsOverviewRouteImport.update({
+  id: '/results/overview',
+  path: '/results/overview',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -136,18 +136,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/join': {
-      id: '/join'
-      path: '/join'
-      fullPath: '/join'
-      preLoaderRoute: typeof JoinRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug': {
@@ -157,25 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DebugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/results/overview': {
-      id: '/results/overview'
-      path: '/results/overview'
-      fullPath: '/results/overview'
-      preLoaderRoute: typeof ResultsOverviewRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/results/$resultID': {
-      id: '/results/$resultID'
-      path: '/results/$resultID'
-      fullPath: '/results/$resultID'
-      preLoaderRoute: typeof ResultsResultIDRouteImport
+    '/game/new': {
+      id: '/game/new'
+      path: '/game/new'
+      fullPath: '/game/new'
+      preLoaderRoute: typeof GameNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/playing': {
@@ -185,11 +178,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GamePlayingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/game/new': {
-      id: '/game/new'
-      path: '/game/new'
-      fullPath: '/game/new'
-      preLoaderRoute: typeof GameNewRouteImport
+    '/results/$resultID': {
+      id: '/results/$resultID'
+      path: '/results/$resultID'
+      fullPath: '/results/$resultID'
+      preLoaderRoute: typeof ResultsResultIDRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/results/overview': {
+      id: '/results/overview'
+      path: '/results/overview'
+      fullPath: '/results/overview'
+      preLoaderRoute: typeof ResultsOverviewRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
