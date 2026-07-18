@@ -22,6 +22,7 @@ interface PlayerCardProps {
   isRemoteConnected?: boolean;
   slotStatus?: SlotStatus;
   inputsDisabled?: boolean;
+  showEditabilityIndicator?: boolean;
 }
 
 export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
@@ -40,6 +41,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
   isRemoteConnected,
   slotStatus,
   inputsDisabled,
+  showEditabilityIndicator = true,
 }) => {
   const { t } = useTranslation();
 
@@ -62,7 +64,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
             </Badge>
           )}
           {idx === currentRound % playerCount && <IconCardsFilled color={'red'} stroke={1.5} />}
-          {inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} />}
+          {showEditabilityIndicator !== false && (inputsDisabled ? <IconEye color={'gray'} stroke={1.5} /> : <IconPencil color={'gray'} stroke={1.5} />)}
         </FlexRow>
       </Card.Section>
 

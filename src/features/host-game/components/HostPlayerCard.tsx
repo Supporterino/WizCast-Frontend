@@ -31,6 +31,7 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, i
       slotStatus={slotStatus}
       isRemoteConnected={isRemoteConnected}
       inputsDisabled={currentRound !== playingRound}
+      showEditabilityIndicator={false}
       onPredictionChange={(value) => {
         setPrediction(currentRound, idx, value);
         const currentActual = rounds[currentRound]?.actuals[idx];
