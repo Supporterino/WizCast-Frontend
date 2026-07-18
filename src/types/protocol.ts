@@ -58,7 +58,8 @@ export type ClientToRelayPayload =
   | CloseRoomPayload
   | ReleaseSlotPayload
   | StateSyncPayload
-  | RoundCompletedPayload;
+  | RoundCompletedPayload
+  | PingPayload;
 
 // === Relay → Client payloads ===
 
@@ -130,7 +131,8 @@ export type RelayToClientPayload =
   | StateSyncPayload
   | RoundCompletedPayload
   | HostDisconnectedPayload
-  | HostReconnectedPayload;
+  | HostReconnectedPayload
+  | PongPayload;
 
 // === Envelope types ===
 
@@ -138,6 +140,9 @@ export interface ClientToRelayEnvelope {
   event: string;
   data: ClientToRelayPayload;
 }
+
+export type PingPayload = Record<string, never>;
+export type PongPayload = Record<string, never>;
 
 export type RelayToClientEnvelope =
   | { event: 'room-created'; data: RoomCreatedPayload }
@@ -153,4 +158,6 @@ export type RelayToClientEnvelope =
   | { event: 'state-sync'; data: StateSyncPayload }
   | { event: 'round-completed'; data: RoundCompletedPayload }
   | { event: 'host-disconnected'; data: HostDisconnectedPayload }
-  | { event: 'host-reconnected'; data: HostReconnectedPayload };
+  | { event: 'host-reconnected'; data: HostReconnectedPayload }
+  | { event: 'ping'; data: PingPayload }
+  | { event: 'pong'; data: PongPayload };
