@@ -60,7 +60,7 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
 
   const wsRef = useRef<WebSocket | null>(null);
   const pingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastPongTimeRef = useRef<number>(0);
+  const pongTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intentionalCloseRef = useRef(false);
@@ -127,17 +127,19 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     ws.onopen = () => {
       setTransport('CONNECTED');
       reconnectAttemptRef.current = 0;
-      lastPongTimeRef.current = Date.now();
 
       if (pingIntervalRef.current) {
         clearInterval(pingIntervalRef.current);
       }
+      if (pongTimeoutRef.current) {
+        clearTimeout(pongTimeoutRef.current);
+        pongTimeoutRef.current = null;
+      }
       pingIntervalRef.current = setInterval(() => {
-        if (Date.now() - lastPongTimeRef.current > 30_000) {
-          wsRef.current?.close();
-          return;
-        }
         wsRef.current?.send(JSON.stringify({ event: 'ping', data: {} }));
+        pongTimeoutRef.current = setTimeout(() => {
+          wsRef.current?.close();
+        }, 10_000);
       }, 30_000);
 
       if (roleRef.current === 'contestant' && sessionTokenRef.current && joinCodeRef.current) {
@@ -154,7 +156,10 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
         const msg = JSON.parse(event.data as string) as RelayToClientEnvelope;
 
         if (msg.event === 'pong') {
-          lastPongTimeRef.current = Date.now();
+          if (pongTimeoutRef.current) {
+            clearTimeout(pongTimeoutRef.current);
+            pongTimeoutRef.current = null;
+          }
           return;
         }
         if (msg.event === 'ping') {
@@ -177,6 +182,14 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     };
 
     ws.onclose = () => {
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
+      }
+      if (pongTimeoutRef.current) {
+        clearTimeout(pongTimeoutRef.current);
+        pongTimeoutRef.current = null;
+      }
       if (wsRef.current === ws) {
         setTransport('DISCONNECTED');
         if (!intentionalCloseRef.current) {
@@ -214,7 +227,10 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
       clearInterval(pingIntervalRef.current);
       pingIntervalRef.current = null;
     }
-    lastPongTimeRef.current = 0;
+    if (pongTimeoutRef.current) {
+      clearTimeout(pongTimeoutRef.current);
+      pongTimeoutRef.current = null;
+    }
     reconnectAttemptRef.current = 0;
     wsRef.current?.close();
     wsRef.current = null;
@@ -258,6 +274,7 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
       intentionalCloseRef.current = true;
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
       if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
+      if (pongTimeoutRef.current) clearTimeout(pongTimeoutRef.current);
       wsRef.current?.close();
     };
   }, []);
