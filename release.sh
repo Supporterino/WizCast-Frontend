@@ -73,9 +73,9 @@ bump_version() {
   local major=$1 minor=$2 patch=$3 type=${4:-patch}
 
   case "$type" in
-    major) ((major++)); minor=0; patch=0 ;;
-    minor) ((minor++)); patch=0 ;;
-    patch|default) ((patch++)) ;;
+    major) ((++major)); minor=0; patch=0 ;;
+    minor) ((++minor)); patch=0 ;;
+    patch|default) ((++patch)) ;;
     *) printf >&2 'error: unknown bump type %s\n' "$type"; return 1 ;;
   esac
 
