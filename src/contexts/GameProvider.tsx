@@ -1,5 +1,5 @@
 import type { Dispatch, FunctionComponent, ReactNode, SetStateAction } from 'react';
-import { createContext, useCallback, useEffect, useMemo, useReducer } from 'react';
+import { createContext, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PlayerSlot, RoundData, Rule } from '@/types/game.ts';
 
@@ -173,6 +173,12 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
+  const crRef = useRef(state.currentRound);
+  crRef.current = state.currentRound;
+
+  const prRef = useRef(state.playingRound);
+  prRef.current = state.playingRound;
+
   const roundCount = useMemo(() => Math.ceil(60 / state.players.length), [state.players.length]);
 
   const makeEmptyRound = useCallback(
@@ -234,12 +240,12 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   const toggleRule = useCallback((index: number) => dispatch({ type: 'TOGGLE_RULE', index }), []);
 
   const setCurrentRound = useCallback((round: number | ((prev: number) => number)) => {
-    const value = typeof round === 'function' ? round(0) : round;
+    const value = typeof round === 'function' ? round(crRef.current) : round;
     dispatch({ type: 'SET_CURRENT_ROUND', currentRound: value });
   }, []);
 
   const setPlayingRound = useCallback((round: number | ((prev: number) => number)) => {
-    const value = typeof round === 'function' ? round(0) : round;
+    const value = typeof round === 'function' ? round(prRef.current) : round;
     dispatch({ type: 'SET_PLAYING_ROUND', playingRound: value });
   }, []);
 
