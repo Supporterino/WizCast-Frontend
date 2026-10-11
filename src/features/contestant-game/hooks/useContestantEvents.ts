@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ConnectionContextValue } from '@/contexts/ConnectionProvider.tsx';
 import { useDebounce } from '@/shared/hooks/useDebounce.ts';
+import { clearSessionCredentials } from '@/shared/services/session-storage.ts';
 import type { RelayToClientEnvelope } from '@/types/protocol.ts';
 import { ErrorCode } from '@/types/protocol.ts';
 import type { AppState } from './useContestantPhase.ts';
@@ -50,13 +51,32 @@ export function useContestantEvents({
               clearTimeout(joinTimeoutRef.current);
               joinTimeoutRef.current = null;
             }
-            conn.setSessionJoined();
+            const claimedSlotIndex = message.data.claimedSlotIndex ?? null;
+            if (claimedSlotIndex === null) {
+              conn.setSessionJoined();
+              return {
+                phase: 'claim-slot',
+                joinCode: joinCodeRef.current ?? conn.joinCode ?? '',
+                players: message.data.players,
+                slotStatuses: message.data.slotStatuses,
+                sessionToken: message.data.sessionToken,
+              };
+            }
+            resetScoreRefs();
+            conn.setSessionActive();
+            setHostDisconnected(true);
             return {
-              phase: 'claim-slot',
-              joinCode: joinCodeRef.current ?? '',
-              players: message.data.players,
-              slotStatuses: message.data.slotStatuses,
+              phase: 'playing',
+              joinCode: joinCodeRef.current ?? conn.joinCode ?? '',
               sessionToken: message.data.sessionToken,
+              claimedIndex: claimedSlotIndex,
+              matchState: {
+                players: message.data.players,
+                rounds: [],
+                scores: new Array(message.data.players.length).fill(0),
+                rules: [],
+                currentRound: 0,
+              },
             };
           }
           case 'slot-claimed': {
@@ -90,6 +110,7 @@ export function useContestantEvents({
           case 'state-sync': {
             if (current.phase === 'playing' || current.phase === 'round-summary') {
               const matchState = message.data.matchState as typeof current.matchState;
+              setHostDisconnected(false);
               const roundChanged = matchState.currentRound !== current.matchState.currentRound;
 
               if (roundChanged) {
@@ -160,11 +181,23 @@ export function useContestantEvents({
           case 'room-closed':
             conn.setSessionDisconnected();
             setHostDisconnected(false);
+            conn.setSessionToken(null);
+            conn.setJoinCode(null);
+            clearSessionCredentials('contestant');
             return { phase: 'enter-code' };
           case 'error': {
             if (joinTimeoutRef.current) {
               clearTimeout(joinTimeoutRef.current);
               joinTimeoutRef.current = null;
+            }
+            if (
+              message.data.code === ErrorCode.SESSION_EXPIRED ||
+              message.data.code === ErrorCode.HOST_SESSION_EXPIRED ||
+              message.data.code === ErrorCode.INVALID_CODE
+            ) {
+              conn.setSessionToken(null);
+              conn.setJoinCode(null);
+              clearSessionCredentials('contestant');
             }
             if (message.data.code === ErrorCode.SESSION_EXPIRED || message.data.code === ErrorCode.HOST_SESSION_EXPIRED) {
               setSessionExpired(true);
@@ -262,6 +295,8 @@ export function useContestantEvents({
   const handleRejoin = useCallback(() => {
     setSessionExpired(false);
     conn.disconnect();
+    clearSessionCredentials('contestant');
+    conn.connect('contestant');
     setAppState({ phase: 'enter-code' });
   }, [conn, setSessionExpired]);
 

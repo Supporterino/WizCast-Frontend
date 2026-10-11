@@ -62,6 +62,15 @@ export const HostLobby = forwardRef<HostLobbyHandle>((_props, ref) => {
           });
           break;
         case 'contestant-joined':
+          conn.sendEvent('state-sync', {
+            matchState: {
+              players: playersRef.current,
+              rounds: roundsRef.current,
+              scores: scoresRef.current,
+              rules,
+              currentRound: currentRoundRef.current,
+            },
+          });
           break;
         case 'contestant-left':
           updateSlotStatus(msg.data.playerIndex, 'unclaimed');

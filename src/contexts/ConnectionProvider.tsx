@@ -1,6 +1,8 @@
 import type { FunctionComponent, ReactNode } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_RELAY_URL } from '@/shared/constants.ts';
+import type { SessionRole } from '@/shared/services/session-storage.ts';
+import { clearSessionCredentials, getSessionCredentials, setSessionCredentials } from '@/shared/services/session-storage.ts';
 import type { RelayToClientEnvelope, SlotStatus } from '@/types/protocol.ts';
 
 export type TransportState = 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';
@@ -53,9 +55,10 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
   const [session, setSession] = useState<SessionState>('DISCONNECTED');
   const [role, setRole] = useState<Role>('none');
 
-  const [sessionTokenState, setSessionTokenState] = useState<string | null>(null);
+  const [initialCredentials] = useState(() => getSessionCredentials('contestant'));
+  const [sessionTokenState, setSessionTokenState] = useState<string | null>(initialCredentials?.sessionToken ?? null);
   const [hostTokenState, setHostTokenState] = useState<string | null>(null);
-  const [joinCodeState, setJoinCodeState] = useState<string | null>(null);
+  const [joinCodeState, setJoinCodeState] = useState<string | null>(initialCredentials?.joinCode ?? null);
   const [slotStatusesState, setSlotStatusesState] = useState<Array<SlotStatus>>([]);
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -63,19 +66,22 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
   const pongTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const credentialClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intentionalCloseRef = useRef(false);
   const roleRef = useRef<Role>('none');
-  const joinCodeRef = useRef<string | null>(null);
-  const sessionTokenRef = useRef<string | null>(null);
+  const joinCodeRef = useRef<string | null>(initialCredentials?.joinCode ?? null);
+  const sessionTokenRef = useRef<string | null>(initialCredentials?.sessionToken ?? null);
   const hostTokenRef = useRef<string | null>(null);
   const messageHandlerRef = useRef<((msg: RelayToClientEnvelope) => void) | null>(null);
   const transportRef = useRef<TransportState>('DISCONNECTED');
+  const sessionRef = useRef<SessionState>('DISCONNECTED');
 
   roleRef.current = role;
   joinCodeRef.current = joinCodeState;
   sessionTokenRef.current = sessionTokenState;
   hostTokenRef.current = hostTokenState;
   transportRef.current = transport;
+  sessionRef.current = session;
 
   const setMessageHandler = useCallback((handler: ((msg: RelayToClientEnvelope) => void) | null) => {
     messageHandlerRef.current = handler;
@@ -104,6 +110,30 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     setHostTokenState(token);
     hostTokenRef.current = token;
   }, []);
+
+  const cancelCredentialClear = useCallback(() => {
+    if (credentialClearTimerRef.current) {
+      clearTimeout(credentialClearTimerRef.current);
+      credentialClearTimerRef.current = null;
+    }
+  }, []);
+
+  const activeSessionRole = useCallback((): SessionRole | null => {
+    if (roleRef.current === 'none') return null;
+    return roleRef.current === 'host' ? 'host' : 'contestant';
+  }, []);
+
+  const scheduleCredentialClear = useCallback(() => {
+    cancelCredentialClear();
+    // Capture the active role at call time — `disconnect` resets `roleRef` on the next render.
+    const roleToClear = activeSessionRole();
+    if (!roleToClear) return;
+    // Deferred so a StrictMode remount's immediate reconnect can cancel it before the session is dropped.
+    credentialClearTimerRef.current = setTimeout(() => {
+      clearSessionCredentials(roleToClear);
+      credentialClearTimerRef.current = null;
+    }, 0);
+  }, [cancelCredentialClear, activeSessionRole]);
 
   const scheduleReconnect = useCallback(() => {
     const attempt = reconnectAttemptRef.current;
@@ -169,6 +199,9 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
         if (msg.event === 'room-joined' && 'sessionToken' in msg.data) {
           sessionTokenRef.current = msg.data.sessionToken;
           setSessionTokenState(msg.data.sessionToken);
+          if (joinCodeRef.current) {
+            setSessionCredentials('contestant', { joinCode: joinCodeRef.current, sessionToken: msg.data.sessionToken });
+          }
         }
         if (msg.event === 'room-created' && 'hostToken' in msg.data) {
           hostTokenRef.current = msg.data.hostToken;
@@ -208,13 +241,23 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
 
   const connect = useCallback(
     (newRole: Role) => {
+      cancelCredentialClear();
+      if (newRole === 'contestant' && !sessionTokenRef.current) {
+        const stored = getSessionCredentials('contestant');
+        if (stored) {
+          sessionTokenRef.current = stored.sessionToken;
+          joinCodeRef.current = stored.joinCode;
+          setSessionTokenState(stored.sessionToken);
+          setJoinCodeState(stored.joinCode);
+        }
+      }
       intentionalCloseRef.current = false;
       reconnectAttemptRef.current = 0;
       setRole(newRole);
       roleRef.current = newRole;
       doConnect();
     },
-    [doConnect],
+    [cancelCredentialClear, doConnect],
   );
 
   const disconnect = useCallback(() => {
@@ -244,7 +287,8 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
     sessionTokenRef.current = null;
     hostTokenRef.current = null;
     joinCodeRef.current = null;
-  }, []);
+    scheduleCredentialClear();
+  }, [scheduleCredentialClear]);
 
   const sendEvent = useCallback((event: string, data: Record<string, unknown>): boolean => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -259,6 +303,12 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
       localStorage.setItem('relayUrl', newUrl);
       relayUrlRef.current = newUrl;
       setRelayUrlState(newUrl);
+      // Sessions do not carry across relays: the new server has no record of the old credentials,
+      // so clear the active role's bucket now rather than relying on the deferred disconnect clear.
+      const activeRole = activeSessionRole();
+      if (activeRole) {
+        clearSessionCredentials(activeRole);
+      }
       if (transportRef.current === 'CONNECTED' || transportRef.current === 'CONNECTING') {
         disconnect();
         intentionalCloseRef.current = false;
@@ -266,7 +316,7 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
         doConnect();
       }
     },
-    [disconnect, doConnect],
+    [activeSessionRole, disconnect, doConnect],
   );
 
   useEffect(() => {
@@ -275,6 +325,7 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
       if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
       if (pongTimeoutRef.current) clearTimeout(pongTimeoutRef.current);
+      if (credentialClearTimerRef.current) clearTimeout(credentialClearTimerRef.current);
       wsRef.current?.close();
     };
   }, []);
@@ -282,10 +333,18 @@ export const ConnectionProvider: FunctionComponent<{ children?: ReactNode }> = (
   useEffect(() => {
     const handleVisibility = () => {
       if (document.visibilityState !== 'visible') return;
+      if (roleRef.current === 'none') return;
       const readyState = wsRef.current?.readyState;
-      if (readyState === WebSocket.CLOSED || readyState === WebSocket.CLOSING) {
-        intentionalCloseRef.current = false;
-        reconnectAttemptRef.current = 0;
+      if (readyState === WebSocket.OPEN && sessionRef.current === 'ACTIVE') return;
+      intentionalCloseRef.current = false;
+      reconnectAttemptRef.current = 0;
+      if (readyState === WebSocket.OPEN) {
+        const hasCredentials = roleRef.current === 'host' ? !!hostTokenRef.current : !!sessionTokenRef.current;
+        if (!hasCredentials) return;
+        wsRef.current?.close();
+        return;
+      }
+      if (readyState === WebSocket.CLOSED || readyState === WebSocket.CLOSING || readyState === undefined) {
         doConnect();
       }
     };

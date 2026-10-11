@@ -73,6 +73,7 @@ export interface RoomJoinedPayload {
   players: Array<string>;
   slotStatuses: Array<SlotStatus>;
   sessionToken: string;
+  claimedSlotIndex: number | null;
 }
 
 export interface SlotClaimedPayload {
