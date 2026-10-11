@@ -2,7 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
+        <key>UIViewControllerBasedStatusBarAppearance</key>
+        <true/>
+        <key>UIStatusBarStyle</key>
+        <string>UIStatusBarStyleDefault</string>
         <key>NSLocationWhenInUseUsageDescription</key>
         <string>Required to set the location for a game</string>
+        <key>UIApplicationSceneManifest</key>
+        <dict>
+            <key>UIApplicationSupportsMultipleScenes</key>
+            <true/>
+            <key>UISceneConfigurations</key>
+            <dict>
+                <key>UIWindowSceneSessionRoleApplication</key>
+                <array>
+                    <dict>
+                        <key>UISceneConfigurationName</key>
+                        <string>TaoScene</string>
+                        <key>UISceneDelegateClassName</key>
+                        <string>TaoSceneDelegate</string>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
     </dict>
 </plist>

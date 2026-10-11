@@ -6,6 +6,7 @@ import type { TouchEvent } from 'react';
 import { useCallback, useRef } from 'react';
 import { Header } from '@/shared/components/Header/Header.tsx';
 import { NavBar } from '@/shared/components/NavBar/NavBar.tsx';
+import { useStatusBarStyle } from '@/shared/hooks/useStatusBarStyle.ts';
 
 const SWIPE_THRESHOLD = 50; // Minimum distance to count as a swipe
 const EDGE_THRESHOLD = 30; // How close to the edge the gesture must start
@@ -13,6 +14,8 @@ const EDGE_THRESHOLD = 30; // How close to the edge the gesture must start
 const Layout = () => {
   const { height, width } = useViewportSize();
   const [opened, { toggle, close }] = useDisclosure();
+
+  useStatusBarStyle();
 
   const openStartX = useRef<number | null>(null);
   const handleMainTouchStart = useCallback(
@@ -64,7 +67,7 @@ const Layout = () => {
 
   return (
     <AppShell
-      header={{ height: 60 }}
+      header={{ height: 'calc(60px + env(safe-area-inset-top, 0px))' }}
       navbar={{
         width: 250,
         breakpoint: 'sm',
@@ -78,11 +81,32 @@ const Layout = () => {
       <AppShell.Header>
         <Header toggle={toggle} opened={opened} />
       </AppShell.Header>
-      <AppShell.Navbar p={0} onTouchStart={handleNavbarTouchStart} onTouchEnd={handleNavbarTouchEnd}>
+      <AppShell.Navbar
+        p={0}
+        pb={'env(safe-area-inset-bottom, 0px)'}
+        pl={'env(safe-area-inset-left, 0px)'}
+        pr={'env(safe-area-inset-right, 0px)'}
+        onTouchStart={handleNavbarTouchStart}
+        onTouchEnd={handleNavbarTouchEnd}
+      >
         <NavBar closeNav={close} />
       </AppShell.Navbar>
-      <AppShell.Main pb={0} px={width < 768 ? 0 : undefined} onTouchStart={handleMainTouchStart} onTouchEnd={handleMainTouchEnd}>
-        <Container h={height - 60 - 2 * 16} p={'xs'}>
+      <AppShell.Main
+        pb={'env(safe-area-inset-bottom, 0px)'}
+        pl={
+          width < 768
+            ? 'env(safe-area-inset-left, 0px)'
+            : 'calc(var(--app-shell-navbar-offset, 0rem) + var(--app-shell-padding, 0rem) + env(safe-area-inset-left, 0px))'
+        }
+        pr={
+          width < 768
+            ? 'env(safe-area-inset-right, 0px)'
+            : 'calc(var(--app-shell-aside-offset, 0rem) + var(--app-shell-padding, 0rem) + env(safe-area-inset-right, 0px))'
+        }
+        onTouchStart={handleMainTouchStart}
+        onTouchEnd={handleMainTouchEnd}
+      >
+        <Container h={`calc(${height - 60 - 2 * 16}px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))`} p={'xs'}>
           <Outlet />
           <TanStackRouterDevtools />
         </Container>

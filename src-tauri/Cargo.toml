@@ -26,3 +26,18 @@ tauri-plugin-store = "2"
 tauri-plugin-geolocation = "2"
 tauri-plugin-fs = "2"
 
+[target.'cfg(target_os = "ios")'.dependencies]
+# iOS-only: derive the scene identifier for `RunEvent::SceneRequested`
+# (`present_scene_window`) and reach the native UIView/UIViewController for the
+# scheme-aware status-bar style (`set_status_bar_style`).
+objc2-ui-kit = { version = "0.3.0", default-features = false, features = [
+  "UIInterface",
+  "UIResponder",
+  "UIScene",
+  "UISceneSession",
+  "UIView",
+  "UIViewController",
+  "UIWindow",
+] }
+raw-window-handle = "0.6"
+
