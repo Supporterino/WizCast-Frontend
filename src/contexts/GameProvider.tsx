@@ -28,9 +28,9 @@ export interface GameContextProps {
   playingRound: number;
   setPlayingRound: Dispatch<SetStateAction<number>>;
 
-  setPrediction: (roundIdx: number, playerIdx: number, value: number) => void;
-  setActual: (roundIdx: number, playerIdx: number, value: number) => void;
-  setScoreChange: (roundIdx: number, playerIdx: number, value: number) => void;
+  setPrediction: (roundIdx: number, playerIdx: number, value: number | undefined) => void;
+  setActual: (roundIdx: number, playerIdx: number, value: number | undefined) => void;
+  setScoreChange: (roundIdx: number, playerIdx: number, value: number | undefined) => void;
 
   playerSlots: Array<PlayerSlot>;
   setPlayerSlot: (playerIndex: number, updates: Partial<PlayerSlot>) => void;
@@ -64,14 +64,28 @@ type GameAction =
   | { type: 'SET_CURRENT_ROUND'; currentRound: number }
   | { type: 'SET_PLAYING_ROUND'; playingRound: number }
   | { type: 'SET_ROUNDS'; rounds: Array<RoundData> }
-  | { type: 'SET_PREDICTION'; roundIdx: number; playerIdx: number; value: number }
-  | { type: 'SET_ACTUAL'; roundIdx: number; playerIdx: number; value: number }
-  | { type: 'SET_SCORE_CHANGE'; roundIdx: number; playerIdx: number; value: number }
+  | { type: 'SET_PREDICTION'; roundIdx: number; playerIdx: number; value: number | undefined }
+  | { type: 'SET_ACTUAL'; roundIdx: number; playerIdx: number; value: number | undefined }
+  | { type: 'SET_SCORE_CHANGE'; roundIdx: number; playerIdx: number; value: number | undefined }
   | { type: 'SET_PLAYER_SLOTS'; playerSlots: Array<PlayerSlot> }
   | { type: 'UPDATE_PLAYER_SLOT'; playerIndex: number; updates: Partial<PlayerSlot> }
   | { type: 'UPDATE_SLOT_STATUS'; playerIndex: number; status: PlayerSlot['slotStatus'] }
   | { type: 'START_GAME' }
   | { type: 'END_GAME'; gameId: string; defaultPlayers: Array<string>; defaultRules: Array<Rule> };
+
+function makeEmptyRound(id: number, length: number): RoundData {
+  return {
+    id,
+    predictions: Array(length).fill(undefined),
+    actuals: Array(length).fill(undefined),
+    scoreChanges: Array(length).fill(undefined),
+  };
+}
+
+function makeEmptyRounds(playerCount: number): Array<RoundData> {
+  if (playerCount <= 0) return [];
+  return Array.from({ length: Math.ceil(60 / playerCount) }, (_, i) => makeEmptyRound(i, playerCount));
+}
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -125,7 +139,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ),
       };
     case 'START_GAME':
-      return { ...state, active: true, startDate: new Date() };
+      return {
+        ...state,
+        active: true,
+        startDate: new Date(),
+        currentRound: 0,
+        playingRound: 0,
+        rounds: makeEmptyRounds(state.players.length),
+      };
     case 'END_GAME':
       return {
         ...state,
@@ -137,6 +158,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         rules: action.defaultRules,
         currentRound: 0,
         playingRound: 0,
+        rounds: [],
       };
     default:
       return state;
@@ -181,22 +203,12 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
 
   const roundCount = useMemo(() => Math.ceil(60 / state.players.length), [state.players.length]);
 
-  const makeEmptyRound = useCallback(
-    (id: number, length: number): RoundData => ({
-      id,
-      predictions: Array(length).fill(undefined),
-      actuals: Array(length).fill(undefined),
-      scoreChanges: Array(length).fill(undefined),
-    }),
-    [],
-  );
-
   useEffect(() => {
     dispatch({
       type: 'SET_ROUNDS',
-      rounds: Array.from({ length: roundCount }, (_, i) => makeEmptyRound(i, state.players.length)),
+      rounds: makeEmptyRounds(state.players.length),
     });
-  }, [roundCount, state.players.length, makeEmptyRound]);
+  }, [roundCount, state.players.length]);
 
   useEffect(() => {
     if (state.playerSlots.length === state.players.length) return;
@@ -250,17 +262,17 @@ export const GameProvider: FunctionComponent<{ children?: ReactNode }> = ({ chil
   }, []);
 
   const setPrediction = useCallback(
-    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_PREDICTION', roundIdx, playerIdx, value }),
+    (roundIdx: number, playerIdx: number, value: number | undefined) => dispatch({ type: 'SET_PREDICTION', roundIdx, playerIdx, value }),
     [],
   );
 
   const setActual = useCallback(
-    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_ACTUAL', roundIdx, playerIdx, value }),
+    (roundIdx: number, playerIdx: number, value: number | undefined) => dispatch({ type: 'SET_ACTUAL', roundIdx, playerIdx, value }),
     [],
   );
 
   const setScoreChange = useCallback(
-    (roundIdx: number, playerIdx: number, value: number) => dispatch({ type: 'SET_SCORE_CHANGE', roundIdx, playerIdx, value }),
+    (roundIdx: number, playerIdx: number, value: number | undefined) => dispatch({ type: 'SET_SCORE_CHANGE', roundIdx, playerIdx, value }),
     [],
   );
 

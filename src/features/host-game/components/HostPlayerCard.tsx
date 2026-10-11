@@ -35,16 +35,20 @@ export const HostPlayerCard: FunctionComponent<HostPlayerCardProps> = ({ name, i
       onPredictionChange={(value) => {
         setPrediction(currentRound, idx, value);
         const currentActual = rounds[currentRound]?.actuals[idx];
-        if (currentActual !== undefined) {
-          setScoreChange(currentRound, idx, computeSingleScoreChange(value, currentActual));
-        }
+        setScoreChange(
+          currentRound,
+          idx,
+          value !== undefined && currentActual !== undefined ? computeSingleScoreChange(value, currentActual) : undefined,
+        );
       }}
       onActualChange={(value) => {
         setActual(currentRound, idx, value);
         const currentPrediction = rounds[currentRound]?.predictions[idx];
-        if (currentPrediction !== undefined) {
-          setScoreChange(currentRound, idx, computeSingleScoreChange(currentPrediction, value));
-        }
+        setScoreChange(
+          currentRound,
+          idx,
+          value !== undefined && currentPrediction !== undefined ? computeSingleScoreChange(currentPrediction, value) : undefined,
+        );
       }}
     />
   );

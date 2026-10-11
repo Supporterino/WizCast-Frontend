@@ -259,7 +259,7 @@ export function useContestantEvents({
   );
 
   const handlePredictionChange = useCallback(
-    (value: number) => {
+    (value: number | undefined) => {
       latestPredRef.current = value;
       sendScoreDebounced();
     },
@@ -267,7 +267,7 @@ export function useContestantEvents({
   );
 
   const handleActualChange = useCallback(
-    (value: number) => {
+    (value: number | undefined) => {
       latestActualRef.current = value;
       sendScoreDebounced();
     },

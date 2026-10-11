@@ -6,6 +6,7 @@ import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
 import type { RoundData, StoredGame } from '@/types/game.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { sumRoundTotal } from '@/utils/roundTotals.ts';
 import { ContestantPlayerCard } from './ContestantPlayerCard.tsx';
 
 interface ContestantPlayingViewProps {
@@ -16,8 +17,8 @@ interface ContestantPlayingViewProps {
   claimedIndex: number;
   localPrediction?: number;
   localActual?: number;
-  onPredictionChange: (value: number) => void;
-  onActualChange: (value: number) => void;
+  onPredictionChange: (value: number | undefined) => void;
+  onActualChange: (value: number | undefined) => void;
   isFrozen: boolean;
 }
 
@@ -38,8 +39,8 @@ export const ContestantPlayingView: FunctionComponent<ContestantPlayingViewProps
   const roundCount = rounds.length;
   const currentDisplay = currentRound + 1;
   const round = rounds[currentRound] as RoundData | undefined;
-  const totalPredictions = round ? round.predictions.reduce((acc, val) => acc! + (val !== undefined ? val : 0), 0)! : 0;
-  const totalActuals = round ? round.actuals.reduce((acc, val) => acc! + (val !== undefined ? val : 0), 0)! : 0;
+  const totalPredictions = sumRoundTotal(round, 'predictions');
+  const totalActuals = sumRoundTotal(round, 'actuals');
   const accuracyData = calculatePlayerAccuracy({ players, rounds, scores } as StoredGame);
 
   return (

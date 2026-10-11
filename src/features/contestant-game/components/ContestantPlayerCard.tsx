@@ -16,8 +16,8 @@ interface ContestantPlayerCardProps {
   rounds: Array<RoundData>;
   isOwnCard: boolean;
   isFrozen: boolean;
-  onPredictionChange: (value: number) => void;
-  onActualChange: (value: number) => void;
+  onPredictionChange: (value: number | undefined) => void;
+  onActualChange: (value: number | undefined) => void;
 }
 
 export const ContestantPlayerCard: FunctionComponent<ContestantPlayerCardProps> = ({

@@ -6,6 +6,7 @@ import { FlexCol } from '@/shared/components/Layout/FlexCol.tsx';
 import { PredictionsTotalsBar } from '@/shared/components/PredictionsTotalsBar/PredictionsTotalsBar.tsx';
 import type { PlayerSlot, RoundData, StoredGame } from '@/types/game.ts';
 import { calculatePlayerAccuracy } from '@/utils/playerAccuracy.ts';
+import { sumRoundTotal } from '@/utils/roundTotals.ts';
 import { HostPlayerCard } from './HostPlayerCard.tsx';
 
 interface HostPlayingViewProps {
@@ -20,8 +21,8 @@ export const HostPlayingView: FunctionComponent<HostPlayingViewProps> = ({ playe
   const { t } = useTranslation();
 
   const round = rounds[currentRound] as RoundData | undefined;
-  const totalPredictions = round ? round.predictions.reduce((acc, val) => acc! + (!Number.isNaN(val!) ? val! : 0), 0)! : 0;
-  const totalActuals = round ? round.actuals.reduce((acc, val) => acc! + (!Number.isNaN(val!) ? val! : 0), 0)! : 0;
+  const totalPredictions = sumRoundTotal(round, 'predictions');
+  const totalActuals = sumRoundTotal(round, 'actuals');
   const accuracyData = calculatePlayerAccuracy({ players, rounds, scores } as StoredGame);
 
   return (

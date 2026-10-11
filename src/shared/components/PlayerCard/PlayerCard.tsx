@@ -17,8 +17,8 @@ interface PlayerCardProps {
   playingRound: number;
   playerCount: number;
   rounds: Array<RoundData>;
-  onPredictionChange?: (value: number) => void;
-  onActualChange?: (value: number) => void;
+  onPredictionChange?: (value: number | undefined) => void;
+  onActualChange?: (value: number | undefined) => void;
   isRemoteConnected?: boolean;
   slotStatus?: SlotStatus;
   inputsDisabled?: boolean;
@@ -47,6 +47,13 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
 
   const isPredictionEmpty = prediction === undefined;
   const isActualEmpty = actual === undefined;
+
+  const normalizeValue = (value: number | string): number | undefined => {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+    if (value.trim() === '') return undefined;
+    const parsed = Number.parseInt(value, 10);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
 
   const badgeLabel = slotStatus === 'disconnected' ? t('playerCard.disconnected', 'Disconnected') : t('playerCard.remote', 'Remote');
   const badgeColor = slotStatus === 'disconnected' ? 'orange' : 'green';
@@ -88,8 +95,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
             label={t('playerCard.prediction')}
             value={prediction ?? undefined}
             onChange={(value) => {
-              const newVal = typeof value === 'string' ? parseInt(value, 10) : value;
-              if (onPredictionChange) onPredictionChange(newVal);
+              if (onPredictionChange) onPredictionChange(normalizeValue(value));
             }}
             hideControls
             disabled={inputsDisabled}
@@ -106,8 +112,7 @@ export const PlayerCard: FunctionComponent<PlayerCardProps> = ({
             label={t('playerCard.actual')}
             value={actual ?? undefined}
             onChange={(value) => {
-              const newVal = typeof value === 'string' ? parseInt(value, 10) : value;
-              if (onActualChange) onActualChange(newVal);
+              if (onActualChange) onActualChange(normalizeValue(value));
             }}
             hideControls
             disabled={inputsDisabled}
